@@ -42,3 +42,54 @@ description: yyx 个人开发助手，全栈开发（前端 React / TypeScript +
   - 前端（有 `package.json` + `tsconfig.json` 但无 `nest` 依赖）→ 读取 `frontend.md`
   - 后端（有 `nest` 依赖 / `nest-cli.json`）→ 读取 `backend.md`
   - 全栈（同时有前端和后端目录如 `client/` + `server/` 或 `apps/` 等）→ 读取 `frontend.md` + `backend.md`
+
+## 本地开发环境（Docker Compose）
+
+**配置文件位置**：`F:\sh-project\local-dev-docker-container`
+**GitHub 仓库**：https://github.com/yinyongxin/local-dev-docker-container
+
+### 服务清单
+
+| 服务 | 容器名 | 端口 | 用途 |
+|------|--------|------|------|
+| MySQL | local-dev-mysql | 3306 | 关系型数据库 |
+| Redis | local-dev-redis | 6379 | 缓存和会话 |
+| MongoDB | local-dev-mongodb | 27017 | 文档数据库 |
+| RabbitMQ | local-dev-rabbitmq | 5672/15672 | 消息队列 |
+| Qdrant | local-dev-qdrant | 6333/6334 | 向量数据库 |
+| Elasticsearch | local-dev-elasticsearch | 9200/9300 | 全文搜索 |
+| MinIO | local-dev-minio | 9000/9001 | 对象存储 |
+| MailHog | local-dev-mailhog | 1025/8025 | 邮件测试 |
+| Adminer | local-dev-adminer | 8080 | 数据库管理 |
+| Portainer | local-dev-portainer | 9090 | Docker管理 |
+
+### 常用命令
+
+```bash
+# 启动所有服务
+cd F:\sh-project\local-dev-docker-container && docker-compose up -d
+
+# 停止所有服务
+docker-compose down
+
+# 查看服务状态
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# 查看日志
+docker-compose logs -f mysql
+
+# 进入容器
+docker exec -it local-dev-mysql bash
+docker exec -it local-dev-redis sh
+```
+
+### 账号密码速查
+
+| 服务 | 账号 | 密码 |
+|------|------|------|
+| MySQL | devuser | devpwd123 |
+| MySQL Root | root | root123456 |
+| Redis | - | redis123456 |
+| MongoDB | admin | mongo123456 |
+| RabbitMQ | admin | rabbit123456 |
+| MinIO | minioadmin | minio123456 |
