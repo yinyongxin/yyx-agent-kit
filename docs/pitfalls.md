@@ -123,8 +123,16 @@
 - **附带现象**：升级/重装依赖会清空生成的 Prisma client，导致 `@prisma/client did not initialize yet` 或 `has no exported member PrismaClient` —— 重新跑 `prisma generate` 即可。
 - **排查大坑**：反复改 tsconfig 会让多个 `nest start --watch` 残留进程堆积，出现 EADDRINUSE、旧配置反复编译报错。修完配置后务必杀掉所有 node/nest/vite 残留进程再干净启动。
 
+### 15. TS 6 下 Next.js 全局 CSS 副作用 import 报错
+
+- **现象**：`import "./globals.css"` 报 TS2882 `Cannot find module or type declarations for side-effect import`。
+- **原因**：TS 6 对副作用 import 做更严格的模块解析，`moduleResolution: bundler` 下 Next 15 的 `next-env.d.ts` 声明未覆盖 CSS 模块。
+- **解决**：在 portal 加 `src/global.d.ts` 声明 `declare module "*.css";`。
+- **备注**：官网 Next 已是 16.x，项目还在 15.x——按"新建/引入技术先去官网查"的约定，后续升级 Next 时用 ego 查官网最新用法。
+
 ## 相关约定
 
+- **新建项目 / 引入技术用官方脚手架 + ego 官网学习**：新建项目、引入框架/工具或升级版本时，先用 ego 去官网/官方文档查当前最新用法和版本要求，不要靠过往经验写配置；用官方脚手架（`create-vite` / `create-next-app` / `nest new` 等）生成初始结构，再往 monorepo 规范上改。经验会过时（如 TS 7 移除 compiler API 导致 Nest CLI 跑不了）。
 - **模板与规范同步升级**：完善 `templates/base` 的同时，必须同步升级 `agents/` 与 `skills/`——模板里新增/变更的技术与约定（如 Prisma、RBAC、OIDC、Docker、数据库选型）要反映到对应 agent（chief）和规范 skill（workspace/nestjs/tooling）。两者是一体的，不能只改模板不改规范。
 - **开发服务启动**：用标准方式在会话里起即可——`pnpm dev:server`、`pnpm dev:admin` 等后台任务；OpenCode 自带服务状态显示，不需要搞分离进程 / 写 PID 文件 / 建议用户去普通终端跑。需要确认时用一次探活（health / 端口），不要反复轮询。
 - 发版手动流程与 npm 包结构见 [README.md](README.md) 的「创建新项目」「发布 CLI」章节。

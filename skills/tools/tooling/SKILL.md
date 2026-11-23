@@ -30,6 +30,12 @@ description: 需要调用 ardot 设计工具、opencode CLI 或其它第三方 C
 - 需要用户本人操作（密码、2FA、扫码、验证码）→ `task.handOff()` 交还控制权，不要自己猜或代填。
 - 任务结束用 `task.finish({ keep: [] })` 关闭任务空间。
 
+## 新建项目 / 引入技术
+
+- **先用 ego 去官网查**：新建项目、引入框架/工具、升级版本时，用 ego-browser 访问官网/官方文档确认当前最新用法与版本要求，不要凭记忆或过往经验写配置。
+- **用官方脚手架**：前端 `create-vite` / `create-next-app`、后端 `nest new` 等，先生成官方当前模板，再改造成 monorepo 规范。技术迭代快，经验常过时（如 TS 7 移除 compiler API 导致 Nest CLI 不可用）。
+- 落地到 `templates/base` 后同步更新 skills/agents。
+
 ## opencode CLI
 
 ```bash

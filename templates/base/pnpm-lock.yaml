@@ -49,8 +49,8 @@ importers:
         specifier: ^4.1.0
         version: 4.3.5
       typescript:
-        specifier: ^5.8.0
-        version: 5.8.2
+        specifier: ^6.0.3
+        version: 6.0.3
       vite:
         specifier: ^6.3.0
         version: 6.4.6(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)
@@ -86,8 +86,8 @@ importers:
         specifier: ^4.1.0
         version: 4.3.5
       typescript:
-        specifier: ^5.8.0
-        version: 5.8.2
+        specifier: ^6.0.3
+        version: 6.0.3
       vite:
         specifier: ^6.3.0
         version: 6.4.6(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)
@@ -126,8 +126,8 @@ importers:
         specifier: ^4.1.0
         version: 4.3.5
       typescript:
-        specifier: ^5.8.0
-        version: 5.8.2
+        specifier: ^6.0.3
+        version: 6.0.3
 
   apps/server:
     dependencies:
@@ -191,14 +191,14 @@ importers:
         version: link:../shared
     devDependencies:
       typescript:
-        specifier: ^5.8.0
-        version: 5.8.2
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/shared:
     devDependencies:
       typescript:
-        specifier: ^5.8.0
-        version: 5.8.2
+        specifier: ^6.0.3
+        version: 6.0.3
 
 packages:
 
@@ -2594,11 +2594,6 @@ packages:
     resolution: {integrity: sha512-faYHw0anBbc/kWF3zFTEnxSFOAGUX9GFbOBthvDdLsIlEoWOFOtS0zgCiQYwIskL9iGXZL3kAXD8OoZ4GmMATA==}
     engines: {node: '>= 18'}
 
-  typescript@5.8.2:
-    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   typescript@6.0.3:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
@@ -4808,8 +4803,6 @@ snapshots:
       content-type: 2.1.0
       media-typer: 1.1.1
       mime-types: 3.0.2
-
-  typescript@5.8.2: {}
 
   typescript@6.0.3: {}
 
