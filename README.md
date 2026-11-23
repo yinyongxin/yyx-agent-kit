@@ -1,13 +1,13 @@
 ﻿# skills
 
-个人 OpenCode 配置源仓库，位于 `D:\project\yyx-agent-kit`。
+个人 OpenCode 配置源仓库，位于 `F:\project\yyx-agent-kit`。
 
-`~/.config/opencode` 只做落地目录；测试期全局配置已回退，这套东西只在 `D:\project\agent-test` 启用。
+`~/.config/opencode` 只做落地目录；全局已启用：规范类 skill 通过 `skills/standards` junction 直指本仓库，agents 由 `sync.ps1` 同步。流程/工具类 skill 留在项目级按需引用。全局默认 agent 保持内置，需要走流水线时在项目级配 `chief`。
 
 ## 结构
 
 ```text
-D:\project\yyx-agent-kit\
+F:\project\yyx-agent-kit\
 ├── agents\                  # 角色定义 → 同步到项目 .opencode/agents
 │   ├── chief.md             # primary：编排、门禁、设计文档
 │   └── qa.md                # subagent：独立测试与回归
@@ -39,7 +39,7 @@ D:\project\yyx-agent-kit\
 - 它的 `.opencode/opencode.json` 用相对路径 `../../skills`，**在 `examples/agent-test` 目录打开 OpenCode** 即可，换机器 clone 后不用改路径
 
 ```powershell
-cd D:\project\yyx-agent-kit\examples\agent-test
+cd F:\project\yyx-agent-kit\examples\agent-test
 pnpm install
 pnpm build
 opencode
@@ -78,20 +78,24 @@ Skill ID 取叶子目录名，与分组无关：`skills/flows/prd/SKILL.md` 的 
 
 ## 同步
 
-```powershell
-# 同步到测试项目
-powershell -ExecutionPolicy Bypass -File D:\project\yyx-agent-kit\scripts\sync.ps1 -ConfigDir D:\project\agent-test\.opencode
+仓库是全局配置的唯一源头：规范类 skill 通过 junction 直指 `skills/standards`，改完 `/reload` 即生效；agents 需要跑脚本同步到 `~/.config/opencode/agents`。
 
-# 同步到全局（全面启用时才用）
-powershell -ExecutionPolicy Bypass -File D:\project\yyx-agent-kit\scripts\sync.ps1
+在仓库改完后，跟 OpenCode 说「同步全局」，由它执行下面的命令并提示重启：
+
+```powershell
+# 同步 agents 到全局（默认）；脚本会先 git pull --ff-only
+powershell -ExecutionPolicy Bypass -File F:\project\yyx-agent-kit\scripts\sync.ps1
+
+# 同步到某个项目（如样例 / 测试项目）
+powershell -ExecutionPolicy Bypass -File F:\project\yyx-agent-kit\scripts\sync.ps1 -ConfigDir D:\project\agent-test\.opencode
 ```
 
-skills 不复制，配置直指仓库目录；`git pull` 后 `/reload` 即生效。
+注意：全局 `agents/` 目录首次新建后需要 `opencode service restart` 一次，之后增删改文件用 `/reload` 即可。
 
 ## 已知行为
 
 - 如果 `~/.config/opencode/agents` 目录本身被删除后重建，`/reload` 扫不到 agent，需要执行一次 `opencode service restart`。
-- 全局 `~/.config/opencode/skills/standards` 是指向 `skills/standards` 的 junction，只暴露规范类 skill（`workspace` / `nestjs` / `react`），流程与工具类不进全局。
+- 全局 `~/.config/opencode/skills/standards` 是指向 `skills/standards` 的 junction，只暴露规范类 skill（`workspace` / `nestjs` / `next` / `react`），流程与工具类不进全局。
 
 ## 新增技术栈
 
