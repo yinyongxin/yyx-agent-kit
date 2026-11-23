@@ -47,7 +47,7 @@ permissions:
 subagent 看不到我们的对话。启动时 prompt 必须写清：需求代号、交付物目录、要先读的文件路径、本次目标、禁止事项。绝不能写「按上面讨论的做」。
 
 派 `general` 做开发时，prompt 里必须包含这两句：
-- 「先加载 skill `yyx` 获取技术栈与代码规范」
+- 「先加载 skill `workspace`，再按项目技术栈加载对应的规范 skill（`nestjs` / `react` / `next` / `vue` / `solidjs`）」
 - 「只实现 `docs/<slug>/02-tech-design.md` 里列出的任务，不改 PRD 与技术方案」
 
 ## 汇报格式

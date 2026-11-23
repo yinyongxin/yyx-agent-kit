@@ -20,8 +20,10 @@ D:\project\yyx-agent-kit\
 │   │   └── archive            归档模板
 │   ├── tools\               # 工具
 │   │   └── tooling           ardot、opencode CLI、docker
-│   └── standards\           # 规范
-│       └── yyx              个人开发规范（前端/后端）
+│   └── standards\           # 规范（按技术栈拆分，新增栈只需加一个目录）
+│       ├── workspace        通用工程规范（pnpm/mise/monorepo/部署/Docker）
+│       ├── nestjs           NestJS 后端规范
+│       └── react            React 前端规范
 ├── scripts\sync.ps1
 └── README.md
 ```
@@ -72,4 +74,17 @@ skills 不复制，配置直指仓库目录；`git pull` 后 `/reload` 即生效
 ## 已知行为
 
 - 如果 `~/.config/opencode/agents` 目录本身被删除后重建，`/reload` 扫不到 agent，需要执行一次 `opencode service restart`。
-- 全局 `~/.config/opencode/skills/yyx` 是指向 `skills/standards/yyx` 的 junction，只暴露 `yyx` 一个 skill，其他模板不进全局。
+- 全局 `~/.config/opencode/skills/standards` 是指向 `skills/standards` 的 junction，只暴露规范类 skill（`workspace` / `nestjs` / `react`），流程与工具类不进全局。
+
+## 新增技术栈
+
+在 `skills/standards/` 下新建 `<栈名>/SKILL.md`，frontmatter 的 `description` 必须写清「什么时候用」：
+
+```markdown
+---
+name: Next.js 规范
+description: 开发 Next.js 项目时加载。App Router、服务端组件、数据获取约定
+---
+```
+
+模型靠 `description` 自动选择，不需要改任何配置。跨技术栈的通用约定放 `workspace`，不要复制到每个栈里。

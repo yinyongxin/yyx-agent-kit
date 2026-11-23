@@ -1,12 +1,14 @@
 ---
-name: yyx
-description: yyx 个人开发助手，全栈开发（前端 React / TypeScript + 后端 NestJS）
+name: 工程规范
+description: 通用工程规范：pnpm、mise、monorepo、构建产物、部署脚本、本地 Docker 服务。适用于所有项目
 ---
 
-## 通用
+# 工程规范
+
+## 包管理与运行时
 
 - **包管理**: pnpm（禁止使用 npm 或 yarn）
-- **运行时**: mise 管理 (node、bun 等)，用 `mise install` / `mise use` / `mise global` 切换版本
+- **运行时**: mise 管理（node、bun 等），用 `mise install` / `mise use` / `mise global` 切换版本
 - **Node.js 版本**: 项目根目录 `mise.toml` 指定，使用 `mise install` 安装
 
 ## Monorepo 结构
@@ -16,10 +18,10 @@ description: yyx 个人开发助手，全栈开发（前端 React / TypeScript +
 - **依赖安装**: 在根目录执行 `pnpm install`，自动安装所有子项目依赖
 - **锁文件**: 只在根目录有 `pnpm-lock.yaml`，子项目不应有独立锁文件
 
-## 通用规范
+## 通用编码规范
 
 - 异常处理使用 `try/catch` + `console.error`（`catch { /* 静默忽略 */ }` 仅限第三方 SDK 非关键调用）
-- **构建产物**: 使用 `releases/` 目录集中管理构建产物，不要散落在子项目中
+- **构建产物**: 使用 `releases/` 目录集中管理，不要散落在子项目中
 - **部署脚本**: 使用 `--ignore-workspace` 和 `--no-frozen-lockfile` 参数避免影响根目录依赖
 
 ## pnpm Workspace 注意事项
@@ -35,14 +37,6 @@ description: yyx 个人开发助手，全栈开发（前端 React / TypeScript +
 - Docker 部署时通过 `--env-file` 传递环境变量
 - 使用 `npx pm2` 或全局安装的 `pm2` 命令（不要使用 `pnpm exec`，会有 approve-builds 限制）
 
-## 注意
-
-- 全局偏好中已有「语言」和「临时操作」规则，skill 中不再重复
-- **自动识别**：进入项目后自行判断类型，然后读取对应的子文件：
-  - 前端（有 `package.json` + `tsconfig.json` 但无 `nest` 依赖）→ 读取 `frontend.md`
-  - 后端（有 `nest` 依赖 / `nest-cli.json`）→ 读取 `backend.md`
-  - 全栈（同时有前端和后端目录如 `client/` + `server/` 或 `apps/` 等）→ 读取 `frontend.md` + `backend.md`
-
 ## 本地开发环境（Docker Compose）
 
 **配置文件位置**：`F:\sh-project\local-dev-docker-container`
@@ -51,7 +45,7 @@ description: yyx 个人开发助手，全栈开发（前端 React / TypeScript +
 ### 服务清单
 
 | 服务 | 容器名 | 端口 | 用途 |
-|------|--------|------|------|
+| --- | --- | --- | --- |
 | MySQL | local-dev-mysql | 3306 | 关系型数据库 |
 | Redis | local-dev-redis | 6379 | 缓存和会话 |
 | MongoDB | local-dev-mongodb | 27017 | 文档数据库 |
@@ -61,32 +55,22 @@ description: yyx 个人开发助手，全栈开发（前端 React / TypeScript +
 | MinIO | local-dev-minio | 9000/9001 | 对象存储 |
 | MailHog | local-dev-mailhog | 1025/8025 | 邮件测试 |
 | Adminer | local-dev-adminer | 8080 | 数据库管理 |
-| Portainer | local-dev-portainer | 9090 | Docker管理 |
+| Portainer | local-dev-portainer | 9090 | Docker 管理 |
 
 ### 常用命令
 
 ```bash
-# 启动所有服务
-cd F:\sh-project\local-dev-docker-container && docker-compose up -d
-
-# 停止所有服务
-docker-compose down
-
-# 查看服务状态
-docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-
-# 查看日志
-docker-compose logs -f mysql
-
-# 进入容器
-docker exec -it local-dev-mysql bash
-docker exec -it local-dev-redis sh
+cd F:\sh-project\local-dev-docker-container && docker-compose up -d   # 启动所有服务
+docker-compose down                                                    # 停止所有服务
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"          # 查看状态
+docker-compose logs -f mysql                                           # 查看日志
+docker exec -it local-dev-mysql bash                                   # 进入容器
 ```
 
 ### 账号密码速查
 
 | 服务 | 账号 | 密码 |
-|------|------|------|
+| --- | --- | --- |
 | MySQL | devuser | devpwd123 |
 | MySQL Root | root | root123456 |
 | Redis | - | redis123456 |

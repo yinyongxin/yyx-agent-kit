@@ -1,4 +1,9 @@
-# 前端开发
+---
+name: React 前端规范
+description: 开发 React / TypeScript 前端时加载。Vite、Tailwind、路由、状态管理、组件风格、目录结构
+---
+
+# React 前端规范
 
 ## 技术栈
 
