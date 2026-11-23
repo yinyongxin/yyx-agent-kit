@@ -90,6 +90,19 @@
 - **解决**：DB 名和用户名用固定值 `app`（见 `.env.example`），与项目名解耦；容器名 / 网络名 / volume 名仍带项目前缀做隔离。
 - **备注**：不要把项目名直接当 DB 名用。
 
+### 11. tsx 跑 NestJS 导致依赖注入失效
+
+- **现象**：`tsx watch src/main.ts` 启动后，`/api/health` 报 500 —— `Cannot read properties of undefined (reading 'getHealth')`，controller 里注入的 service 是 undefined。
+- **原因**：tsx 用 esbuild 转译，**不做 `emitDecoratorMetadata`**，NestJS 拿不到构造函数参数类型，无法自动注入依赖。
+- **解决**：dev 用 `nest start --watch`（内部用 tsc，会 emit metadata），并补 `nest-cli.json`（sourceRoot=src、tsConfigPath）。生产用 `tsc build` + `node dist/...` 不受影响。
+- **备注**：seed 用 tsx 跑没问题（不依赖 Nest DI）。
+
+### 12. server dev 时 .env 加载时机
+
+- **现象**：`nest start` / `node dist/...` 时 Prisma/JwtStrategy 读不到 `process.env.DATABASE_URL` / `JWT_SECRET`。
+- **原因**：`.env` 在项目根目录，而 nest/node 从 `apps/server` 启动；且模块加载时就读 env。
+- **解决**：`main.ts` 顶部加 `findEnv()`——从 `process.cwd()` 向上找最近的 `.env` 并用 `dotenv.config()` 加载，兼容源码/编译产物不同层级。这样 dev 和 start 都不依赖启动器的 `--env-file` 参数。
+
 ## 相关约定
 
 - 发版手动流程与 npm 包结构见 [README.md](README.md) 的「创建新项目」「发布 CLI」章节。
