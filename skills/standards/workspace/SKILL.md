@@ -14,7 +14,7 @@ description: 通用工程规范：pnpm、mise、monorepo、构建产物、部署
 ## Monorepo 结构
 
 - **工作区配置**: 根目录 `pnpm-workspace.yaml` 定义 `apps/*` 为工作区
-- **子项目**: `apps/admin-web`（前端）、`apps/server`（后端）
+- **子项目**: `apps/client`（客户端）、`apps/admin`（管理端）、`apps/server`（后端）
 - **依赖安装**: 在根目录执行 `pnpm install`，自动安装所有子项目依赖
 - **锁文件**: 只在根目录有 `pnpm-lock.yaml`，子项目不应有独立锁文件
 
