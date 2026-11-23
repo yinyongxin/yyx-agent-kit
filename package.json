@@ -1,6 +1,6 @@
 {
   "name": "yyx-agent-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "全栈项目脚手架与 OpenCode 配置套件",
   "bin": {
     "yyx-new": "cli/bin/yyx-new.mjs",
