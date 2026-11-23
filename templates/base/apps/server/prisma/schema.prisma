@@ -1,0 +1,160 @@
+// Prisma schema —— 租户 / 用户 / RBAC / 套餐订阅
+// 认证身份归 Authentik；本库只存业务映射（authSubject = Authentik 的 sub），不存密码。
+// 所有业务表带 tenantId，由 PrismaService extension 自动注入过滤（全局表除外）。
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TenantStatus {
+  active
+  suspended
+}
+
+enum UserStatus {
+  active
+  disabled
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  expired
+}
+
+/// 租户。单租户阶段用默认租户（seed 里创建），升级多租户不改业务代码。
+model Tenant {
+  id        String       @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String       @unique
+  status    TenantStatus @default(active)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  users         User[]
+  roles         Role[]
+  subscriptions Subscription[]
+
+  @@map("tenants")
+}
+
+/// 业务用户。authSubject 对应 Authentik 的 sub，不存密码。
+model User {
+  id          String     @id @default(uuid()) @db.Uuid
+  tenantId    String     @db.Uuid
+  tenant      Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  authSubject String     @unique
+  email       String?
+  displayName String?
+  status      UserStatus @default(active)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  roles            UserRole[]
+  oauthConnections OAuthConnection[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@map("users")
+}
+
+/// 角色（租户内）。isSystem=true 为内置角色，不可删除。
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  code        String
+  name        String
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("roles")
+}
+
+/// 权限点（全局定义，如 knowledge:read）。
+model Permission {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique
+  name        String
+  description String?
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  userId String @db.Uuid
+  roleId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId       String @db.Uuid
+  permissionId String @db.Uuid
+  role         Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+/// 外部身份连接（Authentik / 未来 Google / 微信），按 provider + 外部 ID 唯一。
+model OAuthConnection {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @db.Uuid
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider       String
+  providerUserId String
+  createdAt      DateTime @default(now())
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+  @@map("oauth_connections")
+}
+
+/// 套餐定义（全局）。
+model Plan {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+/// 租户订阅（门户展示用）。
+model Subscription {
+  id               String             @id @default(uuid()) @db.Uuid
+  tenantId         String             @db.Uuid
+  tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  planId           String             @db.Uuid
+  plan             Plan               @relation(fields: [planId], references: [id])
+  status           SubscriptionStatus @default(active)
+  currentPeriodEnd DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@unique([tenantId, planId])
+  @@index([tenantId])
+  @@map("subscriptions")
+}

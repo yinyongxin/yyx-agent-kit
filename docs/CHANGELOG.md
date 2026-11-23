@@ -19,6 +19,8 @@
 - **数据库选型定案**：PostgreSQL + pgvector 单库（关系数据 + 向量检索），不另起向量库；向量访问封装成 `VectorStore` 接口，将来可换 Qdrant。`workspace` / `nestjs` 规范同步更新
 - **认证/授权定案**：Authentik 做统一 IdP（SSO），各平台 OIDC client；身份源先账号密码 + Google（微信以后加 OAuth source）；账号密码存 Authentik、业务库只存 sub 映射；账号/租户归 Authentik，角色权限归业务库 RBAC（不直接信 token claim）；小程序走补充入口（wx.login → 用户联邦 → 本地 JWT）。逻辑多租户骨架：JWT claim 带 tenantId，Prisma extension 自动注入过滤，单租户阶段用默认租户，升级不改业务代码
 - 数据库选型：PostgreSQL + pgvector 单库（见上）；一个 NestJS server 分 module（auth/knowledge/replay/billing），不拆多服务
+- **租户/RBAC 骨架落地**（Google 暂不接入）：`apps/server/prisma/schema.prisma`（Tenant/User/Role/Permission/UserRole/RolePermission/OAuthConnection/Plan/Subscription）、幂等 `seed.ts`（默认租户 + admin/member 角色 + 11 权限点 + 2 套餐）、`PrismaService` extension 自动注入 tenantId、`TenantMiddleware`、`JwtStrategy`、`PermissionsGuard` + `@RequirePermissions`。认证骨架默认未激活，现有接口免登录可跑；接入 Authentik 时启用全局守卫
+- 修正 `apps/server/Dockerfile` 的 CMD 路径（`dist/apps/server/src/main.js`）
 - 模板目录 `examples/agent-test` → `templates/base`；项目名 `agent-test` → `starter`，包名前缀 `@agent-test/*` → `@starter/*`
 - 全局 skill：旧的 `yyx` 移除，改为 `skills/standards` junction（`workspace` / `nestjs` / `next` / `react`）
 - 所有 `.ps1` 调用统一为 `pwsh -NoProfile -File`（本机 PowerShell 7）

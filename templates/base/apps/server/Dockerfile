@@ -22,4 +22,4 @@ RUN pnpm --filter @starter/server build
 # 运行
 ENV NODE_ENV=production
 EXPOSE 47100
-CMD ["node", "apps/server/dist/main.js"]
+CMD ["node", "apps/server/dist/apps/server/src/main.js"]

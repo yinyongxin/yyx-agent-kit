@@ -22,6 +22,29 @@ export const TODO_STATUS = {
 
 export type TodoStatus = (typeof TODO_STATUS)[keyof typeof TODO_STATUS];
 
+/** 内置角色 code（与后端 seed 一致） */
+export const ROLES = {
+  admin: "admin",
+  member: "member",
+} as const;
+export type RoleCode = (typeof ROLES)[keyof typeof ROLES];
+
+/** 权限点 code（与后端 seed 一致） */
+export const PERMISSIONS = {
+  tenantRead: "tenant:read",
+  tenantWrite: "tenant:write",
+  userRead: "user:read",
+  userWrite: "user:write",
+  roleRead: "role:read",
+  roleWrite: "role:write",
+  knowledgeRead: "knowledge:read",
+  knowledgeWrite: "knowledge:write",
+  replayRead: "replay:read",
+  replayWrite: "replay:write",
+  billingManage: "billing:manage",
+} as const;
+export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
+
 export interface Todo {
   id: string;
   title: string;

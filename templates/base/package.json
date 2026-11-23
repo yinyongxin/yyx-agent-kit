@@ -12,6 +12,7 @@
     "lint": "oxlint apps packages --ignore-pattern \"**/next-env.d.ts\""
   },
   "devDependencies": {
+    "dotenv": "^18.0.10",
     "oxlint": "^1.0.0"
   }
 }
