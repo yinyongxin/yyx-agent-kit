@@ -2,8 +2,6 @@
 
 个人 OpenCode 配置源仓库，位于 `F:\project\yyx-agent-kit`。
 
-> 遇到 npm 发布 / 代理 / 编码等环境问题时，先看 [PITFALLS.md](PITFALLS.md)（踩坑记录）。
-
 `~/.config/opencode` 只做落地目录；全局已启用：规范类 skill 通过 `skills/standards` junction 直指本仓库，agents 由 `sync.ps1` 同步。流程/工具类 skill 留在项目级按需引用。全局默认 agent 保持内置，需要走流水线时在项目级配 `chief`。
 
 ## 结构
@@ -152,3 +150,8 @@ description: 开发 Next.js 项目时加载。App Router、服务端组件、数
 ```
 
 模型靠 `description` 自动选择，不需要改任何配置。跨技术栈的通用约定放 `workspace`，不要复制到每个栈里。
+
+## 文档
+
+- [踩坑记录](docs/pitfalls.md) —— npm 发布、代理、编码等环境问题的现象与解法
+- [变更记录](docs/CHANGELOG.md) —— 版本与功能变更
