@@ -130,6 +130,19 @@
 - **解决**：在 portal 加 `src/global.d.ts` 声明 `declare module "*.css";`。
 - **备注**：官网 Next 已是 16.x，项目还在 15.x——按"新建/引入技术先去官网查"的约定，后续升级 Next 时用 ego 查官网最新用法。
 
+### 16. 官方认证包 JWT_SECRET 必须 ≥32 字节 + .env 改动要重启
+
+- **现象**：启动报 `accessToken: the key is not a valid HS256 key; HS256 needs a secret of at least 32 bytes`，或改了 `.env` 后新值不生效。
+- **原因**：`@nestjs/authentication` 强制 HS256 密钥 ≥32 字节（短密钥要显式 `allowShortSecret: true`，官方文档明确不推荐）；env 在进程启动时读取，`nest start --watch` 只监听 TS 文件变化。
+- **解决**：`.env.example` 里 JWT_SECRET 用 ≥32 字节默认值；改 `.env` 后手动重启服务（profile 脚本或停后台任务重启）。
+- **备注**：包 0.1.x 早期版本，配置有强校验（ issuer/audience/ttl 格式、NaN 环境变量等都会启动失败）——这正是"靠官网一手资料、别靠经验"的价值。
+
+### 17. 认证方案决策演变：Authentik → NestJS 官方包（ego 深挖官网后推翻）
+
+- **经过**：早前因"NestJS 没有完整认证方案"选了 Authentik 做统一 IdP；用 ego 深挖 https://docs.nestjs.com/security/authentication 与 /authorization 后发现官方新包已覆盖全部能力（密码/2FA/magic link/session/access+refresh token/API key/Google OIDC + 6 类 store），且用户模型自己定义、oidc.providers 可从租户动态加载。
+- **结论**：推翻 Authentik，改用 `@nestjs/authentication` + `@nestjs/authorization`。多平台共用一个 server 天然共享登录态，不需要外部 IdP。
+- **教训**：方案决策前必须用 ego 查官网一手资料（认证这么核心的能力，官方可能已经有新包），不能凭"框架一般不做 X"的经验判断。
+
 ## 相关约定
 
 - **新建项目 / 引入技术用官方脚手架 + ego 官网学习**：新建项目、引入框架/工具或升级版本时，先用 ego 去官网/官方文档查当前最新用法和版本要求，不要靠过往经验写配置；用官方脚手架（`create-vite` / `create-next-app` / `nest new` 等）生成初始结构，再往 monorepo 规范上改。经验会过时（如 TS 7 移除 compiler API 导致 Nest CLI 跑不了）。

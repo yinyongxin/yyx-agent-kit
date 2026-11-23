@@ -1,0 +1,42 @@
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import type { User } from "./user";
+
+/**
+ * 官方 @nestjs/authentication 不读用户表，只通过本类拿用户。
+ * 密码哈希留在仓库内部，对外只返回不含敏感字段的 User（见官方文档 Quick Start）。
+ */
+@Injectable()
+export class UsersRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findById(id: string): Promise<User | null> {
+    return this.prisma.scoped.user.findFirst({
+      where: { id, status: "active" },
+      select: {
+        id: true,
+        tenantId: true,
+        email: true,
+        displayName: true,
+        status: true,
+        roles: {
+          select: { role: { select: { code: true } } },
+        },
+      },
+    }) as Promise<User | null>;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.scoped.user.findFirst({
+      where: { email, status: "active" },
+      select: {
+        id: true,
+        tenantId: true,
+        email: true,
+        displayName: true,
+        status: true,
+        roles: { select: { role: { select: { code: true } } } },
+      },
+    }) as Promise<User | null>;
+  }
+}

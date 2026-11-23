@@ -12,11 +12,15 @@
     "prisma:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@nestjs/authentication": "^0.1.7",
+    "@nestjs/authorization": "^0.1.4",
     "@nestjs/common": "^12.6.0",
     "@nestjs/core": "^12.6.0",
     "@nestjs/jwt": "^11.0.0",
+    "@nestjs/microservices": "^12.6.0",
     "@nestjs/passport": "^11.0.0",
     "@nestjs/platform-express": "^12.6.0",
+    "@nestjs/websockets": "^12.6.0",
     "@prisma/client": "^6.5.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

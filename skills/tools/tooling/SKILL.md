@@ -24,7 +24,7 @@ description: 需要调用 ardot 设计工具、opencode CLI 或其它第三方 C
 
 ## ego-browser（浏览器操作首选）
 
-- 凡是要操作网页（登录 Authentik / 管理后台、验证前端页面、配置 Google OAuth 等），**优先用 ego-browser**，不要用其它浏览器工具硬凑。
+- 凡是要操作网页（登录管理后台、验证前端页面、查官网文档、配置 Google OAuth 等），**优先用 ego-browser**，不要用其它浏览器工具硬凑。
 - **先探测**：`ego-browser --version`。命令不存在或连不上 → 告诉用户"需要安装 ego-browser 才能操作浏览器，请安装后告诉我再继续"，停止，不要伪造结果。
 - 用法：`ego-browser skill` 读对应版本指南；`ego-browser nodejs` 跑脚本（PowerShell 写 `.mjs` 文件再 import，别用 `-e` 传多行）。
 - 需要用户本人操作（密码、2FA、扫码、验证码）→ `task.handOff()` 交还控制权，不要自己猜或代填。

@@ -1,5 +1,5 @@
 // Prisma schema —— 租户 / 用户 / RBAC / 套餐订阅
-// 认证身份归 Authentik；本库只存业务映射（authSubject = Authentik 的 sub），不存密码。
+// 认证由 NestJS 官方 @nestjs/authentication 实现：用户/角色/认证状态全在本库，不依赖外部 IdP。
 // 所有业务表带 tenantId，由 PrismaService extension 自动注入过滤（全局表除外）。
 
 generator client {
@@ -43,7 +43,7 @@ model Tenant {
   @@map("tenants")
 }
 
-/// 业务用户。authSubject 对应 Authentik 的 sub，不存密码。
+/// 业务用户。官方认证包通过 UsersRepository 按 id 加载，密码哈希由包内 PasswordHasher 管理。
 model User {
   id          String     @id @default(uuid()) @db.Uuid
   tenantId    String     @db.Uuid
@@ -115,7 +115,7 @@ model RolePermission {
   @@map("role_permissions")
 }
 
-/// 外部身份连接（Authentik / 未来 Google / 微信），按 provider + 外部 ID 唯一。
+/// 外部身份连接（Google / 微信等），按 provider + 外部 ID（subject）唯一。
 model OAuthConnection {
   id             String   @id @default(uuid()) @db.Uuid
   userId         String   @db.Uuid

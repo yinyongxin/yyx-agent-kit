@@ -1,7 +1,9 @@
-# 项目自包含的本地依赖环境（PostgreSQL + pgvector + Redis + Authentik）
+# 项目自包含的本地依赖环境（PostgreSQL + pgvector + Redis）
 # 不依赖全局 local-dev-docker-container，每个项目独立一套，多项目并存不冲突。
+# 认证状态（session / token / mfa / oidc）由 NestJS 官方认证包存进 PostgreSQL，
+# 不需要外部 IdP 容器；多平台共用一个 server 服务，天然共享登录态。
 # 用法：
-#   cp .env.example .env       # 生产务必改 AUTHENTIK_SECRET_KEY 和各密码
+#   cp .env.example .env       # 生产务必改各密码与 JWT_SECRET
 #   docker compose up -d
 #   docker compose down          # 停止但保留数据
 #   docker compose down -v       # 停止并删除数据卷（危险）
@@ -48,59 +50,11 @@ services:
     networks:
       - starter-net
 
-  # 统一 IdP：账号密码 + Google OIDC，用户/租户中心
-  # 2025.4+ 会话存 DB，不需要外部 Redis；只连同一个 PostgreSQL 的 authentik 库
-  authentik-server:
-    image: ghcr.io/goauthentik/server:2026.8.6
-    container_name: starter-authentik-server
-    restart: unless-stopped
-    command: server
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      AUTHENTIK_POSTGRESQL__HOST: postgres
-      AUTHENTIK_POSTGRESQL__PORT: 5432
-      AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_DB_NAME:-authentik}
-      AUTHENTIK_POSTGRESQL__USER: ${AUTHENTIK_DB_USER:-authentik}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASSWORD:-authentik_dev_pwd}
-      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?AUTHENTIK_SECRET_KEY required}
-      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
-    ports:
-      - "${AUTHENTIK_PORT:-9000}:9000"
-    volumes:
-      - authentik-data:/data
-    networks:
-      - starter-net
-
-  authentik-worker:
-    image: ghcr.io/goauthentik/server:2026.8.6
-    container_name: starter-authentik-worker
-    restart: unless-stopped
-    command: worker
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      AUTHENTIK_POSTGRESQL__HOST: postgres
-      AUTHENTIK_POSTGRESQL__PORT: 5432
-      AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_DB_NAME:-authentik}
-      AUTHENTIK_POSTGRESQL__USER: ${AUTHENTIK_DB_USER:-authentik}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASSWORD:-authentik_dev_pwd}
-      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?AUTHENTIK_SECRET_KEY required}
-      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
-    volumes:
-      - authentik-data:/data
-    networks:
-      - starter-net
-
 volumes:
   postgres-data:
     name: starter-postgres-data
   redis-data:
     name: starter-redis-data
-  authentik-data:
-    name: starter-authentik-data
 
 networks:
   starter-net:

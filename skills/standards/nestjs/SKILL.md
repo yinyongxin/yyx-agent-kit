@@ -11,29 +11,32 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 - **ORM**: Prisma
 - **数据库**: PostgreSQL + pgvector（单库兼顾关系数据与向量检索；向量访问封装成 `VectorStore` 接口，将来可换 Qdrant）
 - **API**: RESTful（`@nestjs/swagger` 文档）
-- **认证**: OIDC 客户端（`passport-openidconnect`）对接 Authentik；NestJS 只验 token、签本地 JWT，不做登录页
-- **授权**: 业务库 RBAC（用户/角色/权限），不直接信 token 里的角色 claim
+- **认证**: NestJS 官方 **`@nestjs/authentication`**（0.1.x，官网基线）——密码/email/2FA/magic link/session/access+refresh token/API key/Google OIDC，状态存自己的 PostgreSQL，**不用外部 IdP**
+- **授权**: NestJS 官方 **`@nestjs/authorization`**——`@Policy()` 策略类 + `@Can()` 接口守卫
 
-## 认证与授权分层
+## 认证与授权分层（2026-11-24 ego 深挖官网后定案）
 
-- **认证（你是谁）归 Authentik**：账号密码 + Google OIDC 登录、会话、MFA、用户与租户归属。微信以后加（Authentik OAuth source）
-- **授权（你能干什么）归业务系统**：角色权限规则跟业务强相关，留在业务库，不被 IdP 绑死
-- **单一 server 服务**：知识库、rrweb 回放等业务都是同一 NestJS server 的 module（`auth / knowledge / replay / billing`），不拆多服务；共享同一 PostgreSQL 实例（不同表/不同 database）
+**前提修正**：早前用 Authentik 的判断已被推翻——官方包已覆盖全部认证能力，状态存自己的库、用户模型自己定义、多平台共用一个 server 天然共享登录态，不需要外部 IdP。
 
-### OIDC 客户端流程
+- **认证（你是谁）**：`@nestjs/authentication`。`AuthenticationModule.forRoot({ accessToken, ... })` + 自定义 `JwtBearerProvider`（`validate(claims)` 从我们 UsersRepository 按 sub 查用户）。`@Public()` 豁免、`@Authenticate()` 改要求、`@CurrentUser()` 读用户、`AuthenticationContext` 在 handler 任意层读当前用户
+- **授权（你能干什么）**：`@nestjs/authorization`。`@Policy()` 类里每条 ability 是 `(user, ...args) => boolean`，`before()` hook 放行 admin；路由用 `@Can(Policy, 'ability')` 声明，服务内用 `AuthorizationService.can()/authorize()`。**没有 `@Can()` / `@Can.Anyone()` / `@Public()` 的路由会被 AuthorizationGuard 拒绝**（默认拒绝）
+- **单一 server 服务**：知识库、rrweb 回放等都是同一 NestJS server 的 module（`auth / knowledge / replay / billing`），不拆多服务；共享同一 PostgreSQL 实例
 
-1. 前端跳 Authentik `/authorize`（授权码 + PKCE），登录后回调拿 `code`
-2. 前端把 `code` 发给 NestJS `POST /auth/callback`，后端用 code + secret 换 token（secret 不下发浏览器）
-3. 校验 token 签名 / issuer / audience / 过期 / nonce → 从 claim 取 `sub`、`tenantId`
-4. 在业务库找/建用户映射 → 签**本平台短期 JWT**（含 `sub`、`tenantId`、`userId`）给前端
-5. 后续业务接口用本地 JWT；全局 `AuthGuard` 注入 `req.user = { sub, tenantId, userId }`，`JwtStrategy` 校验
+### 官方认证包要点（官网一手）
+
+- **store 契约 6 类**：sessions / refreshTokens / mfa / magicLinks / oidcStates / emailTokens。`NODE_ENV=production` 且配置了对应功能却没有 store → 启动失败；`allowInMemoryStorage: true` 仅开发用
+- **原子性**：`touchSession`/`deleteSession`/`markRefreshTokenUsed` 等必须是单条条件 UPDATE/DELETE（不能读后写），官方 contract tests 用 `concurrent: true` 在 PostgreSQL 上验证
+- **Google OIDC**：`oidc.providers: { google: google({ clientId, clientSecret }) }`；回调 URI 注册到 Google Cloud；生产配 `APP_URL`
+- **多租户 OIDC**：`oidc.providers` 可是 `(name) => config` 函数，从 TenantsRepository 动态读 issuer/clientId/clientSecret（`GET /auth/oidc/<tenant>/login` 按租户登录）
+- **微信**：非标准 OIDC，需自定义 provider（框架留口子）
+- **生产清单**：HTTPS（session cookie Secure）、真实 SMTP、`app.enableCsrfProtection()`、`session.trustedOrigins`、密钥进 secret manager、scrypt 内存规划（默认 128MiB/次）、throttler 用 Redis 共享存储
+- **多平台共享用户库**：每个应用的 mfa / accessToken 配置必须一致，否则一个平台开了 2FA、另一个能纯密码登录
 
 ### 多租户与 RBAC
 
-- **租户隔离**：`tenantId` 来自 token claim，Prisma extension 自动给所有查询注入 `where: { tenantId }`（单租户阶段用默认租户，升级不改业务代码）
-- **角色权限**：`users / roles / permissions / user_roles / role_permissions` 存业务库；管理员判断**从库里查，不信 token claim**（权限变更即时生效）
-- **接口守卫**：`@RequirePermissions('knowledge:read')` 做接口级校验，前端隐藏只是体验，服务端校验才是安全边界
-- 小程序是补充入口：`wx.login → openid → Authentik 用户联邦 → 本地 JWT`，身份统一但登录态独立（平台限制），主干复用同一套授权逻辑
+- **租户隔离**：Prisma extension 自动给业务表注入 `where: { tenantId }`（Tenant/Permission/Plan 是全局表不注入）。`tenantId` 来源：官方包把用户从库里加载（含 tenantId），接入时把 tenantId 写进 token claim 或从 `AuthenticationContext.user` 读取（模板当前用 `TenantMiddleware` 解析 token，见 auth 模块 TODO）
+- **角色权限**：`users / roles / permissions / user_roles / role_permissions` 存业务库；policy 从 `user.roles` 判断，权限变更即时生效（不依赖 token claim）
+- 小程序是补充入口：`wx.login → openid → 官方认证包签 JWT`，身份统一但登录态独立（平台限制），主干复用同一套授权
 
 ## 开发规范
 

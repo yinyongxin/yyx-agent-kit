@@ -20,6 +20,8 @@
 - Vite: https://vite.dev/guide/
 - NestJS: https://docs.nestjs.com/first-steps（Node 要求 v20.19+/v22.12+；CLI 生成器 v22.22.3+/v24.15+）
 - Next.js: https://nextjs.org/docs/app/getting-started/installation（Node 最低 20.9）
+- NestJS 认证: https://docs.nestjs.com/security/authentication（`@nestjs/authentication` 官方包）
+- NestJS 授权: https://docs.nestjs.com/security/authorization（`@nestjs/authorization` 官方包）
 
 ## 我们的适配差异（monorepo 特殊处理）
 

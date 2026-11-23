@@ -6,26 +6,32 @@
 
 | 服务 | 地址 | 账号 | 密码 |
 | --- | --- | --- | --- |
-| PostgreSQL（业务库 `app`） | `localhost:54732` | `app` | `app_dev_pwd` |
-| PostgreSQL（IdP 库 `authentik`） | `localhost:54732` | `authentik` | `authentik_dev_pwd` |
-| Redis | `localhost:46379` | - | `app_redis_pwd` |
-| Authentik 管理界面 | http://localhost:9000 | `akadmin` | `admin_dev_pwd`（邮箱 `admin@localhost`，已初始化）|
+| PostgreSQL（业务库 `app`，含认证状态表） | `localhost:54732` | `app` | `app_dev_pwd` |
+| Redis（限流共享存储） | `localhost:46379` | - | `app_redis_pwd` |
+
+> 认证/授权由 NestJS 官方包 `@nestjs/authentication` + `@nestjs/authorization` 实现，**没有独立 IdP 容器**。session / refreshToken / mfa / oidcState / emailToken 存进同一个 PostgreSQL（通过 store，见 `apps/server/src/auth/` TODO）。
 
 ## 初始化步骤
 
 1. `cp .env.example .env`（模板仓库里 `.env` 不提交）
-2. `docker compose up -d`，首次 Authentik 迁移约 55 秒
-3. 打开 http://localhost:9000，用 `akadmin` / `admin_dev_pwd` 登录（模板已预置初始设置，邮箱 `admin@localhost`；若重建容器则需重新走初始设置向导，自己设密码并同步更新本文件）
-4. 在 Admin 界面配置 Google OAuth source 和 OIDC provider（应用客户端）
+2. `docker compose up -d`（PostgreSQL + pgvector + Redis）
+3. `pnpm --filter @starter/server prisma:generate`、`prisma:push`、`prisma:seed`（建表 + 默认租户/角色/权限/套餐）
+4. `pnpm dev:server` / `pnpm dev:admin` 启动
+
+> **改了 `.env`（尤其 JWT_SECRET）必须重启服务**——env 在进程启动时读取，nest watch 只监听 TS 文件变化，不会因 .env 改动重启。
 
 ## 生产必改清单
 
-| 文件 | 项 | 说明 |
-| --- | --- | --- |
-| `.env` | `AUTHENTIK_SECRET_KEY` | 用 `openssl rand -base64 60` 生成，改了会失效所有会话 |
-| `.env` | `POSTGRES_PASSWORD` / `REDIS_PASSWORD` / `AUTHENTIK_DB_PASSWORD` | 各服务密码 |
-| Authentik 后台 | `akadmin` 密码 | 首次登录后立刻改掉 `admin_dev_pwd` |
-| `docker/init-db.sql` | `CREATE USER authentik WITH PASSWORD '...'` | SQL 不支持环境变量替换，必须与 `.env` 的 `AUTHENTIK_DB_PASSWORD` 同步改 |
-| `docker/init-db.sql` | 业务库初始化 | dev 默认值仅用于本地 |
+| 项 | 说明 |
+| --- | --- |
+| `JWT_SECRET` | 至少 32 字节（`openssl rand -base64 32`）；官方包 HS256 强校验，短了启动失败 |
+| `POSTGRES_PASSWORD` / `REDIS_PASSWORD` | 各服务密码 |
+| `accessToken.issuer` / `audience` | 按实际域名/应用设置（在 `auth.module.ts`） |
+| 注册 6 个 store | 生产 `NODE_ENV=production` 下，官方包强制要求 sessions/refreshTokens/mfa/magicLinks/oidcStates/emailTokens 的 store，否则启动失败；见官网 `The store contract` |
+| Google OAuth | `.env` 填 `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`，配置 `oidc.providers` |
+| SMTP | `SMTP_URL` 用真实邮件服务（开发 LogMailTransport 只打日志） |
+| HTTPS + CSRF | session cookie 是 Secure；`app.enableCsrfProtection()`；配置 `session.trustedOrigins` |
+| 微信扫码 | 非标准 OIDC，需自定义 provider（框架留口子） |
+| 多平台一致性 | 共享用户库的每个应用，mfa / accessToken 配置必须一致，否则一个平台开 2FA 另一个能纯密码登录 |
 
 > 不要在文档 / 提交里写生产密钥。本文件只有本地 dev 默认值。

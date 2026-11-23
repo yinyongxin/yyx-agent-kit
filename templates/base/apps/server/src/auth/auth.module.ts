@@ -1,32 +1,39 @@
 import { Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
-import { PassportModule } from "@nestjs/passport";
-import { JwtStrategy } from "./jwt.strategy";
-import { PermissionsGuard } from "./permissions.guard";
+import {
+  AuthenticationModule,
+} from "@nestjs/authentication";
+import { AuthorizationModule } from "@nestjs/authorization";
+import { JwtAuth } from "./jwt-auth.provider";
+import { UsersRepository } from "./users.repository";
 
 /**
- * 认证模块（骨架，默认未激活）。
+ * 认证（@nestjs/authentication）+ 授权（@nestjs/authorization）官方模块。
  *
- * 现状：租户模型、JWT 策略、权限守卫都就绪，但不挂全局守卫 —— 模板现有接口
- * （health / todos）无需登录即可跑，方便先验证基础设施。
+ * 当前是最小闭环：Bearer JWT 凭证 provider + 全局 guard（除 @Public() 路由）。
+ * health 用 @Public() 豁免；其余路由需要登录。
  *
- * 接入 Authentik/Google 时：
- *   1. 在本模块加 OIDC 策略 + /auth/callback，用 code 换 token 后签本地 JWT
- *      （含 sub / tenantId / userId，见 jwt.strategy.ts 的 JwtPayload）
- *   2. 在 app.module.ts 的 providers 里启用全局守卫：
- *      { provide: APP_GUARD, useClass: AuthGuard("jwt") }
- *      { provide: APP_GUARD, useClass: PermissionsGuard }
- *   3. health 接口用 @Public() 豁免（需加 @nestjs/throttler 类似的 public 装饰器机制）
+ * 生产上线前按官网文档补齐（见 docs/pitfalls.md #16 与 README TODO）：
+ *   1. 注册 6 个 store（sessions / refreshTokens / mfa / magicLinks / oidcStates / emailTokens）
+ *      到同一个 PostgreSQL（写 Prisma store，跑官方 contract tests）
+ *   2. Google OIDC：oidc.providers 加 google() + 环境变量 GOOGLE_CLIENT_ID/SECRET
+ *   3. TOTP 2FA / magic link / 密码重置：按官网对应章节配置
+ *   4. 微信扫码：oidc.providers 自定义 provider（微信非标准 OIDC，需自己实现）
+ *   5. 多平台共享用户库时，每个应用的 mfa / accessToken 配置必须一致
  */
 @Module({
   imports: [
-    PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET ?? "dev_jwt_secret_change_me",
-      signOptions: { expiresIn: "30m" },
+    AuthenticationModule.forRoot({
+      accessToken: {
+        key: process.env.JWT_SECRET ?? "dev_jwt_secret_change_me_at_least_32_bytes",
+        issuer: "starter-api",
+        audience: "starter-web",
+        ttl: "15m",
+      },
+      allowInMemoryStorage: true, // 仅开发；生产注册 store 后去掉
     }),
+    AuthorizationModule.forRoot(),
   ],
-  providers: [JwtStrategy, PermissionsGuard],
-  exports: [JwtModule, PermissionsGuard],
+  providers: [UsersRepository, JwtAuth],
+  exports: [UsersRepository],
 })
 export class AuthModule {}

@@ -90,13 +90,13 @@ allowBuilds:
 
 ## 本地开发环境（Docker Compose）
 
-**项目自带独立环境**：每个项目根目录有 `docker-compose.yml`，自带 PostgreSQL(pgvector) + Redis + Authentik（统一 IdP），容器名 / volume / 网络名带项目前缀。**不要依赖全局 `local-dev-docker-container`**，那是跨项目共享的中间件池，仅供临时验证用，不作为项目依赖。
+**项目自带独立环境**：每个项目根目录有 `docker-compose.yml`，自带 PostgreSQL(pgvector) + Redis，认证由 NestJS 官方包实现（状态存 PostgreSQL，无独立 IdP 容器），容器名 / volume / 网络名带项目前缀。**不要依赖全局 `local-dev-docker-container`**，那是跨项目共享的中间件池，仅供临时验证用，不作为项目依赖。
 
 ### 项目自包含环境（默认）
 
 ```bash
 cp .env.example .env            # 改端口和密码，多项目并存时端口必须不同
-docker compose up -d            # 起 PostgreSQL(pgvector) + Redis + Authentik
+docker compose up -d            # 起 PostgreSQL(pgvector) + Redis
 docker compose ps               # 状态（含 healthcheck）
 docker compose logs -f postgres # 日志
 docker compose down             # 停止，保留数据
@@ -107,7 +107,7 @@ docker compose down -v          # 停止并删数据卷（危险）
 - 端口：默认 54732(Postgres) / 46379(Redis)，映射到宿主，**多项目并存时每个项目的 `.env` 用不同端口**。应用端口仍走 47xxx 段。
 - 连接：本地进程用 `localhost` + 映射端口（见 `.env` 的 `DATABASE_URL` / `REDIS_URL`）；容器内用 service 名 `postgres` / `redis`。
 - 密码只放 `.env`（已 gitignore），不写死在代码或提交里。
-- **Authentik（统一 IdP）**：多平台 SSO、用户/租户中心、账号密码 + Google OIDC 身份源（微信以后加 OAuth source）。复用同一个 PostgreSQL 实例，单独 database（`authentik`），不额外起数据库容器。登录页品牌用 Authentik 的 Branding 配置做统一视觉（改一处所有平台生效），不绑定具体平台。登录 page 定制优先用 Branding，别改模板文件（升级会被覆盖）。
+- **认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`（非外部 IdP）。session/refreshToken/mfa/oidcState/emailToken 存进同一个 PostgreSQL（store 契约，见 nestjs skill）。多平台共用一个 server，天然共享登录态；Google OIDC 开箱即用，微信需自定义 provider。生产必须注册全部 store 并配 HTTPS/CSRF/trustedOrigins，详见 `docs/credentials.md`。
 
 ### 跨项目共享中间件池（仅临时验证）
 
