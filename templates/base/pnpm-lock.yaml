@@ -14,6 +14,9 @@ importers:
       oxlint:
         specifier: ^1.0.0
         version: 1.94.0
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
 
   apps/admin:
     dependencies:
@@ -178,7 +181,7 @@ importers:
         specifier: ^4.19.0
         version: 4.23.15
       typescript:
-        specifier: ^5.8.0
+        specifier: ^5.8.2
         version: 5.8.2
 
   packages/api:

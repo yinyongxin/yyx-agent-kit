@@ -1,0 +1,5 @@
+{
+  // 让编辑器使用项目自带的 TypeScript，而非编辑器内置的 TS 7（TS 7 把 node10 模块解析移除，会误报）
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

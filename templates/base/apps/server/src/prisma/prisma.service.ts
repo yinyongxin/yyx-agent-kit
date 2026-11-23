@@ -41,7 +41,12 @@ export class PrismaService
   readonly scoped = this.$extends({
     query: {
       $allModels: {
-        async $allOperations({ model, operation, args, query }) {
+        async $allOperations({ model, operation, args, query }: {
+          model: string;
+          operation: string;
+          args: Record<string, unknown>;
+          query: (args: Record<string, unknown>) => Promise<unknown>;
+        }) {
           if (GLOBAL_MODELS.has(model)) return query(args);
 
           const tenantId = TenantContext.getTenantId();
