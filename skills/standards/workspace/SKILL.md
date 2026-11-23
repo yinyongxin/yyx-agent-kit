@@ -9,7 +9,10 @@ description: 通用工程规范：pnpm、mise、monorepo、构建产物、部署
 
 - **包管理**: pnpm（禁止使用 npm 或 yarn）
 - **运行时**: mise 管理（node、bun 等），用 `mise install` / `mise use` / `mise global` 切换版本
-- **Node.js 版本**: 项目根目录 `mise.toml` 指定，使用 `mise install` 安装
+- **Node.js 版本**: 项目根目录 `mise.toml` 指定，使用 `mise install` 安装。当前框架最低要求：NestJS 12 需 v22.22.3+/v24.15+（CLI），Next.js 16 需 v20.9+
+- **技术栈版本基线**（2026-11-24 官网查询，用 ego 复核，见 `docs/scaffolds/`）: Vite 8.x + React 19.3 + TS 7（前端）、NestJS 12 + TS 6（后端，Nest CLI 限制）、Next.js 16（门户）。**升级时重新用 ego 查官网 + 跑官方脚手架，不靠旧版本经验**
+- **TS 版本前后端分开**: 前端 admin/client/portal 用 TS 7（跟 Vite 官方脚手架一致）；后端 server 锁 TS 6（Nest CLI 依赖 compiler API，TS 7 无此 API）
+- **升级方法**: 用官方脚手架在临时目录生成最新基础项目（`npm create vite@latest` / `npx @nestjs/cli@latest new` / `pnpm create next-app`），对照其 package.json/tsconfig/lint 配置迁移到本 monorepo，再叠加我们的端口/代理/共享包/Prisma RBAC/Docker 约定
 
 ## Monorepo 结构
 

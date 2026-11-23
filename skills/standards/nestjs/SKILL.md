@@ -7,7 +7,7 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 
 ## 技术栈
 
-- **框架**: NestJS + TypeScript
+- **框架**: NestJS 12 + TypeScript 6（2026-11-24 官网基线；TS 7 无 compiler API 不兼容 Nest CLI，见踩坑记录 #14）
 - **ORM**: Prisma
 - **数据库**: PostgreSQL + pgvector（单库兼顾关系数据与向量检索；向量访问封装成 `VectorStore` 接口，将来可换 Qdrant）
 - **API**: RESTful（`@nestjs/swagger` 文档）
