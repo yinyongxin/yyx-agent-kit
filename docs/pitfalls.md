@@ -103,8 +103,16 @@
 - **原因**：`.env` 在项目根目录，而 nest/node 从 `apps/server` 启动；且模块加载时就读 env。
 - **解决**：`main.ts` 顶部加 `findEnv()`——从 `process.cwd()` 向上找最近的 `.env` 并用 `dotenv.config()` 加载，兼容源码/编译产物不同层级。这样 dev 和 start 都不依赖启动器的 `--env-file` 参数。
 
+### 13. nest start 找不到入口 dist/main
+
+- **现象**：`pnpm dev:server`（`nest start --watch`）编译成功（0 errors）但立刻退出，报 `Cannot find module ...\dist\main`。
+- **原因**：tsconfig 的 `rootDir` 设为 `../..`（让 `packages/shared` 一起编译），产物实际在 `dist/apps/server/src/main.js`；`nest start` 默认找 `dist/main`。
+- **解决**：`apps/server/nest-cli.json` 里显式指定 `entryFile: "apps/server/src/main"`（相对 outDir）。`nest-cli.json` 还需 `sourceRoot: "src"` + `compilerOptions.tsConfigPath: "tsconfig.json"`。
+- **备注**：`node dist/apps/server/src/main.js` 直接跑不受影响；只有 `nest start` 需要 entryFile。
+
 ## 相关约定
 
+- **模板与规范同步升级**：完善 `templates/base` 的同时，必须同步升级 `agents/` 与 `skills/`——模板里新增/变更的技术与约定（如 Prisma、RBAC、OIDC、Docker、数据库选型）要反映到对应 agent（chief）和规范 skill（workspace/nestjs/tooling）。两者是一体的，不能只改模板不改规范。
 - **开发服务启动**：用标准方式在会话里起即可——`pnpm dev:server`、`pnpm dev:admin` 等后台任务；OpenCode 自带服务状态显示，不需要搞分离进程 / 写 PID 文件 / 建议用户去普通终端跑。需要确认时用一次探活（health / 端口），不要反复轮询。
 - 发版手动流程与 npm 包结构见 [README.md](README.md) 的「创建新项目」「发布 CLI」章节。
 - 全局偏好（pwsh、代理、mise 等）在 `~/.config/opencode/AGENTS.md`。

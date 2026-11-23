@@ -22,7 +22,7 @@
 - **租户/RBAC 骨架落地**（Google 暂不接入）：`apps/server/prisma/schema.prisma`（Tenant/User/Role/Permission/UserRole/RolePermission/OAuthConnection/Plan/Subscription）、幂等 `seed.ts`（默认租户 + admin/member 角色 + 11 权限点 + 2 套餐）、`PrismaService` extension 自动注入 tenantId、`TenantMiddleware`、`JwtStrategy`、`PermissionsGuard` + `@RequirePermissions`。认证骨架默认未激活，现有接口免登录可跑；接入 Authentik 时启用全局守卫
 - 修正 `apps/server/Dockerfile` 的 CMD 路径（`dist/apps/server/src/main.js`）
 - admin 补基础功能页：调 `/api/health` + `/api/todos` 显示后端连通状态与待办列表（ego 验证前后端联通通过）
-- server dev 脚本修正：`tsx watch` 无 decorator metadata 导致 DI 失效，改 `nest start --watch` + `nest-cli.json`；`main.ts` 加 findEnv 从 cwd 向上找 .env
+- server dev 脚本修正：`tsx watch` 无 decorator metadata 导致 DI 失效，改 `nest start --watch` + `nest-cli.json`；`main.ts` 加 findEnv 从 cwd 向上找 .env；`nest-cli.json` 补 `entryFile` 修复入口查找
 - 模板目录 `examples/agent-test` → `templates/base`；项目名 `agent-test` → `starter`，包名前缀 `@agent-test/*` → `@starter/*`
 - 全局 skill：旧的 `yyx` 移除，改为 `skills/standards` junction（`workspace` / `nestjs` / `next` / `react`）
 - 所有 `.ps1` 调用统一为 `pwsh -NoProfile -File`（本机 PowerShell 7）
