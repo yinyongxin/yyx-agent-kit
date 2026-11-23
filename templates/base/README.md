@@ -34,20 +34,24 @@ docs/           需求交付物，按 docs/<slug>/ 存放
 项目自带独立的 Docker 环境，**不依赖全局 local-dev-docker-container**，每个项目一套容器 / volume / 网络，名字带项目前缀，多项目并存不冲突。
 
 ```powershell
-cp .env.example .env          # 按需改端口和密码
-docker compose up -d          # 起 PostgreSQL(pgvector) + Redis
+cp .env.example .env          # 按需改端口和密码；生产务必改 AUTHENTIK_SECRET_KEY
+docker compose up -d          # 起 PostgreSQL(pgvector) + Redis + Authentik(server/worker)
 docker compose ps             # 查看状态（含 healthcheck）
-docker compose logs -f postgres
+docker compose logs -f authentik-server
 docker compose down           # 停止，保留数据
 docker compose down -v        # 停止并删除数据卷（危险）
 ```
 
 | 服务 | 镜像 | 宿主端口 | 说明 |
 | --- | --- | --- | --- |
-| postgres | `pgvector/pgvector:pg17` | 54732 | 关系库 + pgvector 扩展，已建 `vector` extension |
-| redis | `redis:7-alpine` | 46379 | 缓存 / 会话 |
+| postgres | `pgvector/pgvector:pg17` | 54732 | 关系库 + pgvector 扩展；同实例另建 `authentik` 库给 IdP 用 |
+| redis | `redis:7-alpine` | 46379 | 业务缓存 / 会话 |
+| authentik-server | `ghcr.io/goauthentik/server:2026.8.6` | 9000 | 统一 IdP：账号密码 + Google OIDC，用户/租户中心 |
+| authentik-worker | 同上 | - | 后台任务（不对外暴露端口） |
 
-应用连库：本地进程用 `localhost` + 上表端口（见 `.env` 的 `DATABASE_URL` / `REDIS_URL`）；容器化部署时用 service 名 `postgres` / `redis`。向量检索走 pgvector，访问封装成 `VectorStore` 接口，将来可换 Qdrant。
+首次访问 `http://localhost:9000`，用默认管理员 `akadmin` 设置密码，然后在 Admin 界面配置 Google OAuth source 和应用。登录页品牌用 Authentik 的 Branding 配置（统一视觉，不绑定具体平台）。
+
+应用连库：本地进程用 `localhost` + 上表端口（见 `.env` 的 `DATABASE_URL` / `REDIS_URL`）；容器化部署时用 service 名 `postgres` / `redis`。向量检索走 pgvector，访问封装成 `VectorStore` 接口，将来可换 Qdrant。认证/授权分层见 `skills/standards/nestjs/SKILL.md`。
 
 ## 命令
 
