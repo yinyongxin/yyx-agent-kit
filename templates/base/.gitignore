@@ -1,6 +1,12 @@
 node_modules/
 dist/
 .next/
+# 源码目录只放 TS，编译产物统一进 dist/；防止误把 tsc 输出提交进来
+apps/*/src/*.js
+apps/*/src/**/*.js
+packages/*/src/*.js
+packages/*/src/**/*.js
+apps/server/prisma/*.js
 *.log
 .DS_Store
 .env
