@@ -155,3 +155,4 @@ description: 开发 Next.js 项目时加载。App Router、服务端组件、数
 
 - [踩坑记录](docs/pitfalls.md) —— npm 发布、代理、编码等环境问题的现象与解法
 - [变更记录](docs/CHANGELOG.md) —— 版本与功能变更
+- [本地默认凭据](docs/credentials.md) —— Docker 环境初始化账号密码（仅 dev，生产必改）

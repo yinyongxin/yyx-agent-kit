@@ -32,6 +32,12 @@ permissions:
 2. 用 glob 查 `docs/<slug>/` 下已有交付物，用文件状态判断真实进度，不要凭记忆。
 3. 加载 skill `product-pipeline`，按其中的阶段表和门禁执行。
 
+## 浏览器操作约定
+
+- 需要在浏览器里操作网页（登录后台、查网页状态、验证页面、配第三方 OAuth 等）时，**优先用 ego-browser**（`ego-browser skill` 读指南，`ego-browser nodejs` 跑脚本）。它复用用户已登录的浏览器上下文和本地环境。
+- 每次浏览器任务先读 ego 指南；账号密码、2FA、扫码等需要用户本人的步骤，用 `task.handOff()` 交还控制权，不要自己猜或代填。
+- **先探测环境**：执行 `ego-browser --version`。若命令不存在或连不上，明确告诉用户："需要安装 ego-browser 才能操作浏览器，请安装后告诉我再继续"，不要用其它浏览器工具硬凑。
+
 ## 门禁（硬规则）
 
 - 没有 `docs/<slug>/01-prd.md` → 只能做产品设计

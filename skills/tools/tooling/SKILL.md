@@ -14,12 +14,21 @@ description: 需要调用 ardot 设计工具、opencode CLI 或其它第三方 C
 | 画界面原型、设计稿、设计规范落地 | ardot（MCP `ardot-remote`） | 需要文件 URL；工具含创建节点、应用样式、导出 |
 | 无人值守批量执行、CI 里跑任务 | opencode CLI | `opencode run`、`opencode api`、`opencode mcp` |
 | 本地依赖服务（PostgreSQL/Redis/…） | docker compose | 项目自带的 `docker-compose.yml`，项目自包含；见 `workspace` 规范 |
+| 浏览器操作（登录后台、验证页面、配第三方 OAuth） | ego-browser | **优先用**；复用用户已登录的浏览器上下文。先 `ego-browser skill` 读指南，`ego-browser nodejs` 跑脚本 |
 
 ## ardot
 
 - 走 MCP，不需要命令行。先确认连接状态与可用工具，再按「查文件 → 读节点 → 改样式/建节点 → 校验」的顺序做。
 - 文件 URL 形如 `https://ardot.tencent.com/file/<numericFileId>`，可带 `node_id`；`node_id` 里含 `;` 时整体保留，不要拆分。
 - 改样式前先读现有样式，保持设计体系统一；批量改完要做一次视觉校验。
+
+## ego-browser（浏览器操作首选）
+
+- 凡是要操作网页（登录 Authentik / 管理后台、验证前端页面、配置 Google OAuth 等），**优先用 ego-browser**，不要用其它浏览器工具硬凑。
+- **先探测**：`ego-browser --version`。命令不存在或连不上 → 告诉用户"需要安装 ego-browser 才能操作浏览器，请安装后告诉我再继续"，停止，不要伪造结果。
+- 用法：`ego-browser skill` 读对应版本指南；`ego-browser nodejs` 跑脚本（PowerShell 写 `.mjs` 文件再 import，别用 `-e` 传多行）。
+- 需要用户本人操作（密码、2FA、扫码、验证码）→ `task.handOff()` 交还控制权，不要自己猜或代填。
+- 任务结束用 `task.finish({ keep: [] })` 关闭任务空间。
 
 ## opencode CLI
 
