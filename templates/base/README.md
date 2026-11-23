@@ -29,6 +29,26 @@ docs/           需求交付物，按 docs/<slug>/ 存放
 
 工程约定见 `AGENTS.md`。
 
+## 本地依赖环境（Docker）
+
+项目自带独立的 Docker 环境，**不依赖全局 local-dev-docker-container**，每个项目一套容器 / volume / 网络，名字带项目前缀，多项目并存不冲突。
+
+```powershell
+cp .env.example .env          # 按需改端口和密码
+docker compose up -d          # 起 PostgreSQL(pgvector) + Redis
+docker compose ps             # 查看状态（含 healthcheck）
+docker compose logs -f postgres
+docker compose down           # 停止，保留数据
+docker compose down -v        # 停止并删除数据卷（危险）
+```
+
+| 服务 | 镜像 | 宿主端口 | 说明 |
+| --- | --- | --- | --- |
+| postgres | `pgvector/pgvector:pg17` | 54732 | 关系库 + pgvector 扩展，已建 `vector` extension |
+| redis | `redis:7-alpine` | 46379 | 缓存 / 会话 |
+
+应用连库：本地进程用 `localhost` + 上表端口（见 `.env` 的 `DATABASE_URL` / `REDIS_URL`）；容器化部署时用 service 名 `postgres` / `redis`。向量检索走 pgvector，访问封装成 `VectorStore` 接口，将来可换 Qdrant。
+
 ## 命令
 
 | 命令 | 作用 |

@@ -87,41 +87,24 @@ allowBuilds:
 
 ## 本地开发环境（Docker Compose）
 
-**配置文件位置**：`F:\sh-project\local-dev-docker-container`
-**GitHub 仓库**：https://github.com/yinyongxin/local-dev-docker-container
+**项目自带独立环境**：每个项目根目录有 `docker-compose.yml`，自带 PostgreSQL(pgvector) + Redis，容器名 / volume / 网络名带项目前缀。**不要依赖全局 `local-dev-docker-container`**，那是跨项目共享的中间件池，仅供临时验证用，不作为项目依赖。
 
-### 服务清单
-
-| 服务 | 容器名 | 端口 | 用途 |
-| --- | --- | --- | --- |
-| MySQL | local-dev-mysql | 3306 | 关系型数据库 |
-| Redis | local-dev-redis | 6379 | 缓存和会话 |
-| MongoDB | local-dev-mongodb | 27017 | 文档数据库 |
-| RabbitMQ | local-dev-rabbitmq | 5672/15672 | 消息队列 |
-| Qdrant | local-dev-qdrant | 6333/6334 | 向量数据库 |
-| Elasticsearch | local-dev-elasticsearch | 9200/9300 | 全文搜索 |
-| MinIO | local-dev-minio | 9000/9001 | 对象存储 |
-| MailHog | local-dev-mailhog | 1025/8025 | 邮件测试 |
-| Adminer | local-dev-adminer | 8080 | 数据库管理 |
-| Portainer | local-dev-portainer | 9090 | Docker 管理 |
-
-### 常用命令
+### 项目自包含环境（默认）
 
 ```bash
-cd F:\sh-project\local-dev-docker-container && docker-compose up -d   # 启动所有服务
-docker-compose down                                                    # 停止所有服务
-docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"          # 查看状态
-docker-compose logs -f mysql                                           # 查看日志
-docker exec -it local-dev-mysql bash                                   # 进入容器
+cp .env.example .env            # 改端口和密码，多项目并存时端口必须不同
+docker compose up -d            # 起 PostgreSQL(pgvector) + Redis
+docker compose ps               # 状态（含 healthcheck）
+docker compose logs -f postgres # 日志
+docker compose down             # 停止，保留数据
+docker compose down -v          # 停止并删数据卷（危险）
 ```
 
-### 账号密码速查
+- 数据库：**PostgreSQL + pgvector**（`pgvector/pgvector:pg17`），初始化 SQL 已 `CREATE EXTENSION vector`，向量检索单库搞定，不另起向量库；访问封装成 `VectorStore` 接口，将来可换 Qdrant。
+- 端口：默认 54732(Postgres) / 46379(Redis)，映射到宿主，**多项目并存时每个项目的 `.env` 用不同端口**。应用端口仍走 47xxx 段。
+- 连接：本地进程用 `localhost` + 映射端口（见 `.env` 的 `DATABASE_URL` / `REDIS_URL`）；容器内用 service 名 `postgres` / `redis`。
+- 密码只放 `.env`（已 gitignore），不写死在代码或提交里。
 
-| 服务 | 账号 | 密码 |
-| --- | --- | --- |
-| MySQL | devuser | devpwd123 |
-| MySQL Root | root | root123456 |
-| Redis | - | redis123456 |
-| MongoDB | admin | mongo123456 |
-| RabbitMQ | admin | rabbit123456 |
-| MinIO | minioadmin | minio123456 |
+### 跨项目共享中间件池（仅临时验证）
+
+路径 `F:\sh-project\local-dev-docker-container`（https://github.com/yinyongxin/local-dev-docker-container），含 MySQL/Redis/MongoDB/RabbitMQ/Qdrant/Elasticsearch/MinIO 等，**不作为项目运行依赖**，只在需要临时验证某个中间件时用。

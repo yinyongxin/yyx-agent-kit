@@ -3,6 +3,10 @@
 ## 硬性规则
 
 - 包管理只用 pnpm，禁止 npm、yarn。依赖装在根目录，子项目不生成独立锁文件。
+- 本地依赖服务用项目自带的 `docker-compose.yml`（PostgreSQL + pgvector + Redis），**不要用全局 local-dev-docker-container**。每个项目一套独立容器、volume、网络，名字带项目前缀，多项目并存不冲突。
+- 起环境：`cp .env.example .env` 后 `docker compose up -d`；停止保留数据 `docker compose down`；删数据 `docker compose down -v`（危险）。
+- 应用连库：容器内用 service 名（`postgres` / `redis`），本地进程用 `localhost` + `.env` 里映射端口。数据库 URL 放 `.env` 的 `DATABASE_URL` / `REDIS_URL`，不硬编码。
+- 向量能力用 PostgreSQL 的 pgvector 扩展（初始化 SQL 已 `CREATE EXTENSION vector`），不另起向量库；访问封装成 `VectorStore` 接口，将来要换 Qdrant 只换实现。
 - 端口统一使用 **47xxx 段**，禁止用 `3000` / `5173` / `8080` 等框架默认端口，避免与本机其他项目冲突。Vite 必须开 `strictPort`，端口被占时直接失败而不是静默换端口。
 - 接口调用统一走 `@starter/api`，业务代码不自己写 `fetch`、不自己拼 URL。
 - 开发期接口统一用 `/api` 相对路径，由 Vite 代理到后端，**不写死后端域名**。

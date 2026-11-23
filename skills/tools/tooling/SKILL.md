@@ -13,7 +13,7 @@ description: 需要调用 ardot 设计工具、opencode CLI 或其它第三方 C
 | --- | --- | --- |
 | 画界面原型、设计稿、设计规范落地 | ardot（MCP `ardot-remote`） | 需要文件 URL；工具含创建节点、应用样式、导出 |
 | 无人值守批量执行、CI 里跑任务 | opencode CLI | `opencode run`、`opencode api`、`opencode mcp` |
-| 本地依赖服务（MySQL/Redis/…） | docker compose | 见 `yyx` skill 的服务清单与账号 |
+| 本地依赖服务（PostgreSQL/Redis/…） | docker compose | 项目自带的 `docker-compose.yml`，项目自包含；见 `workspace` 规范 |
 
 ## ardot
 

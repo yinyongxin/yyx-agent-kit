@@ -83,6 +83,13 @@
 - **现象**：`pnpm dlx` 后提示 "Added 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml"。
 - **说明**：pnpm 新版本对刚发布的包有年龄限制，dlx 会自动加排除项。本次没有污染仓库（根目录无 `pnpm-workspace.yaml`），无需处理。
 
+### 10. 项目名带连字符，PostgreSQL 初始化失败
+
+- **现象**：CLI 生成项目名 `docker-test` 后，compose 里 `POSTGRES_DB=docker-test` / `POSTGRES_USER=docker-test`，PostgreSQL 因标识符含 `-` 初始化失败。
+- **原因**：CLI 允许项目名含 `-`（`^[a-z0-9][a-z0-9-_]*$`），但 PG 的数据库名 / 用户名不能用连字符。
+- **解决**：DB 名和用户名用固定值 `app`（见 `.env.example`），与项目名解耦；容器名 / 网络名 / volume 名仍带项目前缀做隔离。
+- **备注**：不要把项目名直接当 DB 名用。
+
 ## 相关约定
 
 - 发版手动流程与 npm 包结构见 [README.md](README.md) 的「创建新项目」「发布 CLI」章节。

@@ -9,9 +9,9 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、模块分�
 
 - **框架**: NestJS + TypeScript
 - **ORM**: Prisma
-- **数据库**: PostgreSQL / MySQL
+- **数据库**: PostgreSQL + pgvector（单库兼顾关系数据与向量检索；向量访问封装成 `VectorStore` 接口，将来可换 Qdrant）
 - **API**: RESTful（`@nestjs/swagger` 文档）
-- **认证**: JWT + Passport
+- **认证**: JWT + Passport（多端统一认证；租户 ID 放 JWT claim，Prisma extension 自动注入租户过滤）
 
 ## 开发规范
 
