@@ -19,6 +19,7 @@ clone 到其他机器后路径不同也没关系，相对路径会跟着走。
 apps/
 ├── client/     客户端   React 19 + Vite 6 + TS + Tailwind 4   47173
 ├── admin/      管理端   React 19 + Vite 6 + TS + Tailwind 4   47174
+├── portal/     门户     Next.js 16 App Router + Tailwind 4     47175
 └── server/     后端     NestJS 11                              47100，路由前缀 /api
 packages/
 ├── shared/     常量、路由表、业务枚举、类型（TS 源码直供）
@@ -37,6 +38,7 @@ docs/           需求交付物，按 docs/<slug>/ 存放
 | `pnpm lint` | oxlint 检查 `apps` 与 `packages`（qa 判定基线） |
 | `pnpm dev:client` | 启动客户端（47173） |
 | `pnpm dev:admin` | 启动管理端（47174） |
+| `pnpm dev:portal` | 启动门户（47175） |
 | `pnpm dev:server` | 启动后端（47100） |
 
 接口：`GET /api/health`（运维探活）、`GET /api/todos`（业务示例）。

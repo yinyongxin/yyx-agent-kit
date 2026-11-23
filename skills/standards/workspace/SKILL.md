@@ -14,7 +14,8 @@ description: 通用工程规范：pnpm、mise、monorepo、构建产物、部署
 ## Monorepo 结构
 
 - **工作区配置**: 根目录 `pnpm-workspace.yaml` 定义 `apps/*` 与 `packages/*`
-- **应用**: `apps/client`（客户端）、`apps/admin`（管理端）、`apps/server`（后端）
+- **应用**: `apps/client`（客户端）、`apps/admin`（管理端）、`apps/portal`（门户，Next.js）、`apps/server`（后端）
+- **选型**: 需要 SEO 的公开站点用 Next.js；登录后的业务应用与后台用 Vite SPA，不要全部迁到 Next
 - **共享包**: `packages/shared`（常量/工具/类型）、`packages/api`（接口层）
 - **依赖安装**: 在根目录执行 `pnpm install`，自动安装所有子项目依赖
 - **锁文件**: 只在根目录有 `pnpm-lock.yaml`，子项目不应有独立锁文件

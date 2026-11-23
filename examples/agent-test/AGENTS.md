@@ -35,6 +35,7 @@
 ```text
 apps/client        客户端：React + Vite + TypeScript + Tailwind（端口 47173）
 apps/admin         管理端：React + Vite + TypeScript + Tailwind（端口 47174）
+apps/portal        门户网站：Next.js App Router + Tailwind（端口 47175，面向未登录访客）
 apps/server        后端：NestJS + TypeScript（端口 47100，路由前缀 /api）
 packages/shared    共享常量、工具函数、类型（TS 源码直供，无构建产物）
 packages/api       接口层：类型、SDK、错误处理
@@ -43,7 +44,8 @@ docs               需求交付物，按 docs/<slug>/ 存放
 
 ## 多端边界
 
-- PC、H5、管理端可以共用 `packages/shared` 与 `packages/api`。
+- PC、H5、管理端、门户可以共用 `packages/shared` 与 `packages/api`。
 - 小程序、App 没有标准 `fetch`，通过 `createApiClient({ fetcher })` 注入各自的请求器，不要修改请求层实现。
 - 小程序、App 不共用 Web UI 组件；共享只到类型和纯逻辑这一层。
 - 需要新的端时，新建 `apps/<端名>`，复用 packages，不复制代码。
+- 门户（portal）是唯一以 SEO 为目标的应用：默认 server component，不滥用 `"use client"`；其他 Web 端是纯客户端渲染。

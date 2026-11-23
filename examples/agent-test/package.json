@@ -5,10 +5,11 @@
   "scripts": {
     "dev:client": "pnpm --filter @agent-test/client dev",
     "dev:admin": "pnpm --filter @agent-test/admin dev",
+    "dev:portal": "pnpm --filter @agent-test/portal dev",
     "dev:server": "pnpm --filter @agent-test/server dev",
     "build": "pnpm -r --workspace-concurrency=1 build && pnpm typecheck",
     "typecheck": "pnpm -r --workspace-concurrency=1 typecheck",
-    "lint": "oxlint apps packages"
+    "lint": "oxlint apps packages --ignore-pattern \"**/next-env.d.ts\""
   },
   "devDependencies": {
     "oxlint": "^1.0.0"
