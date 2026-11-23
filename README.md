@@ -24,8 +24,25 @@ D:\project\yyx-agent-kit\
 │       ├── workspace        通用工程规范（pnpm/mise/monorepo/部署/Docker）
 │       ├── nestjs           NestJS 后端规范
 │       └── react            React 前端规范
+├── examples\
+│   └── agent-test\          可运行样例：客户端/管理端/后端 + packages 共享层
 ├── scripts\sync.ps1
 └── README.md
+```
+
+## 样例项目
+
+`examples/agent-test` 是完整可运行的样例，用来验证流水线和工程规范：
+
+- pnpm workspace：`apps/client`、`apps/admin`、`apps/server` + `packages/shared`、`packages/api`
+- 端口 47xxx 段，接口统一 `/api` 前缀，路由常量放 `packages/shared`
+- 它的 `.opencode/opencode.json` 用相对路径 `../../skills`，**在 `examples/agent-test` 目录打开 OpenCode** 即可，换机器 clone 后不用改路径
+
+```powershell
+cd D:\project\yyx-agent-kit\examples\agent-test
+pnpm install
+pnpm build
+opencode
 ```
 
 Skill ID 取叶子目录名，与分组无关：`skills/flows/prd/SKILL.md` 的 ID 仍是 `prd`。

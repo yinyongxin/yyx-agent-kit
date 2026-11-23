@@ -31,6 +31,9 @@ description: 通用工程规范：pnpm、mise、monorepo、构建产物、部署
 ## 接口层
 
 - 接口类型、SDK、错误处理**收敛在 `packages/api`**，各端业务代码不自己写 fetch、不自己拼 URL
+- **路由段按业务领域命名**（`/todos`、`/orders`），`health` 只做运维探活，不承载业务
+- **跨端共用的常量放 `packages/shared`**：`API_PREFIX`、`API_ROUTES`、业务枚举、类型。新增接口先加常量，controller 与 api 层都引用它，禁止前后端各写一份字符串
+- 服务端是 CommonJS，不能直接 `require` TS 源码包：通过相对路径引用 shared 源码（`../../../packages/shared/src/index`），并在 tsconfig 里把 `rootDir` 提到仓库根、`include` 加上 shared 源码，输出结构随之变成 `dist/apps/server/src/...`
 - `baseUrl` 默认 `/api`，开发期由 Vite 代理到后端；**不写死后端域名**
 - 手写装配文件（token 注入、401 回调）放在 `src/` 外。接入 OpenAPI 生成后 `src/` 会被整目录重建，放里面会被删
 - 401 只负责通知调用方，清会话和跳登录由各端实现，传输层不感知路由
