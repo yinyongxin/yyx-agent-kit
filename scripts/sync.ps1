@@ -1,7 +1,7 @@
 ﻿# 从 skills 仓库同步到 OpenCode 全局配置目录
 # skills 本身由 opencode.json 的 skills 数组直接指向仓库，无需复制
 # agents 只能从 ~/.config/opencode/agents 读取，所以需要同步
-# 用法: powershell -ExecutionPolicy Bypass -File D:\project\skills\scripts\sync.ps1
+# 用法: powershell -ExecutionPolicy Bypass -File D:\project\yyx-agent-kit\scripts\sync.ps1
 param(
     [string]$Repo = (Split-Path -Parent $PSScriptRoot),
     [string]$ConfigDir = (Join-Path $env:USERPROFILE ".config\opencode")
@@ -11,6 +11,10 @@ $ErrorActionPreference = "Stop"
 
 Write-Host "==> 拉取最新内容: $Repo"
 git -C $Repo pull --ff-only
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "git pull 失败，已保留现有 agents 不动。先检查网络或远端地址（git remote -v）再重试。" -ForegroundColor Red
+    exit 1
+}
 
 $src  = Join-Path $Repo "agents"
 $dest = Join-Path $ConfigDir "agents"

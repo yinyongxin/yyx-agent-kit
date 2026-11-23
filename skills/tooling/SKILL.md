@@ -1,6 +1,6 @@
 ---
 name: 工具链索引
-description: 需要调用 ardot 设计工具、opencode CLI、ego 或其它第三方 CLI/MCP 时加载，说明能力边界与探测方法
+description: 需要调用 ardot 设计工具、opencode CLI 或其它第三方 CLI/MCP 时加载，说明能力边界与探测方法
 ---
 
 # 工具链索引
@@ -13,7 +13,6 @@ description: 需要调用 ardot 设计工具、opencode CLI、ego 或其它第�
 | --- | --- | --- |
 | 画界面原型、设计稿、设计规范落地 | ardot（MCP `ardot-remote`） | 需要文件 URL；工具含创建节点、应用样式、导出 |
 | 无人值守批量执行、CI 里跑任务 | opencode CLI | `opencode run`、`opencode api`、`opencode mcp` |
-| 公司内部平台操作 | ego CLI | 具体子命令未确认，先 `ego --help` |
 | 本地依赖服务（MySQL/Redis/…） | docker compose | 见 `yyx` skill 的服务清单与账号 |
 
 ## ardot
@@ -32,11 +31,6 @@ opencode mcp list                                         # 查看 MCP 连接状
 
 - 用在流水线里自动推进阶段时，每个 `opencode run` 只给一个阶段目标，并让它读交付物文件，不要把整条链路写进一句 prompt。
 - MCP 需要登录时让用户执行 `/mcps` 手动授权，不要在脚本里尝试自动化登录。
-
-## ego
-
-- 未确认的能力不写死。首次使用前执行 `ego --help`（或 `ego <子命令> --help`），把确认到的用法补进本节。
-- 只读操作可直接执行；写操作（提交、发布、删除）必须先向用户确认目标对象。
 
 ## 通用纪律
 

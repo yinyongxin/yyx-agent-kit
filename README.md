@@ -1,13 +1,13 @@
 ﻿# skills
 
-个人 OpenCode 配置源仓库，位于 `D:\project\skills`。
+个人 OpenCode 配置源仓库，位于 `D:\project\yyx-agent-kit`。
 
 `~/.config/opencode` 只做落地目录：skills 由配置直接指向本仓库，agents 由 `scripts/sync.ps1` 同步过去。
 
 ## 结构
 
 ```text
-D:\project\skills\
+D:\project\yyx-agent-kit\
 ├── skills/                  # ← opencode.json 的 skills 数组指向这里
 │   ├── product-pipeline/    # 五阶段流程与门禁（主流程）
 │   ├── prd/                 # PRD 模板
@@ -32,7 +32,7 @@ D:\project\skills\
 
 ```jsonc
 {
-  "skills": ["D:/project/skills/skills"],
+  "skills": ["D:/project/yyx-agent-kit/skills"],
   "default_agent": "chief"
 }
 ```
@@ -49,19 +49,19 @@ D:\project\skills\
 ## 首次安装
 
 ```powershell
-git clone git@github.com:yinyongxin/skills.git D:\project\skills
+git clone git@github.com:yinyongxin/skills.git D:\project\yyx-agent-kit
 ```
 
-然后在 `~/.config/opencode/opencode.json` 加上 `"skills": ["D:/project/skills/skills"]`，再执行：
+然后在 `~/.config/opencode/opencode.json` 加上 `"skills": ["D:/project/yyx-agent-kit/skills"]`，再执行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\project\skills\scripts\sync.ps1
+powershell -ExecutionPolicy Bypass -File D:\project\yyx-agent-kit\scripts\sync.ps1
 ```
 
 ## 日常更新
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\project\skills\scripts\sync.ps1
+powershell -ExecutionPolicy Bypass -File D:\project\yyx-agent-kit\scripts\sync.ps1
 ```
 
 或在 OpenCode 里执行 `/reload`。
@@ -70,7 +70,7 @@ powershell -ExecutionPolicy Bypass -File D:\project\skills\scripts\sync.ps1
 
 - 新增、修改、删除 `agents/*.md` 后，`/reload` 即可生效。
 - 如果 `~/.config/opencode/agents` 目录本身被删除后重建，OpenCode 的目录监听会失效，此后的 `/reload` 扫不到 agent，需要执行一次 `opencode service restart`（会中断当前会话，请在普通终端里执行）。
-- `~/.config/opencode/skills` 已不再使用，skills 全部来自 `D:/project/skills/skills`；配置里的 `skills` 数组是唯一来源。
+- `~/.config/opencode/skills` 已不再使用，skills 全部来自 `D:/project/yyx-agent-kit/skills`；配置里的 `skills` 数组是唯一来源。
 
 ## 使用
 
