@@ -1,24 +1,41 @@
-# 同步 skills 仓库到本机 OpenCode 配置
-# 用法: powershell -ExecutionPolicy Bypass -File scripts\sync.ps1
+﻿# 从 skills 仓库同步到 OpenCode 全局配置目录
+# skills 本身由 opencode.json 的 skills 数组直接指向仓库，无需复制
+# agents 只能从 ~/.config/opencode/agents 读取，所以需要同步
+# 用法: powershell -ExecutionPolicy Bypass -File D:\project\skills\scripts\sync.ps1
 param(
-    [string]$Repo = (Split-Path -Parent $PSScriptRoot)
+    [string]$Repo = (Split-Path -Parent $PSScriptRoot),
+    [string]$ConfigDir = (Join-Path $env:USERPROFILE ".config\opencode")
 )
 
 $ErrorActionPreference = "Stop"
-Set-Location $Repo
 
-Write-Host "==> 拉取最新内容"
-git pull --ff-only
+Write-Host "==> 拉取最新内容: $Repo"
+git -C $Repo pull --ff-only
 
-# skills 目录本身就是 OpenCode 的全局 skills 源，pull 后自动生效
-# agents 通过 junction 直连仓库，无需复制
-$agentsLink = Join-Path $env:USERPROFILE ".config\opencode\agents"
-if (-not (Test-Path $agentsLink)) {
-    New-Item -ItemType Junction -Path $agentsLink -Target (Join-Path $Repo "agents") | Out-Null
-    Write-Host "==> 已创建 agents junction: $agentsLink"
+$src  = Join-Path $Repo "agents"
+$dest = Join-Path $ConfigDir "agents"
+New-Item -ItemType Directory -Path $dest -Force | Out-Null
+
+$manifest = Join-Path $dest ".synced.json"
+$previous = @()
+if (Test-Path $manifest) {
+    $previous = @(Get-Content $manifest -Raw | ConvertFrom-Json)
 }
 
-Write-Host "==> 当前版本"
-git log -1 --oneline
+$current = @(Get-ChildItem $src -Filter *.md -File | Select-Object -ExpandProperty Name)
+$current | ForEach-Object { Copy-Item (Join-Path $src $_) (Join-Path $dest $_) -Force }
+
+# 清理上次同步过、但仓库里已经删除的 agent，避免残留
+foreach ($name in $previous) {
+    if ($current -notcontains $name -and (Test-Path (Join-Path $dest $name))) {
+        Remove-Item (Join-Path $dest $name) -Force
+        Write-Host "    - 已移除 $name"
+    }
+}
+
+$current | ConvertTo-Json | Set-Content -Path $manifest -Encoding UTF8
+
+Write-Host "==> 已同步 agents: $($current.Count) 个"
+$current | ForEach-Object { Write-Host "    + $_" }
 Write-Host ""
-Write-Host "完成。在 OpenCode 中执行 /reload 使 skills 与 agents 立即刷新。"
+Write-Host "完成。在 OpenCode 中执行 /reload 使 skills 与 agents 刷新。"

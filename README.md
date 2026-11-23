@@ -1,51 +1,73 @@
 ﻿# skills
 
-个人 OpenCode 配置源仓库。**克隆到 `~/.config/opencode/skills` 后，仓库内容就是本机 OpenCode 的唯一真相源。**
+个人 OpenCode 配置源仓库，位于 `D:\project\skills`。
+
+`~/.config/opencode` 只做落地目录：skills 由配置直接指向本仓库，agents 由 `scripts/sync.ps1` 同步过去。
 
 ## 结构
 
 ```text
-skills/
-├── agents/                  # 角色定义 → junction 到 ~/.config/opencode/agents
+D:\project\skills\
+├── skills/                  # ← opencode.json 的 skills 数组指向这里
+│   ├── product-pipeline/    # 五阶段流程与门禁（主流程）
+│   ├── prd/                 # PRD 模板
+│   ├── tech-design/         # 技术方案模板
+│   ├── qa-regression/       # 测试与回归方法
+│   ├── archive/             # 归档模板
+│   ├── tooling/             # ardot / opencode / ego 等工具索引
+│   └── yyx/                 # 个人开发规范（前端/后端）
+├── agents/                  # 角色定义 → 同步到 ~/.config/opencode/agents
 │   ├── chief.md             # 产品交付总管（primary）
 │   ├── product.md           # 产品设计
 │   ├── architect.md         # 技术负责人
 │   ├── coder.md             # 开发实施
 │   ├── qa.md                # 测试与回归
 │   └── archivist.md         # 记录归档
-├── product-pipeline/SKILL.md  # 五阶段流程与门禁（主流程）
-├── prd/SKILL.md               # PRD 模板
-├── tech-design/SKILL.md       # 技术方案模板
-├── qa-regression/SKILL.md     # 测试与回归方法
-├── archive/SKILL.md           # 归档模板
-├── tooling/SKILL.md           # ardot / opencode / ego 等工具索引
-├── yyx/                       # 个人开发规范（前端/后端）
-└── scripts/sync.ps1           # 一键同步
+└── scripts/sync.ps1         # 一键同步
 ```
+
+## 接入方式
+
+全局 `~/.config/opencode/opencode.json`：
+
+```jsonc
+{
+  "skills": ["D:/project/skills/skills"],
+  "default_agent": "chief"
+}
+```
+
+- **skills 不复制**：配置直指仓库目录，`git pull` 后 `/reload` 即生效。
+- **agents 复制**：OpenCode 只从 `~/.config/opencode/agents` 读取，必须执行 `sync.ps1`。
 
 ## 规则
 
-- **Skill**：必须是 `<id>/SKILL.md` 形式，skill ID 等于目录名（不是 frontmatter 的 `name`）。
-- **Agent**：放在 `agents/<id>.md`，通过 junction 被 OpenCode 读取，pull 后即为最新。
-- 仓库根目录的 `*.md` 会被当成 skill 注册（无 `description` 则不会展示给模型），除本 README 外不要在根目录加 md。
+- Skill 必须是 `<id>/SKILL.md`，skill ID 等于目录名（不是 frontmatter 的 `name`）。
+- Agent 放在 `agents/<id>.md`，ID 等于文件名。
+- 新增/删除/改名 agent 后要重新跑一次 `sync.ps1`，脚本会按 `.synced.json` 清理残留。
 
 ## 首次安装
 
 ```powershell
-git clone git@github.com:yinyongxin/skills.git "$env:USERPROFILE\.config\opencode\skills"
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.config\opencode\skills\scripts\sync.ps1"
+git clone git@github.com:yinyongxin/skills.git D:\project\skills
+```
+
+然后在 `~/.config/opencode/opencode.json` 加上 `"skills": ["D:/project/skills/skills"]`，再执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\project\skills\scripts\sync.ps1
 ```
 
 ## 日常更新
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.config\opencode\skills\scripts\sync.ps1"
+powershell -ExecutionPolicy Bypass -File D:\project\skills\scripts\sync.ps1
 ```
 
 或在 OpenCode 里执行 `/reload`。
 
 ## 使用
 
-- 默认 agent 设为 `chief`。接到需求后它会加载 `product-pipeline`，按「产品设计 → 技术方案 → 开发 → 测试回归 → 归档」分派给 `product` / `architect` / `coder` / `qa` / `archivist`。
+- 默认 agent 为 `chief`。接到需求后它会加载 `product-pipeline`，按「产品设计 → 技术方案 → 开发 → 测试回归 → 归档」分派给 `product` / `architect` / `coder` / `qa` / `archivist`。
 - 手动指定 skill：`@product-pipeline`、`@prd`、`@qa-regression`。
 - 交付物统一写进项目内 `docs/<slug>/`，门禁依据文件状态而非记忆。
