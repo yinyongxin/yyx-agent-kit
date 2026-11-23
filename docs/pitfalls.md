@@ -105,5 +105,6 @@
 
 ## 相关约定
 
+- **开发服务启动**：用标准方式在会话里起即可——`pnpm dev:server`、`pnpm dev:admin` 等后台任务；OpenCode 自带服务状态显示，不需要搞分离进程 / 写 PID 文件 / 建议用户去普通终端跑。需要确认时用一次探活（health / 端口），不要反复轮询。
 - 发版手动流程与 npm 包结构见 [README.md](README.md) 的「创建新项目」「发布 CLI」章节。
 - 全局偏好（pwsh、代理、mise 等）在 `~/.config/opencode/AGENTS.md`。
