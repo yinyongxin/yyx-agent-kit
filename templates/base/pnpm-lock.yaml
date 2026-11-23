@@ -15,8 +15,8 @@ importers:
         specifier: ^1.0.0
         version: 1.94.0
       typescript:
-        specifier: 5.8.2
-        version: 5.8.2
+        specifier: 6.0.3
+        version: 6.0.3
 
   apps/admin:
     dependencies:
@@ -148,7 +148,7 @@ importers:
         version: 11.2.11(@nestjs/common@11.2.11(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.2.11)
       '@prisma/client':
         specifier: ^6.5.0
-        version: 6.19.3(prisma@6.19.3(typescript@5.8.2))(typescript@5.8.2)
+        version: 6.19.3(prisma@6.19.3(typescript@6.0.3))(typescript@6.0.3)
       passport:
         specifier: ^0.7.0
         version: 0.7.0
@@ -176,13 +176,13 @@ importers:
         version: 4.0.1
       prisma:
         specifier: ^6.5.0
-        version: 6.19.3(typescript@5.8.2)
+        version: 6.19.3(typescript@6.0.3)
       tsx:
         specifier: ^4.19.0
         version: 4.23.15
       typescript:
-        specifier: ^5.8.2
-        version: 5.8.2
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/api:
     dependencies:
@@ -3432,10 +3432,10 @@ snapshots:
   '@oxlint/binding-win32-x64-msvc@1.94.0':
     optional: true
 
-  '@prisma/client@6.19.3(prisma@6.19.3(typescript@5.8.2))(typescript@5.8.2)':
+  '@prisma/client@6.19.3(prisma@6.19.3(typescript@6.0.3))(typescript@6.0.3)':
     optionalDependencies:
-      prisma: 6.19.3(typescript@5.8.2)
-      typescript: 5.8.2
+      prisma: 6.19.3(typescript@6.0.3)
+      typescript: 6.0.3
 
   '@prisma/config@6.19.3':
     dependencies:
@@ -4511,12 +4511,12 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.4
 
-  prisma@6.19.3(typescript@5.8.2):
+  prisma@6.19.3(typescript@6.0.3):
     dependencies:
       '@prisma/config': 6.19.3
       '@prisma/engines': 6.19.3
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 6.0.3
     transitivePeerDependencies:
       - magicast
 

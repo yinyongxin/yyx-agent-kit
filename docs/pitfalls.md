@@ -110,16 +110,18 @@
 - **解决**：`apps/server/nest-cli.json` 里显式指定 `entryFile: "apps/server/src/main"`（相对 outDir）。`nest-cli.json` 还需 `sourceRoot: "src"` + `compilerOptions.tsConfigPath: "tsconfig.json"`。
 - **备注**：`node dist/apps/server/src/main.js` 直接跑不受影响；只有 `nest start` 需要 entryFile。
 
-### 14. 编辑器 TypeScript 7 报 moduleResolution=node10 弃用错误
+### 14. 编辑器报 moduleResolution=node10 弃用错误
 
-- **现象**：编辑器（VSCode 等）报 `选项 moduleResolution=node10 已弃用，将停止在 TS 7.0 运行`，severity=Error，指向 `apps/server/tsconfig.json`。但项目本地 `tsc` 编译正常。
-- **原因**：编辑器用自带的 TS 7.0.2，它把 node10 移除成错误；项目本地是 TS 5.8.2，不报。同一份配置两个版本结论不同。
-- **不要这样修**：
-  - 升项目到 TS 7 → `nest start --watch` 直接跑不了（TS 7.0 只提供 `tsc` 可执行文件，**不提供 programmatic compiler API**，Nest CLI 依赖它；官方说 7.1 才回归）
-  - `moduleResolution: node16` / `bundler` + `module: node16` → 强制所有相对 import 加 `.js` 后缀，且 CJS server 不能 require ESM 的 shared 包，改动面太大
-  - `ignoreDeprecations: "6.0"` → 本地 TS 5.8 不认这个值（只认 5.0）
-- **正解**：项目保持 TS 5.8.2 + `module: commonjs` + `moduleResolution: node`（能跑、Nest CLI 兼容），在 `templates/base/.vscode/settings.json` 指定 `"typescript.tsdk": "node_modules/typescript/lib"`（根 devDependency 装 typescript@5.8.2），让编辑器用项目 TS 而非自带 TS 7，报错消失。
-- **备注**：编辑器若提示"是否使用工作区 TS 版本"，选是；`typescript.enablePromptUseWorkspaceTsdk: true` 会自动提示。
+- **现象**：编辑器报 `选项 moduleResolution=node10 已弃用，将停止在 TypeScript 7.0 中运行。指定 compilerOption "ignoreDeprecations":"6.0" 使此错误静音`，severity=Error，指向 `apps/server/tsconfig.json`。但项目本地 `tsc` 编译正常。
+- **原因**：报错措辞是 **TS 6.x** 的弃用警告（TS 7 会直接说"已移除"）。编辑器用自带的 TS 6.x/7.x，把 node10 标为错误；项目本地若是 TS 5.8 则不报——同一份配置两个版本结论不同。
+- **版本现实**（记牢，别再试错）：
+  - TS 5.8：`ignoreDeprecations` 只认 `"5.0"`，不认 `"6.0"`
+  - TS 6.x：认 `"6.0"`，node10 仍是弃用警告但可静音，且有 compiler API（Nest CLI 能用）
+  - TS 7.x：**移除了 node10**（TS5108），`ignoreDeprecations` 也救不了；且 TS 7.0 不提供 programmatic compiler API → `nest start --watch` 直接跑不了（官方说 7.1 才回归）
+- **不要这样修**：升 TS 7（nest 跑不了）；迁 `node16`/`bundler`（强制 import 加 `.js`，且 CJS server 不能 require ESM 的 shared 包，改动面太大）；锁 TS 5.8 + `.vscode tsdk`（编辑器仍可能用自带 TS，不生效）。
+- **正解**：项目统一升到 **TS 6.0.3**（根 + server 的 devDependency 都升），tsconfig 保留 `module: commonjs` + `moduleResolution: node` + 加 `"ignoreDeprecations": "6.0"`。本地与编辑器都在 TS 6，报错消失，nest CLI 正常，产物仍是 CommonJS。
+- **附带现象**：升级/重装依赖会清空生成的 Prisma client，导致 `@prisma/client did not initialize yet` 或 `has no exported member PrismaClient` —— 重新跑 `prisma generate` 即可。
+- **排查大坑**：反复改 tsconfig 会让多个 `nest start --watch` 残留进程堆积，出现 EADDRINUSE、旧配置反复编译报错。修完配置后务必杀掉所有 node/nest/vite 残留进程再干净启动。
 
 ## 相关约定
 
