@@ -65,7 +65,7 @@ const todos = await api.todos();
 仓库 `agents/` 改动后（注意 `-ConfigDir` 指向本项目的 `.opencode`）：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File ..\..\scripts\sync.ps1 -ConfigDir .
+powershell -ExecutionPolicy Bypass -File ..\..\scripts\sync.ps1 -ConfigDir .opencode
 ```
 
 在 OpenCode 里 `/reload`。样例里的 `.opencode/agents/` 是仓库 agents 的快照，别手改，改了会被覆盖。
