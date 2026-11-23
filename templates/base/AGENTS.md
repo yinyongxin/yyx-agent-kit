@@ -1,0 +1,51 @@
+# starter 工程约定
+
+## 硬性规则
+
+- 包管理只用 pnpm，禁止 npm、yarn。依赖装在根目录，子项目不生成独立锁文件。
+- 端口统一使用 **47xxx 段**，禁止用 `3000` / `5173` / `8080` 等框架默认端口，避免与本机其他项目冲突。Vite 必须开 `strictPort`，端口被占时直接失败而不是静默换端口。
+- 接口调用统一走 `@starter/api`，业务代码不自己写 `fetch`、不自己拼 URL。
+- 开发期接口统一用 `/api` 相对路径，由 Vite 代理到后端，**不写死后端域名**。
+- 业务接口按领域命名（`/todos`、`/orders`、`/patients`），`health` 只做运维探活，不承载业务逻辑。
+- 跨端共用的常量必须放 `packages/shared`：`API_PREFIX`、`API_ROUTES`、业务枚举、类型。新增接口先加常量，再由 controller 与 api 层引用，不要前后端各写一份字符串。
+- 前端 HTTP 使用原生 `fetch`，不引入 axios。
+- 前端不引入第三方 UI 组件库，样式用 Tailwind 原子类。
+- 组件写法统一 `export const Comp = () => {}`，不使用 `function` 声明，不使用 `export default`。
+- 页面文件放在 `[业务名]/[业务名].tsx`，页面内组件放同级 `components/`。
+- 后端 Controller 只做参数校验和转发，业务逻辑放 Service。
+- 后端禁止 `res.status().json()` 手动返回错误，统一抛 `HttpException` 子类。
+- 生成物（`dist/`、`*.gen.ts`）禁止手改，也不要加注释。
+- 每个源码目录都要有 `README.md`：目录职责、文件索引、注意事项。
+- 文档、提交信息、回复使用简体中文。
+
+## 验证命令（qa 判定基线）
+
+在仓库根目录执行：
+
+| 命令 | 含义 | 失败即判定 |
+| --- | --- | --- |
+| `pnpm build` | 全部子项目构建 + 全量 typecheck | 不通过 |
+| `pnpm lint` | oxlint 静态检查（apps + packages） | 不通过 |
+| `GET /api/health` | 后端能启动并返回 `{"status":"ok"}` | 不通过 |
+
+单测、接口测试在第一轮需求时再引入，届时补充对应脚本。
+
+## 目录
+
+```text
+apps/client        客户端：React + Vite + TypeScript + Tailwind（端口 47173）
+apps/admin         管理端：React + Vite + TypeScript + Tailwind（端口 47174）
+apps/portal        门户网站：Next.js App Router + Tailwind（端口 47175，面向未登录访客）
+apps/server        后端：NestJS + TypeScript（端口 47100，路由前缀 /api）
+packages/shared    共享常量、工具函数、类型（TS 源码直供，无构建产物）
+packages/api       接口层：类型、SDK、错误处理
+docs               需求交付物，按 docs/<slug>/ 存放
+```
+
+## 多端边界
+
+- PC、H5、管理端、门户可以共用 `packages/shared` 与 `packages/api`。
+- 小程序、App 没有标准 `fetch`，通过 `createApiClient({ fetcher })` 注入各自的请求器，不要修改请求层实现。
+- 小程序、App 不共用 Web UI 组件；共享只到类型和纯逻辑这一层。
+- 需要新的端时，新建 `apps/<端名>`，复用 packages，不复制代码。
+- 门户（portal）是唯一以 SEO 为目标的应用：默认 server component，不滥用 `"use client"`；其他 Web 端是纯客户端渲染。

@@ -1,0 +1,17 @@
+{
+  "name": "starter",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev:client": "pnpm --filter @starter/client dev",
+    "dev:admin": "pnpm --filter @starter/admin dev",
+    "dev:portal": "pnpm --filter @starter/portal dev",
+    "dev:server": "pnpm --filter @starter/server dev",
+    "build": "pnpm -r --workspace-concurrency=1 build && pnpm typecheck",
+    "typecheck": "pnpm -r --workspace-concurrency=1 typecheck",
+    "lint": "oxlint apps packages --ignore-pattern \"**/next-env.d.ts\""
+  },
+  "devDependencies": {
+    "oxlint": "^1.0.0"
+  }
+}

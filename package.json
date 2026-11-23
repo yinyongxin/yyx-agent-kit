@@ -1,0 +1,35 @@
+{
+  "name": "yyx-agent-kit",
+  "version": "0.1.0",
+  "description": "全栈项目脚手架与 OpenCode 配置套件",
+  "bin": {
+    "yyx-new": "cli/bin/yyx-new.mjs",
+    "yyx-agent-kit": "cli/bin/yyx-new.mjs"
+  },
+  "files": [
+    "cli/",
+    "templates/",
+    "agents/",
+    "skills/",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test:cli": "node cli/bin/yyx-new.mjs --help"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yinyongxin/yyx-agent-kit.git"
+  },
+  "keywords": [
+    "scaffold",
+    "opencode",
+    "nestjs",
+    "react",
+    "next"
+  ],
+  "license": "MIT",
+  "private": false
+}

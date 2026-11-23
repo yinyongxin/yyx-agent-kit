@@ -1,7 +1,7 @@
 ﻿# 从 skills 仓库同步到 OpenCode 全局配置目录
 # skills 本身由 opencode.json 的 skills 数组直接指向仓库，无需复制
 # agents 只能从 ~/.config/opencode/agents 读取，所以需要同步
-# 用法: powershell -ExecutionPolicy Bypass -File D:\project\yyx-agent-kit\scripts\sync.ps1
+# 用法: pwsh -NoProfile -File F:\project\yyx-agent-kit\scripts\sync.ps1
 param(
     [string]$Repo = (Split-Path -Parent $PSScriptRoot),
     [string]$ConfigDir = (Join-Path $env:USERPROFILE ".config\opencode")
