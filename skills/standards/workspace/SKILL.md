@@ -13,10 +13,47 @@ description: 通用工程规范：pnpm、mise、monorepo、构建产物、部署
 
 ## Monorepo 结构
 
-- **工作区配置**: 根目录 `pnpm-workspace.yaml` 定义 `apps/*` 为工作区
-- **子项目**: `apps/client`（客户端）、`apps/admin`（管理端）、`apps/server`（后端）
+- **工作区配置**: 根目录 `pnpm-workspace.yaml` 定义 `apps/*` 与 `packages/*`
+- **应用**: `apps/client`（客户端）、`apps/admin`（管理端）、`apps/server`（后端）
+- **共享包**: `packages/shared`（常量/工具/类型）、`packages/api`（接口层）
 - **依赖安装**: 在根目录执行 `pnpm install`，自动安装所有子项目依赖
 - **锁文件**: 只在根目录有 `pnpm-lock.yaml`，子项目不应有独立锁文件
+- **脚本**: 根目录用 `pnpm --filter <包名>` 转发，如 `dev:client`；构建用 `pnpm -r --workspace-concurrency=1 build`
+
+## packages 约定
+
+- 以 TS 源码被 Vite 直接消费，**没有构建产物**，`exports` 直接指向 `./src/index.ts`
+- `package.json` 的 `exports` 是白名单：新增子路径必须同时改 `exports`，否则引用方解析不到
+- 不引入宿主环境依赖（`react`、`fetch`、`window`），否则小程序 / App 端无法复用
+- 共享只到类型、常量和纯逻辑；UI 组件不要跨端共享
+- 每个包的 `src/` 都要有 README，说明职责、文件索引、注意事项
+
+## 接口层
+
+- 接口类型、SDK、错误处理**收敛在 `packages/api`**，各端业务代码不自己写 fetch、不自己拼 URL
+- `baseUrl` 默认 `/api`，开发期由 Vite 代理到后端；**不写死后端域名**
+- 手写装配文件（token 注入、401 回调）放在 `src/` 外。接入 OpenAPI 生成后 `src/` 会被整目录重建，放里面会被删
+- 401 只负责通知调用方，清会话和跳登录由各端实现，传输层不感知路由
+- 生成物（`*.gen.ts`）禁止手改，唯一更新方式是重新生成
+
+## 多端边界
+
+- PC / H5 / 管理端可共享 `packages/shared` 与 `packages/api`
+- 小程序 / App 没有标准 `fetch`：通过注入 `fetcher` 适配，不改请求层实现
+- 小程序 / App 不共享 Web UI 组件，只共享类型与纯逻辑
+- 新增端时新建 `apps/<端名>` 并复用 packages，不复制代码
+
+## pnpm 版本差异（易踩）
+
+- pnpm 10 及以前：`pnpm-workspace.yaml` 用 `onlyBuiltDependencies`（数组）
+- pnpm 11：改名为 `allowBuilds`，且是 **map**：
+
+```yaml
+allowBuilds:
+  esbuild: true
+```
+
+写错会一直以 `ERR_PNPM_IGNORED_BUILDS` 退出 1。
 
 ## 通用编码规范
 
