@@ -101,20 +101,22 @@ apps/admin/src/
 ├── routes/                  # 文件路由：只放 createFileRoute 声明（约 5 行），指向 features 的页面组件
 │   ├── __root.tsx / index.tsx / dashboard.tsx / settings.tsx
 │   └── access/{users,roles,tenants,permissions}.tsx   # 目录结构=URL：/access/users
-├── features/                # 按业务领域组织页面
-│   ├── home/HomePage.tsx
-│   ├── dashboard/DashboardPage.tsx
-│   ├── access/{Users,Roles,Tenants,Permissions}Page.tsx
-│   └── settings/SettingsPage.tsx
-└── components/              # 通用组件 + 布局
-    ├── PlaceholderPage.tsx  # 通用占位（传 title/description）
-    ├── AdminLayout.tsx
-    └── header/{HeaderMenu,HeaderMegaMenu}、navbar/{DoubleNavbar,NavbarNested}（两套布局保留）
+├── features/                # 按业务领域组织，页面/组件都文件夹化
+│   ├── home/HomePage/{index.tsx, HomePage.tsx, HomeContent.tsx}
+│   ├── dashboard/DashboardPage/{index.tsx, DashboardPage.tsx, DashboardContent.tsx}
+│   ├── access/users/{index.tsx, UsersPage.tsx, UsersContent.tsx}（roles/tenants/permissions 同）
+│   └── settings/SettingsPage/{index.tsx, SettingsPage.tsx, SettingsContent.tsx}
+└── components/              # 通用组件 + 布局，全部文件夹化 + index.tsx barrel
+    ├── PageShell/{index.tsx, PageShell.tsx, PageShell.module.css, types.ts}
+    ├── PlaceholderContent/{index.tsx, PlaceholderContent.tsx}
+    ├── AdminLayout/{index.tsx, AdminLayout.tsx}
+    └── header/{HeaderMenu,HeaderMegaMenu}、navbar/{DoubleNavbar,NavbarNested}（两套布局保留，各含 index.tsx + tsx + css）
 ```
 
 - **routes 与页面分离**：route 文件只声明路由并指向 features 里的页面，页面实现不写在 route 里。
 - **路由目录 = URL**：`routes/access/users.tsx` → `/access/users`；改路由文件路径后必须同步改导航组件里的 `to`/`link`，并**先跑一次 `pnpm --filter @starter/admin build`（或 dev）重新生成 `routeTree.gen.ts`，再跑 typecheck**（否则 typecheck 用旧 routeTree 会报错）。
-- **占位页**：未实现的页面用薄组件 `<PlaceholderPage title="..." description="..." />`，不各写一套占位 UI。
+- **组件/页面文件夹化 + barrel**：每个组件和页面都是目录，内含 `index.tsx`（**只 re-export，不写业务逻辑**）+ 实现文件 + 可选的 `*.module.css` / `types.ts` / `enums.ts` / `functions.ts` / `common/`。外部统一从目录导入（`import { X } from "./X"`），不引用内部文件名。组件目录允许 `index.tsx`（导出 JSX 组件）。
+- **页面 = 壳 + 内容**：`XxxPage` 只负责用 `<PageShell title description actions>` 包一层，`XxxContent` 放可复用业务 UI（表格/表单/API 调用），不含页面级标题。内容组件可被其它页面/弹窗复用。`PageShell` 统一布局，`PlaceholderContent` 只是它的一种内容实现（占位）。
 
 ## 8. 发布与文档入口
 

@@ -7,10 +7,10 @@ import { ActionIcon, Box, Group, Text, Tooltip } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { Outlet } from "@tanstack/react-router";
 import { useState } from "react";
-import { HeaderMegaMenu } from "./header/HeaderMegaMenu";
-import { HeaderMenu } from "./header/HeaderMenu";
-import { DoubleNavbar } from "./navbar/DoubleNavbar";
-import { NavbarNested } from "./navbar/NavbarNested";
+import { HeaderMegaMenu } from "../header/HeaderMegaMenu/index";
+import { HeaderMenu } from "../header/HeaderMenu/index";
+import { DoubleNavbar } from "../navbar/DoubleNavbar/index";
+import { NavbarNested } from "../navbar/NavbarNested/index";
 
 type Layout = "nested" | "double" | "header-menu" | "header-mega-menu";
 
@@ -97,3 +97,6 @@ export const AdminLayout = () => {
     </>
   );
 };
+
+
+
