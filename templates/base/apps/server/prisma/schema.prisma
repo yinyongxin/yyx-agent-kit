@@ -3,12 +3,13 @@
 // 所有业务表带 tenantId，由 PrismaService extension 自动注入过滤（全局表除外）。
 
 generator client {
-  provider = "prisma-client-js"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum TenantStatus {

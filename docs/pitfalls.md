@@ -143,10 +143,23 @@
 - **结论**：推翻 Authentik，改用 `@nestjs/authentication` + `@nestjs/authorization`。多平台共用一个 server 天然共享登录态，不需要外部 IdP。
 - **教训**：方案决策前必须用 ego 查官网一手资料（认证这么核心的能力，官方可能已经有新包），不能凭"框架一般不做 X"的经验判断。
 
+### 18. Prisma 7 升级：moduleFormat 必须显式设 cjs
+
+- **现象**：按官网默认 `prisma-client` generator 生成 client，CommonJS 项目运行报 `SyntaxError: Cannot use 'import.meta' outside a module`。
+- **原因**：Prisma 7 默认从 tsconfig 推断模块格式；模板是 CommonJS + `moduleResolution: node`，推断可能给出 ESM client，生成代码含 `import.meta.url`，CJS 下直接崩。
+- **解决**：generator 里显式写 `moduleFormat = "cjs"`（官网明确支持 CommonJS），生成用 `__dirname` 的 CJS client。补上后 `tsc` + `node` 运行通过。
+- **附带**：`latest` 已指向 Prisma 8 pre-release，必须显式装 `@7`；连接串移到 `prisma7.config.ts`，datasource 不再放 `url`；必须传 driver adapter（PG 用 `@prisma/adapter-pg`）。
+
+### 19. 把「默认配置 PoC 失败」误判成「官网方案不可行」
+
+- **现象**：Prisma 7 升级先查 NestJS 官网的 Prisma 章节（示例是 ESM + SQLite），按默认 generator 跑 PoC，CommonJS 运行时报 `import.meta` 错，于是结论是「不能按官网升级，必须回退 `prisma-client-js`」。用户追问后查 Prisma 官方 Generators Reference 与 GitHub discussion #28606，才发现官网明确支持 CommonJS——显式 `moduleFormat = "cjs"` 即可，补上后验证通过。
+- **原因**：① 只查了二手来源（NestJS 官网讲 Prisma 的章节），没查一手来源（Prisma 官方 generator 文档）；二手文档是 ESM 语境，只字未提 CommonJS 的 `moduleFormat`。② PoC 只跑了默认配置，没穷尽 generator 的可选字段。③ 把「我漏配了选项」直接等同于「技术上不支持」，诊断层级错了。
+- **解决**：下「不可行/不支持」结论前，必须查所用库/框架的一手文档（不是上层框架的封装文档），并交叉验证至少一个独立来源（官方参考手册的字段表、GitHub issue/discussion）；PoC 失败先问「是不是漏配了选项」再下结论。
+- **教训**：这次错误差点让整个方案走偏（回退到旧 generator）。多方验证不是额外成本，而是防止「凭一次实验下结论」的必要步骤——智能体尤其容易犯这个错，因为一次 PoC 失败看起来就是铁证。
+
 ## 相关约定
 
-- **新建项目 / 引入技术用官方脚手架 + ego 官网学习**：新建项目、引入框架/工具或升级版本时，先用 ego 去官网/官方文档查当前最新用法和版本要求，不要靠过往经验写配置；用官方脚手架（`create-vite` / `create-next-app` / `nest new` 等）生成初始结构，再往 monorepo 规范上改。经验会过时（如 TS 7 移除 compiler API 导致 Nest CLI 跑不了）。
-- **模板与规范同步升级**：完善 `templates/base` 的同时，必须同步升级 `agents/` 与 `skills/`——模板里新增/变更的技术与约定（如 Prisma、RBAC、OIDC、Docker、数据库选型）要反映到对应 agent（chief）和规范 skill（workspace/nestjs/tooling）。两者是一体的，不能只改模板不改规范。
-- **开发服务启动**：用标准方式在会话里起即可——`pnpm dev:server`、`pnpm dev:admin` 等后台任务；OpenCode 自带服务状态显示，不需要搞分离进程 / 写 PID 文件 / 建议用户去普通终端跑。需要确认时用一次探活（health / 端口），不要反复轮询。
-- 发版手动流程与 npm 包结构见 [README.md](README.md) 的「创建新项目」「发布 CLI」章节。
+跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。
+
+- 发版手动流程与 npm 包结构见 [README.md](../README.md) 的「创建新项目」「发布 CLI」章节。
 - 全局偏好（pwsh、代理、mise 等）在 `~/.config/opencode/AGENTS.md`。

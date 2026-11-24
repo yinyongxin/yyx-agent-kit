@@ -8,7 +8,7 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 ## 技术栈
 
 - **框架**: NestJS 12 + TypeScript 6（2026-11-24 官网基线；TS 7 无 compiler API 不兼容 Nest CLI，见踩坑记录 #14）
-- **ORM**: Prisma
+- **ORM**: Prisma 7（官网方案：`prisma-client` generator + `output = "../src/generated/prisma"` + `moduleFormat = "cjs"`，兼容 CommonJS；driver adapter `@prisma/adapter-pg`；连接串与迁移配置在 `prisma7.config.ts`；生成物不入库）
 - **数据库**: PostgreSQL + pgvector（单库兼顾关系数据与向量检索；向量访问封装成 `VectorStore` 接口，将来可换 Qdrant）
 - **API**: RESTful（`@nestjs/swagger` 文档）
 - **认证**: NestJS 官方 **`@nestjs/authentication`**（0.1.x，官网基线）——密码/email/2FA/magic link/session/access+refresh token/API key/Google OIDC，状态存自己的 PostgreSQL，**不用外部 IdP**
@@ -41,7 +41,8 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 ## 开发规范
 
 - 模块按 NestJS 规范分层：`module / controller / service / dto / entity`
-- 使用 Prisma Schema 定义数据模型，通过 `prisma generate` 同步类型
+- 使用 Prisma Schema 定义数据模型，通过 `prisma generate` 同步类型（生成物在 `src/generated/prisma`，随应用编译）
+- 服务内从 `../generated/prisma/client` 导入 `PrismaClient`，构造时传 driver adapter；不要再写 `@prisma/client` 导入或 schema 里的 `url = env(...)`
 - Controller 只做参数校验和路由转发，业务逻辑放在 Service 层
 - 使用 `class-validator` + `class-transformer` 做 DTO 校验
 - 全局异常过滤器统一处理错误响应格式

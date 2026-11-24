@@ -14,3 +14,5 @@ apps/server/prisma/*.js
 .env.*.local
 .env.prod
 *.tsbuildinfo
+# Prisma 7 生成的 client：随应用一起编译，不入库
+apps/server/src/generated/
