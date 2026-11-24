@@ -1,10 +1,5 @@
-import {
-  IconArrowsExchange,
-  IconChevronLeft,
-  IconChevronRight,
-} from "@tabler/icons-react";
-import { ActionIcon, Box, Group, Text, Tooltip } from "@mantine/core";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { IconArrowsExchange } from "@tabler/icons-react";
+import { ActionIcon, Group, Text, Tooltip } from "@mantine/core";
 import { Outlet } from "@tanstack/react-router";
 import { useState } from "react";
 import { HeaderMegaMenu } from "../header/HeaderMegaMenu/index";
@@ -24,9 +19,6 @@ const LABELS: Record<Layout, string> = {
 
 export const AdminLayout = () => {
   const [layout, setLayout] = useState<Layout>("nested");
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-  const isMobile = useMediaQuery("(max-width: 48em)");
 
   const nextLayout = () =>
     setLayout((current) => LAYOUTS[(LAYOUTS.indexOf(current) + 1) % LAYOUTS.length]!);
@@ -54,49 +46,32 @@ export const AdminLayout = () => {
           </div>
         </div>
       ) : (
-        <>
-          <Box hiddenFrom="sm" p="xs">
-            <ActionIcon variant="subtle" onClick={toggleMobile} aria-label="打开菜单">
-              <IconChevronRight size={18} />
-            </ActionIcon>
-          </Box>
-
-          <div style={{ display: "flex", minHeight: "100vh" }}>
-            <div
-              style={{
-                width: desktopOpened ? 260 : 56,
-                flexShrink: 0,
-                transition: "width 200ms ease",
-                borderRight: "1px solid var(--mantine-color-gray-3)",
-                display: isMobile && !mobileOpened ? "none" : "block",
-              }}
-            >
-              <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-                <Group justify="space-between" gap="xs" p="xs" wrap="nowrap">
-                  {desktopOpened && <Text size="sm" fw={600}>starter</Text>}
-                  <Group gap={4} ml="auto">
-                    <Tooltip label={desktopOpened ? "收起菜单" : "展开菜单"} position="bottom">
-                      <ActionIcon variant="subtle" onClick={toggleDesktop} aria-label="折叠菜单">
-                        {desktopOpened ? <IconChevronLeft size={18} /> : <IconChevronRight size={18} />}
-                      </ActionIcon>
-                    </Tooltip>
-                  </Group>
-                </Group>
-                <div style={{ flex: 1, minHeight: 0 }}>
-                  {layout === "nested" ? <NavbarNested /> : <DoubleNavbar />}
-                </div>
+        <div style={{ display: "flex", minHeight: "100vh" }}>
+          {/* 侧栏固定宽度，不折叠 */}
+          <div
+            style={{
+              width: 260,
+              flexShrink: 0,
+              borderRight: "1px solid var(--mantine-color-gray-3)",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+              <Group gap="xs" p="xs">
+                <Text size="sm" fw={600}>
+                  starter
+                </Text>
+              </Group>
+              <div style={{ flex: 1, minHeight: 0 }}>
+                {layout === "nested" ? <NavbarNested /> : <DoubleNavbar />}
               </div>
             </div>
-
-            <div style={{ flex: 1, minWidth: 0, padding: "var(--mantine-spacing-md)" }}>
-              <Outlet />
-            </div>
           </div>
-        </>
+
+          <div style={{ flex: 1, minWidth: 0, padding: "var(--mantine-spacing-md)" }}>
+            <Outlet />
+          </div>
+        </div>
       )}
     </>
   );
 };
-
-
-
