@@ -16,3 +16,5 @@ apps/server/prisma/*.js
 *.tsbuildinfo
 # Prisma 7 生成的 client：随应用一起编译，不入库
 apps/server/src/generated/
+# TanStack Router 生成的路由树：插件生成，禁止手改、不入库
+apps/*/src/routeTree.gen.ts

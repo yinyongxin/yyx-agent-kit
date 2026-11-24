@@ -32,6 +32,8 @@
 - 所有 `.ps1` 调用统一为 `pwsh -NoProfile -File`（本机 PowerShell 7）
 - `agents/` 收敛为 2 个（`chief` primary + `qa` subagent），skills 按 `flows` / `tools` / `standards` 分组
 - **数据库迁移规范**：权限系统表结构变更从 `db push` 切到 Prisma Migrate（`db:migrate` 生成迁移文件入库 review、`db:deploy` 幂等部署、生产禁止 `db push`）；seed 收窄为只写初始数据；新增初始迁移 `init_permissions`。规范见 `docs/conventions.md` 第 5 节
+- **管理端 UI 选型**：`apps/admin` 引入 Mantine 9（仅管理端），交互组件用 Mantine、布局微调用 Tailwind，用 `tailwind-preset-mantine` 对齐主题；client / portal 仍只用 Tailwind。规则见 `docs/conventions.md` 第 6 节
+- **管理端路由与菜单布局**：admin 引入 `@tanstack/react-router`（file-based），Vite 插件自动生成 `routeTree.gen.ts`（不手改）；7 个路由页（首页/工作台/用户/角色/租户/权限/设置），Mantine AppShell 可折叠侧边菜单，菜单项集中配置在 `AdminMenu.tsx`
 
 ### Removed
 

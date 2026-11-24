@@ -10,18 +10,23 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@mantine/core": "^9.8.1",
+    "@mantine/hooks": "^9.8.1",
     "@starter/api": "workspace:*",
     "@starter/shared": "workspace:*",
+    "@tanstack/react-router": "^1.170.46",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.0",
+    "@tanstack/router-plugin": "^1.169.0",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "oxlint": "^1.94.0",
+    "tailwind-preset-mantine": "^4.0.3",
     "tailwindcss": "^4.1.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.8"

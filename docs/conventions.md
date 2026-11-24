@@ -58,7 +58,20 @@
 - 权限点 `code` 是不可变标识，变更走「新增 → 废弃 → 数据迁移」
 - 新租户的角色初始化不放 seed，放租户创建业务逻辑
 
-## 6. 发布与文档入口
+## 6. 前端样式与组件库
+
+| 端 | 样式方案 |
+| --- | --- |
+| `apps/admin` 管理端 | Mantine 组件 + Tailwind 布局微调 |
+| `apps/client` / `apps/portal` | 仅 Tailwind 原子类，不引入第三方 UI 组件库 |
+
+- Mantine 负责交互控件（表单、表格、弹窗、通知、日期、Combobox），Tailwind 负责布局、间距、栅格，通过 `className` 传入
+- 用 `tailwind-preset-mantine` 对齐主题变量与 layer 顺序，不靠 `!important` 压样式
+- 只装按需包（`@mantine/core` + `@mantine/hooks`），扩展包按需加
+- 组件写法统一 `export const Comp = () => {}`，不受组件库影响
+- 不启用深色模式（Mantine 开箱支持，按需再开）
+
+## 7. 发布与文档入口
 
 - 发版手动流程与 npm 包结构：[README.md](../README.md) 的「创建新项目」「发布 CLI」章节。
 - 全局偏好（pwsh、代理、mise 等）：`~/.config/opencode/AGENTS.md`。
