@@ -74,7 +74,26 @@
 - 模板项目已在 `.opencode/opencode.json` 配好 `mantine` MCP，生成的新项目自动带
 - Mantine 官方 agent skills（`mantine-form` / `mantine-combobox` / `mantine-custom-components`）装在用户全局 `~/.agents/skills`，安装命令：`npx skills add https://github.com/mantinedev/skills --skill <name> -g -y`。**skills 不随项目走**，换机器 / 新环境需重装；MCP 配置随模板项目走。不要把这些第三方 skills 复制进仓库 `skills/`（官方随版本更新，复制会滞后）
 
-## 7. 发布与文档入口
+## 7. 文件与目录命名规范
+
+**总原则：延用各生态/框架的惯例，不在同一场景内混用风格。** 不追求全项目单一风格——框架绑定的命名（Next 路由、Nest 后缀）改了会坏或违背工具约定，收益低于代价。
+
+| 场景 | 规则 | 示例 |
+| --- | --- | --- |
+| NestJS 后端文件 | 小写连字符 + 点分隔角色后缀 | `app.module.ts`、`jwt-auth.provider.ts`、`users.repository.ts`、`tenant-context.util.ts`、`todo.policy.ts` |
+| 纯类型定义 | `<name>.types.ts` | `user.types.ts` |
+| React 组件 | PascalCase，文件名 = 组件名 | `AdminLayout.tsx`、`DashboardPage.tsx` |
+| CSS Modules | 与组件同名 + `.module.css` | `HeaderMenu.module.css` |
+| Next.js 路由文件 | 框架保留名，**不可改** | `page.tsx`、`layout.tsx`、`route.ts` |
+| TanStack Router 路由 | 小写，路由路径即文件名 | `routes/dashboard.tsx`、`routes/__root.tsx` |
+| 工具生成文件 | `*.gen.ts`，**不可手改/改名** | `routeTree.gen.ts` |
+| Prisma | 框架固定名 | `schema.prisma`、`models/*.prisma`、`migration.sql` |
+| 配置 / 脚本 / 文档 | kebab-case 或框架固定名 | `docker-compose.yml`、`pnpm-workspace.yaml`、`init-db.sql`、`credentials.md` |
+| 需求代号目录 | `YYYYMMDD-kebab-case` | `20261124-admin-mantine/` |
+
+**新增文件时**：先看同目录已有文件的风格，跟随它；没有同目录就查上表。禁止出现小驼峰文件名（如 `usersRepository.ts`）或在 React 里用 kebab-case 组件名（如 `dashboard-page.tsx`）。现有文件若不符合，按上表改名并同步所有 import。
+
+## 8. 发布与文档入口
 
 - 发版手动流程与 npm 包结构：[README.md](../README.md) 的「创建新项目」「发布 CLI」章节。
 - 全局偏好（pwsh、代理、mise 等）：`~/.config/opencode/AGENTS.md`。

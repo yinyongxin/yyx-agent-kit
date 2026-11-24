@@ -1,7 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
-import { TenantContext } from "../auth/tenant-context";
+import { TenantContext } from "../auth/tenant-context.util";
 
 /** 不按租户过滤的全局表 */
 const GLOBAL_MODELS = new Set(["Tenant", "Permission", "Plan"]);
@@ -77,3 +77,4 @@ export class PrismaService
     },
   });
 }
+

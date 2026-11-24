@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
-import { TenantContext } from "./tenant-context";
+import { TenantContext } from "./tenant-context.util";
 
 /**
  * 从 Authorization Bearer token 解析租户上下文（不做签名校验，由 JwtStrategy 负责）。
@@ -35,3 +35,4 @@ export class TenantMiddleware implements NestMiddleware {
     next();
   }
 }
+

@@ -49,6 +49,7 @@ permissions:
   - `migrate` 管表结构（DDL），`db:seed` 只管初始数据，职责不可混；已应用的迁移禁止手改，修正走新迁移或反向迁移。
   - 派 `general` 做涉及 schema 变更的任务时，prompt 里必须明确这条约束，并要求把迁移文件作为交付物。
 - 落地到 `templates/base` 后，按「模板与规范同步升级」约束同步更新 skills/agents。
+- **文件命名按生态惯例、场景内统一**（见 `docs/conventions.md` 第 7 节）：NestJS 小写连字符+点分隔角色后缀、React 组件 PascalCase、Next 路由保留名、生成文件 `*.gen.ts`、配置/文档 kebab-case。派活时提醒 `general`：新增文件先看同目录风格，不要写出小驼峰文件名或在 React 里用 kebab-case 组件名。
 
 ## 门禁（硬规则）
 

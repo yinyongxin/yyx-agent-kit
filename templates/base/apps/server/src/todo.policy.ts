@@ -1,5 +1,5 @@
 import { Policy, type PolicyBefore } from "@nestjs/authorization";
-import type { User } from "./auth/user";
+import type { User } from "./auth/user.types";
 
 /**
  * 示例 policy：演示 @nestjs/authorization 的官方写法。
@@ -23,3 +23,4 @@ export class TodoPolicy implements PolicyBefore<User> {
     return user !== null;
   }
 }
+
