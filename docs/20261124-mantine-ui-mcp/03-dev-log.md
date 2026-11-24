@@ -55,6 +55,24 @@
 - 切换布局入口从 Header 移到 Navbar 顶部工具条，double / nested 切换仍可用
 - 浏览器验证（ego-browser，space 7）：snapshot 确认无 Header 节点，左侧工具条 + 官方菜单、右侧首页内容；点击切换按钮后左侧变为 DoubleNavbar。截图 `D:/opencode-poc/ego-admin/noheader-nested.png`
 
+## 追加需求：增加两种 Header 模式（共四种布局）
+
+用户要求在两种侧栏模式之外，再增加 ui.mantine.dev 的 `header-menu` 与 `header-mega-menu`，四种模式可切换。
+
+| 编号 | 任务 | 文件 | 结果 |
+| --- | --- | --- | --- |
+| T10 | 官方 HeaderMenu 适配 | `src/components/header/HeaderMenu.tsx` + `.module.css` | hover 下拉 + 移动端 Drawer，链接换成 TanStack `Link`，菜单换成 3 组 |
+| T11 | 官方 HeaderMegaMenu 适配 | `src/components/header/HeaderMegaMenu.tsx` + `.module.css` | HoverCard 卡片大菜单 + Drawer，数据换成我们的 7 项，去掉登录按钮 |
+| T12 | 四模式循环切换 | `AdminLayout.tsx` | `nested → double → header-menu → header-mega-menu` 循环；切换按钮改右上角浮动（所有模式可见）；侧栏模式保留折叠，Header 模式 Content 直接占满 |
+
+**浏览器验证（ego-browser，space 8）**：连续点浮动切换按钮 4 次，snapshot 依次确认：
+1. 嵌套侧栏（starter + 管理菜单 + 7 链接）
+2. 双栏侧栏（S + 图标栏 + 概览）
+3. 顶部菜单（starter + 概览/权限管理/设置）
+4. 顶部大菜单（starter + 首页/概览/权限管理/设置）
+
+截图 `D:/opencode-poc/ego-admin/mode-{0,1,2,3}.png`。typecheck 抓到并修复 `LAYOUTS.indexOf(...)` 在 TS 7 下可能 undefined 的类型错误（加 `!`）。
+
 ## 验证补充（切换功能）
 
 - `pnpm --filter @starter/admin typecheck`、`pnpm lint` 通过。typecheck 抓到并修复了一个真实类型错误：`DoubleNavbar` 中 `GROUPS.find(...) ?? GROUPS[0]` 在 TS 7 下 `group` 可能为 undefined，已改为 `GROUPS[0]!`。
