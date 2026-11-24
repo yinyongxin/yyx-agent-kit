@@ -1,11 +1,22 @@
 import { config } from "dotenv";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { resolve } from "node:path";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../src/generated/prisma/client";
+
+/**
+ * seed 只负责初始业务数据（默认租户/角色/权限点/套餐），不负责表结构，也不负责已有数据演进。
+ * 结构变更走 prisma migrate；已有数据变更（如权限点 code 调整）走显式数据迁移。
+ * upsert 的 update 只覆盖展示字段，不覆盖 code / isSystem 等标识或控制字段。
+ */
 
 // 从项目根加载 .env（本文件在 apps/server/prisma/，根在上三级），保证从任意子目录运行都能连库
 config({ path: resolve(__dirname, "../../../.env") });
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({
+    connectionString: process.env.DATABASE_URL!,
+  }),
+});
 
 // 默认租户 slug。单租户阶段所有用户归到这个租户。
 const DEFAULT_TENANT_SLUG = "default";
@@ -63,7 +74,7 @@ async function main() {
   for (const r of ROLES) {
     const role = await prisma.role.upsert({
       where: { tenantId_code: { tenantId: tenant.id, code: r.code } },
-      update: { name: r.name, description: r.description, isSystem: true },
+      update: { name: r.name, description: r.description },
       create: {
         tenantId: tenant.id,
         code: r.code,

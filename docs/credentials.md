@@ -15,7 +15,7 @@
 
 1. `cp .env.example .env`（模板仓库里 `.env` 不提交）
 2. `docker compose up -d`（PostgreSQL + pgvector + Redis）
-3. `pnpm --filter @starter/server prisma:generate`、`prisma:push`、`prisma:seed`（建表 + 默认租户/角色/权限/套餐）
+3. `pnpm --filter @starter/server prisma:generate`、`db:deploy`（按迁移文件建表）、`db:seed`（默认租户/角色/权限/套餐）
 4. `pnpm dev:server` / `pnpm dev:admin` 启动
 
 > **改了 `.env`（尤其 JWT_SECRET）必须重启服务**——env 在进程启动时读取，nest watch 只监听 TS 文件变化，不会因 .env 改动重启。

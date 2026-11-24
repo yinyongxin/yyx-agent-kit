@@ -38,7 +38,27 @@
 - 开发服务用标准后台任务启动（`pnpm dev:server` 等），需要时用一次探活确认，不要反复轮询。
 - 改配置后用 `/reload`；全局 `agents/` 目录首次新建需 `opencode service restart` 一次。
 
-## 5. 发布与文档入口
+## 5. 数据库迁移
+
+结构变更走 Prisma Migrate，不再用 `db push` 直接同步。
+
+| 场景 | 命令 |
+| --- | --- |
+| 改 schema 后生成迁移 | `pnpm --filter @starter/server db:migrate -- --name <语义名>` |
+| 部署 / CI 应用迁移 | `pnpm --filter @starter/server db:deploy`（幂等） |
+| 写初始数据 | `pnpm --filter @starter/server db:seed`（幂等 upsert） |
+| 一次性原型验证 | `prisma:push`（仅限临时，禁止生产） |
+
+边界：
+
+- `migrate` 管表结构（DDL），`seed` 只管初始业务数据，各自独立
+- 迁移 SQL 入库即代码，必须 review；已应用迁移禁止手改，修正走新迁移
+- 生产禁止 `db push`；回滚写反向迁移，不靠 push 抹平
+- seed 的 `update` 只覆盖展示字段，不覆盖 `code` / `isSystem` 等标识或控制字段
+- 权限点 `code` 是不可变标识，变更走「新增 → 废弃 → 数据迁移」
+- 新租户的角色初始化不放 seed，放租户创建业务逻辑
+
+## 6. 发布与文档入口
 
 - 发版手动流程与 npm 包结构：[README.md](../README.md) 的「创建新项目」「发布 CLI」章节。
 - 全局偏好（pwsh、代理、mise 等）：`~/.config/opencode/AGENTS.md`。
