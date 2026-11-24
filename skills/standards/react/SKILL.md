@@ -24,4 +24,5 @@ description: 开发 React / TypeScript 前端时加载。Vite、Tailwind、路�
 - 页面文件统一 `[业务名]/[业务名].tsx` 结构
 - 页面内组件放 `components/` 目录，全局共享放 `src/components/`
 - 管理端交互控件优先用 Mantine（表单、表格、弹窗、通知、日期），布局与间距用 Tailwind 的 `className`；组件写法仍为 `export const`
-- 路由用 `@tanstack/react-router` file-based 模式：页面文件放 `src/routes/`，`routeTree.gen.ts` 由 Vite 插件生成、禁止手改；菜单配置集中在 `src/components/AdminMenu.tsx`，不在页面里散落写菜单
+- 路由用 `@tanstack/react-router` file-based 模式：页面文件放 `src/routes/`，`routeTree.gen.ts` 由 Vite 插件生成、禁止手改；菜单集中在 `src/components/navbar/`，复用 ui.mantine.dev 官方组件（NavbarNested + LinksGroup），不在页面里散落写菜单
+- 查 Mantine 最新用法优先用 `mantine` MCP 或 `https://mantine.dev/llms.txt`（官方随版本更新），不靠记忆

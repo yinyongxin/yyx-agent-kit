@@ -70,6 +70,9 @@
 - 只装按需包（`@mantine/core` + `@mantine/hooks`），扩展包按需加
 - 组件写法统一 `export const Comp = () => {}`，不受组件库影响
 - 不启用深色模式（Mantine 开箱支持，按需再开）
+- 查 Mantine 最新用法优先用 `mantine` MCP（`npx -y @mantine/mcp-server`）或 `https://mantine.dev/llms.txt`——官方随版本更新，不靠记忆；管理端菜单等布局优先复用 ui.mantine.dev 的现成组件（MIT），不重复手写
+- 模板项目已在 `.opencode/opencode.json` 配好 `mantine` MCP，生成的新项目自动带
+- Mantine 官方 agent skills（`mantine-form` / `mantine-combobox` / `mantine-custom-components`）装在用户全局 `~/.agents/skills`，安装命令：`npx skills add https://github.com/mantinedev/skills --skill <name> -g -y`。**skills 不随项目走**，换机器 / 新环境需重装；MCP 配置随模板项目走。不要把这些第三方 skills 复制进仓库 `skills/`（官方随版本更新，复制会滞后）
 
 ## 7. 发布与文档入口
 
