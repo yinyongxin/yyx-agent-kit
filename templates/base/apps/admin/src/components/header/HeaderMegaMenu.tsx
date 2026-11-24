@@ -37,10 +37,10 @@ const OVERVIEW: MegaItem[] = [
 ];
 
 const PERMISSIONS: MegaItem[] = [
-  { icon: IconFingerprint, title: "用户", description: "用户管理", to: "/users" },
-  { icon: IconBook, title: "角色", description: "角色管理", to: "/roles" },
-  { icon: IconCoin, title: "租户", description: "租户管理", to: "/tenants" },
-  { icon: IconChartPie3, title: "权限", description: "权限管理", to: "/permissions" },
+  { icon: IconFingerprint, title: "用户", description: "用户管理", to: "/access/users" },
+  { icon: IconBook, title: "角色", description: "角色管理", to: "/access/roles" },
+  { icon: IconCoin, title: "租户", description: "租户管理", to: "/access/tenants" },
+  { icon: IconChartPie3, title: "权限", description: "权限管理", to: "/access/permissions" },
 ];
 
 const MegaLinks = ({ items }: { items: MegaItem[] }) => {
@@ -102,7 +102,7 @@ export const HeaderMegaMenu = () => {
             </HoverCard>
             <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
               <HoverCard.Target>
-                <Link to="/users" className={classes.link} onClick={(e) => e.preventDefault()}>
+                <Link to="/access/users" className={classes.link} onClick={(e) => e.preventDefault()}>
                   <Center inline>
                     <Box component="span" mr={5}>权限管理</Box>
                     <IconChevronDown size={16} />
@@ -112,7 +112,7 @@ export const HeaderMegaMenu = () => {
               <HoverCard.Dropdown style={{ overflow: "hidden" }}>
                 <Group justify="space-between" px="md">
                   <Text fw={500}>权限管理</Text>
-                  <Anchor component={Link} to="/users" fz="xs">查看全部</Anchor>
+                  <Anchor component={Link} to="/access/users" fz="xs">查看全部</Anchor>
                 </Group>
                 <Divider my="sm" />
                 <MegaLinks items={PERMISSIONS} />
@@ -164,3 +164,4 @@ export const HeaderMegaMenu = () => {
     </Box>
   );
 };
+

@@ -176,6 +176,13 @@
 - **验证**：生成后检查 `src/generated/prisma/models.ts` 是否导出了全部模型；跑 `prisma migrate status` 确认 `Database schema is up to date`（组织变化不应产生新迁移）。
 - **备注**：本次拆分前先用隔离 PoC 验证了 Prisma 7 + `prisma-client` generator 的多文件合并可行，再动项目——符合"下结论前多方验证"的约定。
 
+### 22. TanStack Router 改路由后 typecheck 报路径不在 FileRoutesByPath
+
+- **现象**：重组 routes 目录（如 `routes/users.tsx` → `routes/access/users.tsx`）后，`pnpm --filter @starter/admin typecheck` 报 `"/access/users" is not assignable to keyof FileRoutesByPath`，列出的还是旧路径。
+- **原因**：`routeTree.gen.ts` 是由 `@tanstack/router-plugin/vite` 在 dev/build 时生成的，typecheck（纯 `tsc --noEmit`）不会触发生成，用的是旧 routeTree。
+- **解决**：改路由后**先跑一次 `pnpm --filter @starter/admin build`（或 dev）**重新生成 `routeTree.gen.ts`，再跑 typecheck。`tsr` CLI 没装，只有 Vite 插件能生成。
+- **备注**：同步改导航组件（`header/*`、`navbar/*`）里的 `to`/`link` 常量；ego 验证 `/access/users` 等新 URL 能打开页面。
+
 ## 相关约定
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。

@@ -93,6 +93,29 @@
 
 **新增文件时**：先看同目录已有文件的风格，跟随它；没有同目录就查上表。禁止出现小驼峰文件名（如 `usersRepository.ts`）或在 React 里用 kebab-case 组件名（如 `dashboard-page.tsx`）。现有文件若不符合，按上表改名并同步所有 import。
 
+### admin 目录结构（TanStack Router + Mantine）
+
+```
+apps/admin/src/
+├── main.tsx / index.css / routeTree.gen.ts（生成，勿改）
+├── routes/                  # 文件路由：只放 createFileRoute 声明（约 5 行），指向 features 的页面组件
+│   ├── __root.tsx / index.tsx / dashboard.tsx / settings.tsx
+│   └── access/{users,roles,tenants,permissions}.tsx   # 目录结构=URL：/access/users
+├── features/                # 按业务领域组织页面
+│   ├── home/HomePage.tsx
+│   ├── dashboard/DashboardPage.tsx
+│   ├── access/{Users,Roles,Tenants,Permissions}Page.tsx
+│   └── settings/SettingsPage.tsx
+└── components/              # 通用组件 + 布局
+    ├── PlaceholderPage.tsx  # 通用占位（传 title/description）
+    ├── AdminLayout.tsx
+    └── header/{HeaderMenu,HeaderMegaMenu}、navbar/{DoubleNavbar,NavbarNested}（两套布局保留）
+```
+
+- **routes 与页面分离**：route 文件只声明路由并指向 features 里的页面，页面实现不写在 route 里。
+- **路由目录 = URL**：`routes/access/users.tsx` → `/access/users`；改路由文件路径后必须同步改导航组件里的 `to`/`link`，并**先跑一次 `pnpm --filter @starter/admin build`（或 dev）重新生成 `routeTree.gen.ts`，再跑 typecheck**（否则 typecheck 用旧 routeTree 会报错）。
+- **占位页**：未实现的页面用薄组件 `<PlaceholderPage title="..." description="..." />`，不各写一套占位 UI。
+
 ## 8. 发布与文档入口
 
 - 发版手动流程与 npm 包结构：[README.md](../README.md) 的「创建新项目」「发布 CLI」章节。

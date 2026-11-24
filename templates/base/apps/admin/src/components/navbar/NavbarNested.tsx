@@ -28,10 +28,10 @@ const MENU: {
     icon: IconLock,
     initiallyOpened: true,
     links: [
-      { label: "用户", link: "/users" },
-      { label: "角色", link: "/roles" },
-      { label: "租户", link: "/tenants" },
-      { label: "权限", link: "/permissions" },
+      { label: "用户", link: "/access/users" },
+      { label: "角色", link: "/access/roles" },
+      { label: "租户", link: "/access/tenants" },
+      { label: "权限", link: "/access/permissions" },
     ],
   },
   {
@@ -59,3 +59,4 @@ export const NavbarNested = () => (
     </ScrollArea>
   </nav>
 );
+

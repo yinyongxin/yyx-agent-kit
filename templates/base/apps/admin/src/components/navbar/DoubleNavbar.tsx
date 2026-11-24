@@ -26,10 +26,10 @@ const GROUPS: {
     label: "权限管理",
     icon: IconLock,
     links: [
-      { label: "用户", to: "/users" },
-      { label: "角色", to: "/roles" },
-      { label: "租户", to: "/tenants" },
-      { label: "权限", to: "/permissions" },
+      { label: "用户", to: "/access/users" },
+      { label: "角色", to: "/access/roles" },
+      { label: "租户", to: "/access/tenants" },
+      { label: "权限", to: "/access/permissions" },
     ],
   },
   {
@@ -87,3 +87,4 @@ export const DoubleNavbar = () => {
     </nav>
   );
 };
+

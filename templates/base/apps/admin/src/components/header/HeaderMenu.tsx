@@ -32,13 +32,13 @@ const LINKS: NavItem[] = [
     ],
   },
   {
-    to: "/users",
+    to: "/access/users",
     label: "权限管理",
     links: [
-      { to: "/users", label: "用户" },
-      { to: "/roles", label: "角色" },
-      { to: "/tenants", label: "租户" },
-      { to: "/permissions", label: "权限" },
+      { to: "/access/users", label: "用户" },
+      { to: "/access/roles", label: "角色" },
+      { to: "/access/tenants", label: "租户" },
+      { to: "/access/permissions", label: "权限" },
     ],
   },
   { to: "/settings", label: "设置" },
@@ -128,3 +128,4 @@ const DrawerLinksGroup = ({ link }: { link: NavItem }) => {
     </>
   );
 };
+
