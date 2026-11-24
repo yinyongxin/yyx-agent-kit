@@ -2,6 +2,11 @@
 
 记录仓库与 npm 包 `yyx-agent-kit` 的版本变更。格式参考 Keep a Changelog。
 
+## [Unreleased]
+
+- **Prisma schema 多文件拆分**：主文件 `prisma/schema.prisma` 只放 generator/datasource/enum，模型按领域拆到 `prisma/models/{tenant,user,rbac,billing}.prisma`；`prisma.config.ts` 的 `schema` 改指向目录 `"prisma"`（指向文件会静默丢模型，见踩坑记录 #21）。PoC 验证 + `migrate status` 确认无新迁移，typecheck/build 通过
+- **数据库变更强制走 migrate 写入 agent 规则**：chief/qa 的 prompt 与 workspace/nestjs skill 明确禁止 `prisma:push` 用于正式开发/生产，schema 变更必须生成迁移文件；新增踩坑 #20（P3005 baseline）
+
 ## [0.1.0] - 2026-11-23
 
 首个发布到 npmjs.com 的版本。

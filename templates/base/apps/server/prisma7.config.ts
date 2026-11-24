@@ -15,7 +15,9 @@ for (let i = 0; i < 4; i++) {
 }
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  // 指向目录（不是文件）：Prisma 会自动合并主文件 + models/*.prisma。
+  // 指向单文件会静默忽略 models/ 下的模型（官方坑，见踩坑记录）。
+  schema: "prisma",
   migrations: {
     path: "prisma/migrations",
   },

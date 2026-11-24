@@ -44,6 +44,7 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 
 - 模块按 NestJS 规范分层：`module / controller / service / dto / entity`
 - 使用 Prisma Schema 定义数据模型，通过 `prisma generate` 同步类型（生成物在 `src/generated/prisma`，随应用编译）
+- **schema 多文件组织**：主文件 `prisma/schema.prisma` 只放 generator/datasource/enum；模型按领域拆到 `prisma/models/*.prisma`（tenant/user/rbac/billing）。**`prisma.config.ts` 的 `schema` 必须指向目录 `"prisma"`（不是文件）**，否则 models/ 下的模型被静默忽略（Prisma 7 官方坑，见踩坑记录 #21）。跨文件关系无需 import，Prisma 自动合并；换组织方式后跑 `prisma migrate status` 确认无新迁移
 - 服务内从 `../generated/prisma/client` 导入 `PrismaClient`，构造时传 driver adapter；不要再写 `@prisma/client` 导入或 schema 里的 `url = env(...)`
 - Controller 只做参数校验和路由转发，业务逻辑放在 Service 层
 - 使用 `class-validator` + `class-transformer` 做 DTO 校验

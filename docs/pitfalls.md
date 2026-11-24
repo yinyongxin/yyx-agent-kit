@@ -168,6 +168,14 @@
   ```
 - **备注**：baseline 只改本地库的 `_prisma_migrations` 记录，不影响代码/远端；每台用过 `db push` 的设备都要做一次。这正是"db push 仅原型验证、正式结构变更必须走 migrate"的代价——不要图省事用 push。
 
+### 21. Prisma 7 多文件 schema：config 指向文件会静默丢模型
+
+- **现象**：把模型拆到 `prisma/models/*.prisma` 后，`prisma generate` 成功，但生成的 client 里没有这些模型（跨文件关系也失效）。
+- **原因**：`prisma.config.ts` 的 `schema` 指向了单文件 `prisma/schema.prisma`，Prisma 只读那一个文件，models/ 下全被忽略。官方博客特意强调这点；GitHub issue #28673 就是这个坑（升级 7 后多文件合并"失效"，实为配置指错）。
+- **解决**：`schema: "prisma"`（指向**目录**），不是 `schema: "prisma/schema.prisma"`。Prisma 自动合并主文件 + 所有 `.prisma` 子文件，跨文件关系无需 import。
+- **验证**：生成后检查 `src/generated/prisma/models.ts` 是否导出了全部模型；跑 `prisma migrate status` 确认 `Database schema is up to date`（组织变化不应产生新迁移）。
+- **备注**：本次拆分前先用隔离 PoC 验证了 Prisma 7 + `prisma-client` generator 的多文件合并可行，再动项目——符合"下结论前多方验证"的约定。
+
 ## 相关约定
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。
