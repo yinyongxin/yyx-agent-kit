@@ -43,6 +43,11 @@ permissions:
 - 新建一个项目、引入一个框架/工具、或升级到新技术版本时，**用 ego 去官网/官方文档查看当前最新用法和版本要求**，不要靠过往经验或记忆写配置和命令。技术迭代快，经验经常过时（例：TS 7 移除了 compiler API，Nest CLI 用不了）。
 - **下「不可行/不支持」结论前必须多方交叉验证**：查所用库/框架的一手文档（不是上层框架的封装文档），并至少交叉验证一个独立来源（官方参考手册的配置字段表、GitHub issue/discussion）。PoC 失败先排查是否漏配选项，不要凭单次实验判定「不可行」。分类整理见 `docs/conventions.md` 第 1 节，案例见踩坑记录 #19。
 - **用官方脚手架生成初始结构**，而不是手写配置文件：前端 `create-vite` / `create-next-app`，后端 `nest new`，其它框架同理。先跑官方脚手架拿到当前正确的模板，再往我们的 monorepo 规范上改。
+- **数据库结构变更强制走 Prisma Migrate，禁止用 `prisma:push`（db push）**：
+  - 改了 `schema.prisma` 必须跑 `pnpm --filter @starter/server db:migrate -- --name <语义名>` 生成迁移文件，review SQL 后提交入库；生产/CI 用 `db:deploy` 应用。
+  - `prisma:push` 只是"一次性原型验证工具"，任何涉及提交到仓库/部署的结构变更都不许用它；生产环境绝对禁止。
+  - `migrate` 管表结构（DDL），`db:seed` 只管初始数据，职责不可混；已应用的迁移禁止手改，修正走新迁移或反向迁移。
+  - 派 `general` 做涉及 schema 变更的任务时，prompt 里必须明确这条约束，并要求把迁移文件作为交付物。
 - 落地到 `templates/base` 后，按「模板与规范同步升级」约束同步更新 skills/agents。
 
 ## 门禁（硬规则）

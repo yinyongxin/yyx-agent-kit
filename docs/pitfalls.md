@@ -157,6 +157,17 @@
 - **解决**：下「不可行/不支持」结论前，必须查所用库/框架的一手文档（不是上层框架的封装文档），并交叉验证至少一个独立来源（官方参考手册的字段表、GitHub issue/discussion）；PoC 失败先问「是不是漏配了选项」再下结论。
 - **教训**：这次错误差点让整个方案走偏（回退到旧 generator）。多方验证不是额外成本，而是防止「凭一次实验下结论」的必要步骤——智能体尤其容易犯这个错，因为一次 PoC 失败看起来就是铁证。
 
+### 20. 从 db push 切到 Prisma Migrate 报 P3005（数据库非空）
+
+- **现象**：`pnpm db:deploy` 报 `P3005 The database schema is not empty` —— 库里已有表（之前 `db push` 建的），但没有 `_prisma_migrations` 记录。
+- **原因**：`db push` 只同步结构、不留迁移历史；切换到 Migrate 后，Prisma 发现库非空且无迁移记录，拒绝把初始迁移当成新库应用（怕覆盖已有数据）。
+- **解决**：baseline（基线化）——把当前库状态标记为已应用初始迁移：
+  ```bash
+  npx prisma migrate resolve --applied <初始迁移名>   # 例：20261124120000_init_permissions
+  npx prisma migrate deploy                          # 之后正常
+  ```
+- **备注**：baseline 只改本地库的 `_prisma_migrations` 记录，不影响代码/远端；每台用过 `db push` 的设备都要做一次。这正是"db push 仅原型验证、正式结构变更必须走 migrate"的代价——不要图省事用 push。
+
 ## 相关约定
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。

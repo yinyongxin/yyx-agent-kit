@@ -104,6 +104,7 @@ docker compose down -v          # 停止并删数据卷（危险）
 ```
 
 - 数据库：**PostgreSQL + pgvector**（`pgvector/pgvector:pg17`），初始化 SQL 已 `CREATE EXTENSION vector`，向量检索单库搞定，不另起向量库；访问封装成 `VectorStore` 接口，将来可换 Qdrant。
+- **数据库结构变更强制走 Prisma Migrate**（详见 `docs/conventions.md` 第 5 节）：改 `schema.prisma` → `pnpm --filter @starter/server db:migrate -- --name <语义名>` 生成迁移文件 → review SQL 后提交入库 → 生产/CI `db:deploy` 应用。`prisma:push` **仅一次性原型验证**，禁止用于正式开发与生产；`migrate` 管 DDL、`db:seed` 管初始数据，不可混用；已应用迁移禁止手改，修正走新迁移或反向迁移。
 - 端口：默认 54732(Postgres) / 46379(Redis)，映射到宿主，**多项目并存时每个项目的 `.env` 用不同端口**。应用端口仍走 47xxx 段。
 - 连接：本地进程用 `localhost` + 映射端口（见 `.env` 的 `DATABASE_URL` / `REDIS_URL`）；容器内用 service 名 `postgres` / `redis`。
 - 密码只放 `.env`（已 gitignore），不写死在代码或提交里。
