@@ -1,5 +1,5 @@
 import { IconArrowsExchange } from "@tabler/icons-react";
-import { ActionIcon, Group, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Tooltip } from "@mantine/core";
 import { Outlet } from "@tanstack/react-router";
 import { useState } from "react";
 import { HeaderMegaMenu } from "../header/HeaderMegaMenu/index";
@@ -56,11 +56,6 @@ export const AdminLayout = () => {
             }}
           >
             <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-              <Group gap="xs" p="xs">
-                <Text size="sm" fw={600}>
-                  starter
-                </Text>
-              </Group>
               <div style={{ flex: 1, minHeight: 0 }}>
                 {layout === "nested" ? <NavbarNested /> : <DoubleNavbar />}
               </div>
