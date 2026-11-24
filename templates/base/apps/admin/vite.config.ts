@@ -1,9 +1,16 @@
+import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
+  // @ 别名指向 src，与 tsconfig paths 一致（Vite 8 官方推荐双配置）
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
   plugins: [
     // 官网要求：tanstackRouter 必须在 @vitejs/plugin-react 之前
     tanstackRouter({ target: "react", autoCodeSplitting: true }),

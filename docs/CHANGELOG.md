@@ -8,6 +8,8 @@
 - **文件命名规范**：确定"按生态惯例、场景内统一"原则（`docs/conventions.md` 第 7 节），chief agent 派活时提醒；后端边角文件对齐：`user.ts` → `user.types.ts`、`tenant-context.ts` → `tenant-context.util.ts`，同步所有 import
 - **admin 目录结构重组**：routes/（文件路由声明，access/* → URL `/access/*`）与 features/（home/dashboard/access/settings 按领域）分离；两套 header/navbar 布局保留；导航链接同步新 URL；ego 验证新路由可用（踩坑 #22：改路由先 build 生成 routeTree 再 typecheck）
 - **admin 组件/页面文件夹化 + 壳内容分离**：所有组件和页面改为目录 + `index.tsx` barrel（只 re-export），可带 css/types/enums/functions；页面统一 `<PageShell>` 外壳 + `XxxContent` 可复用内容（Home/Dashboard 的真实逻辑也拆到 Content）；`PlaceholderPage` 拆成 `PageShell` + `PlaceholderContent`；ego 验证三个页面正常
+- **侧栏去掉折叠**：AdminLayout 移除展开/收起和移动端抽屉，侧栏固定 260px；删除多余的静态 starter 标题
+- **Vite 前端加 `@/*` 别名**：admin/client 双配置（tsconfig paths + Vite resolve.alias），跨目录 import 改用 `@/`；TS 7 移除 baseUrl（踩坑 #23）
 - **数据库变更强制走 migrate 写入 agent 规则**：chief/qa 的 prompt 与 workspace/nestjs skill 明确禁止 `prisma:push` 用于正式开发/生产，schema 变更必须生成迁移文件；新增踩坑 #20（P3005 baseline）
 
 ## [0.1.0] - 2026-11-23

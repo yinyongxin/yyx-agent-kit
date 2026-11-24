@@ -1,4 +1,4 @@
-import { PageShell } from "../../../components/PageShell";
+import { PageShell } from "@/components/PageShell";
 import { UsersContent } from "./UsersContent";
 
 /** 用户管理页：页面壳（PageShell）+ 可复用内容（UsersContent）。 */
@@ -7,3 +7,4 @@ export const UsersPage = () => (
     <UsersContent />
   </PageShell>
 );
+

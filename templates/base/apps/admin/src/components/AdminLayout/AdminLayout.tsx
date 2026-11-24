@@ -2,10 +2,10 @@ import { IconArrowsExchange } from "@tabler/icons-react";
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { Outlet } from "@tanstack/react-router";
 import { useState } from "react";
-import { HeaderMegaMenu } from "../header/HeaderMegaMenu/index";
-import { HeaderMenu } from "../header/HeaderMenu/index";
-import { DoubleNavbar } from "../navbar/DoubleNavbar/index";
-import { NavbarNested } from "../navbar/NavbarNested/index";
+import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
+import { HeaderMenu } from "@/components/header/HeaderMenu";
+import { DoubleNavbar } from "@/components/navbar/DoubleNavbar";
+import { NavbarNested } from "@/components/navbar/NavbarNested";
 
 type Layout = "nested" | "double" | "header-menu" | "header-mega-menu";
 
@@ -70,3 +70,4 @@ export const AdminLayout = () => {
     </>
   );
 };
+

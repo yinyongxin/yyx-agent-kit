@@ -183,6 +183,13 @@
 - **解决**：改路由后**先跑一次 `pnpm --filter @starter/admin build`（或 dev）**重新生成 `routeTree.gen.ts`，再跑 typecheck。`tsr` CLI 没装，只有 Vite 插件能生成。
 - **备注**：同步改导航组件（`header/*`、`navbar/*`）里的 `to`/`link` 常量；ego 验证 `/access/users` 等新 URL 能打开页面。
 
+### 23. TS 7 移除了 tsconfig 的 baseUrl
+
+- **现象**：给 Vite 前端配 `@/*` 别名时按老经验写了 `"baseUrl": "."` + `"paths": {"@/*": ["./src/*"]}`，tsc 报 `TS5102: Option 'baseUrl' has been removed. Use '"paths": {"*": ["./*"]}' instead`。
+- **原因**：TypeScript 7 移除了 `baseUrl`（paths 现在自己就能相对 tsconfig 所在目录解析），照搬 TS 5.x 的 alias 写法会报错。
+- **解决**：只写 `paths`（`"@/*": ["./src/*"]`），不要 `baseUrl`。Vite 运行时另配 `resolve.alias` 指向 src（Vite 8 官方推荐双配置，不用 `resolve.tsconfigPaths`）。
+- **备注**：这是"别靠记忆写配置、先查官网"的又一个例子；前端构建（Vite 的 Rolldown）不报错，只有 tsc typecheck 报，容易漏。
+
 ## 相关约定
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。

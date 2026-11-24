@@ -117,6 +117,7 @@ apps/admin/src/
 - **路由目录 = URL**：`routes/access/users.tsx` → `/access/users`；改路由文件路径后必须同步改导航组件里的 `to`/`link`，并**先跑一次 `pnpm --filter @starter/admin build`（或 dev）重新生成 `routeTree.gen.ts`，再跑 typecheck**（否则 typecheck 用旧 routeTree 会报错）。
 - **组件/页面文件夹化 + barrel**：每个组件和页面都是目录，内含 `index.tsx`（**只 re-export，不写业务逻辑**）+ 实现文件 + 可选的 `*.module.css` / `types.ts` / `enums.ts` / `functions.ts` / `common/`。外部统一从目录导入（`import { X } from "./X"`），不引用内部文件名。组件目录允许 `index.tsx`（导出 JSX 组件）。
 - **页面 = 壳 + 内容**：`XxxPage` 只负责用 `<PageShell title description actions>` 包一层，`XxxContent` 放可复用业务 UI（表格/表单/API 调用），不含页面级标题。内容组件可被其它页面/弹窗复用。`PageShell` 统一布局，`PlaceholderContent` 只是它的一种内容实现（占位）。
+- **路径别名**：Vite 前端（admin/client）统一 `@/*` → `./src/*`。**双配置**：tsconfig `paths` 负责类型检查 + `vite.config.ts` 的 `resolve.alias` 负责运行时解析（Vite 8 官方推荐，不用 `resolve.tsconfigPaths`）。跨目录引用用 `@/components/X`、`@/features/X`；同目录 barrel 内部与 css 相对路径保持 `./X`。**TS 7 已移除 `baseUrl`**，只用 `paths` 即可（见踩坑记录 #23）。
 
 ## 8. 发布与文档入口
 

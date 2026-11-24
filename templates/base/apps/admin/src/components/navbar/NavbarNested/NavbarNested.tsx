@@ -5,7 +5,7 @@ import {
   type TablerIcon,
 } from "@tabler/icons-react";
 import { Group, ScrollArea, Text } from "@mantine/core";
-import { LinksGroup } from "../NavbarLinksGroup";
+import { LinksGroup } from "@/components/navbar/NavbarLinksGroup";
 import classes from "./NavbarNested.module.css";
 
 const MENU: {
@@ -59,6 +59,7 @@ export const NavbarNested = () => (
     </ScrollArea>
   </nav>
 );
+
 
 
 
