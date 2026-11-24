@@ -1,0 +1,23 @@
+{
+  "skill_name": "qa-regression",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "开发完了，dev-log 在 docs/20261124-todo/03-dev-log.md，PRD 在 01-prd.md。设计测试用例并出测试报告。",
+      "expected_output": "04-test-plan.md 用例按 AC 编号对齐、覆盖边界与异常；04-test-report.md 有结论/执行明细/缺陷/回归结论",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "登录功能测一下，看看能不能上线。",
+      "expected_output": "从 PRD AC 拆用例，覆盖未登录/越权/token 过期等异常路径，报告给出明确「通过/不通过/阻塞」而非模糊结论",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "这次改了 Prisma schema 和用户表，还动了鉴权拦截器，回归范围怎么定？",
+      "expected_output": "按改动文件推导：读写该表全部入口 + 未登录/越权/token 过期三条路径 + 上次缺陷复测",
+      "files": []
+    }
+  ]
+}

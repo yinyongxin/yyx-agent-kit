@@ -1,0 +1,23 @@
+{
+  "skill_name": "product-pipeline",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我做个待办应用，能登录、能管理待办。",
+      "expected_output": "生成 slug，按文件状态判定当前阶段，从阶段 1 开始并说明下一步门禁，而不是直接写代码",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "docs/20261124-todo/ 下有 01-prd.md 和 02-tech-design.md，03-dev-log.md 还没建。现在到哪一步了，能不能派测试？",
+      "expected_output": "判定为阶段 3 开发实施；因缺 03-dev-log.md 禁止派 qa，说明门禁依据",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "就改个按钮文案，也要走五阶段写一堆文档吗？",
+      "expected_output": "判断是否符合小需求裁剪条件；符合则合并阶段 1+2 但仍产出需求/验收与可行性结论，不直接跳过",
+      "files": []
+    }
+  ]
+}

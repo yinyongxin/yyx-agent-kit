@@ -1,0 +1,23 @@
+{
+  "skill_name": "archive",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "这个需求做完了，把关键决策、交付物和遗留风险归档一下。",
+      "expected_output": "docs/<slug>/05-record.md 含概览/ADR/交付物/验证结论/遗留风险/下次接手，并更新 docs/INDEX.md",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "认证方案从 Authentik 改成 NestJS 官方包了，记录一下这个决策，之前那条别删。",
+      "expected_output": "新增 ADR 记录新结论，旧条目保留并标注「已废弃」及原因，符合「追加不覆盖」",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "更新一下 docs/INDEX.md，把刚交付的 20261124-todo 加进去。",
+      "expected_output": "索引新增一行，需求/状态/更新日期/入口字段齐全，入口指向 05-record.md",
+      "files": []
+    }
+  ]
+}
