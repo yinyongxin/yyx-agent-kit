@@ -30,7 +30,7 @@ docs/
         └── 01-prd.md / 01-wireframe.md / 01-interaction.md / 02-tech-design.md / 03-dev-log.md / 04-*.md / 05-record.md
 ```
 
-- **每个目录用 `README.md` 说明职责、文件索引、关联和同步要求。**
+- **每个目录用 `README.md` 说明职责、文件索引、关联和同步要求**；agent 进目录先读它筛选文件，再读具体内容，结论以具体文件为准（见 `guides/conventions.md` 第 9 节）。
 - **需求交付物固定放 `docs/deliverables/<slug>/`**，这是流水线的硬约定（`product-pipeline` / `prd` / `archive` skill 都按这个路径找文件）；slug 目录下不要再套子目录。
 - **常设文档放 `guides/`**，改完要同步更新引用它的 skills / agents / README。
 - **参考资料放 `reference/`**，官方脚手架配置保持原样，便于升级时对照。

@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **目录导航优先落地**：`conventions.md` 新增第 9 节——目录 README 固定四段（职责/文件索引/关联/同步要求），agent 进目录先读 README 筛选文件再读具体内容，结论以具体文件为准；同步进 chief/qa agent（全局+模板副本）、`product-pipeline` 执行模板、`qa-regression` 回归核对、模板 `AGENTS.md` 与 docs 文档地图
 - **阶段性审查修复**：chief agent 不再引用不存在的 `vue`/`solidjs` skill（全局+模板副本）；`prd` skill 补齐 `01-wireframe.md` / `01-interaction.md` 固定结构模板；补齐 `docs/guides`/`reference`/`deliverables` 三个目录的 README.md；修模板内生成项目不存在的路径引用；根 README 结构树与标题更新；模板技术版本改为 Vite 8 + NestJS 12；踩坑 #14/#15 补当前基线说明；`ardot-remote` 更正为 `ardot`；OpenDesign MCP 连接失败时增加降级路径；qa/qa-regression 交付物路径补全；CLI 版本号改为从 package.json 读取
 - **文档说明统一为 README.md**：独立的需求索引表并入 `docs/README.md`「需求索引」一节并删除原文件；archive / product-pipeline skill（含 evals）、agent-system 说明、根 README 同步改为指向 README.md 的锚点。全仓库目录说明只用 `README.md` 一种命名
 - **需求交付物收敛到 `docs/deliverables/`**：5 个 `20261124-*` 目录统一移入；流水线约定同步改为 `docs/deliverables/<slug>/`，涉及 5 个 flows skill（含 evals）、chief/qa agent（含模板副本）、tooling skill、模板 AGENTS/README、docs 地图与索引、CHANGELOG 历史引用等 25 个文件，路径变体 `<slug>/`、`20261124-` 全部覆盖

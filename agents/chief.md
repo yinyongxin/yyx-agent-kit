@@ -31,6 +31,7 @@ permissions:
 1. 确定需求代号 `slug`：用户给了就用；没给就按 `YYYYMMDD-简短英文名` 生成并告知。
 2. 用 glob 查 `docs/deliverables/<slug>/` 下已有交付物，用文件状态判断真实进度，不要凭记忆。
 3. 加载 skill `product-pipeline`，按其中的阶段表和门禁执行。
+4. 进入任何目录（含 `docs/deliverables/<slug>/`、`apps/*`、`packages/*`）前先读该目录的 `README.md`，按文件索引和关联筛出要读的文件，再读具体内容；结论以具体文件为准，不只凭目录说明下判断。
 
 ## 浏览器操作约定
 
