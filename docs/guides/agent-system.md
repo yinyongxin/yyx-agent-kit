@@ -29,7 +29,7 @@ chief（总管，primary agent）判断阶段、守门禁
    ├─ 阶段4 测试回归（派 qa subagent）
    │     → 04-test-plan.md + 04-test-report.md
    └─ 阶段5 记录归档（chief 自己 + archive skill）
-         → 05-record.md + docs/INDEX.md
+         → 05-record.md + docs/README.md
 ```
 
 ## 1. 角色：agents
@@ -63,7 +63,7 @@ chief（总管，primary agent）判断阶段、守门禁
 | 2 技术方案 | chief + `tech-design` | `02-tech-design.md` | 逐条给可行性结论，无「需调整」「不可做」 | 全部「可做」+ 文件存在 → 才能派 general；出现「需调整/不可做」→ 回 PRD 修订重评 |
 | 3 开发实施 | general | 代码 + `03-dev-log.md` | 任务完成；typecheck / lint / build 通过 | dev-log 任务完成 → 才能派 qa |
 | 4 测试回归 | qa | `04-test-plan.md`、`04-test-report.md` | 报告结论「通过」，无未处理高优缺陷 | 结论=通过 → 才能归档 |
-| 5 记录归档 | chief + `archive` | `05-record.md`、`docs/INDEX.md` | 决策与遗留项可追溯、索引入口正确 | 每道门禁通过后即可追加一条记录，不必等全部做完 |
+| 5 记录归档 | chief + `archive` | `05-record.md`、`docs/README.md` | 决策与遗留项可追溯、索引入口正确 | 每道门禁通过后即可追加一条记录，不必等全部做完 |
 
 ### 门禁为什么这样设
 
@@ -95,11 +95,11 @@ Skill ID = 目录名。加载靠 description 自动匹配，不用手写配置�
 
 | Skill | 什么时候加载 | 目标产出 | 要点 |
 | --- | --- | --- | --- |
-| `product-pipeline` | 「做个 X」「推进需求」「现在到哪一步」「能开工/测试/归档吗」 | 各阶段文件 | 五阶段表、门禁顺序、按文件判断进度；小需求可合并 1+2 但须在方案顶部写需求与验收；大需求拆多 slug 用 `docs/INDEX.md` 串 |
+| `product-pipeline` | 「做个 X」「推进需求」「现在到哪一步」「能开工/测试/归档吗」 | 各阶段文件 | 五阶段表、门禁顺序、按文件判断进度；小需求可合并 1+2 但须在方案顶部写需求与验收；大需求拆多 slug 用 `docs/README.md` 串 |
 | `prd` | 「写 PRD」「功能具体怎么做」「需求文档」 | 三件套：`01-prd.md` / `01-wireframe.md` / `01-interaction.md` | PRD 固定 9 节；AC 用 Given/When/Then 且可判定；编号只增不改；**产出后强制交叉自检 7 条** |
 | `tech-design` | 「能不能做」「怎么拆任务」「用什么框架」 | `02-tech-design.md` | 固定 12 节；可行性三选一；任务必须「一件事、文件可枚举、依赖编号、可独立验证」 |
 | `qa-regression` | 「测一下」「验收」「跑回归」「能上线吗」 | `04-test-plan.md` / `04-test-report.md` | 用例编号对齐 AC；等价类+边界；回归范围按 dev-log 改动推导；缺陷分 P0–P3 |
-| `archive` | 「归档」「记录决策」「更新索引」 | `05-record.md` / `docs/INDEX.md` | 追加不覆盖；只记事实；只留路径不粘日志；可交接 |
+| `archive` | 「归档」「记录决策」「更新索引」 | `05-record.md` / `docs/README.md` | 追加不覆盖；只记事实；只留路径不粘日志；可交接 |
 
 ### 3.2 工程规范类 `skills/standards/`（4 个，约束代码不产文档）
 
@@ -131,7 +131,7 @@ docs/deliverables/<slug>/
 └── 05-record.md            chief 写：决策与遗留
 ```
 
-全局索引 `docs/INDEX.md` 在 docs 根目录，按 slug 串起所有交付物。
+全局索引 `docs/README.md` 在 docs 根目录，按 slug 串起所有交付物。
 
 **编号是跨阶段唯一连接键**：`F1`、`F2` 是功能编号；`AC` 是验收标准；`I/G/E/Q` 是交互/规则/异常/待确认编号。编号只增不改，废弃就保留并标注「已废弃」，不回收再用——因为改一次编号，下游四份文档都要同步改。
 
@@ -171,7 +171,7 @@ docs/deliverables/<slug>/
 | `20261124-mantine-ui-mcp` | 02 / 03（方案里合并写了需求+验收） | 阶段 1+2 合并后做到阶段 3，未测试 |
 | `20261124-prisma7-upgrade` | 02 / 03（同上） | 阶段 1+2 合并后做到阶段 3，未测试 |
 
-> 这些历史目录里**没有** `01-wireframe.md` / `01-interaction.md` / `05-record.md`，也没有 `docs/INDEX.md`——三件套和强制自检是后加的规则（见 CHANGELOG Unreleased）。
+> 这些历史目录里**没有** `01-wireframe.md` / `01-interaction.md` / `05-record.md`，需求索引条目也没建——三件套和强制自检是后加的规则（见 CHANGELOG Unreleased）。
 
 ## 8. 全局 MCP 配置（当前）
 
@@ -190,7 +190,7 @@ docs/deliverables/<slug>/
 审查时发现，不是文档错误，是后续需要处理的现状：
 
 1. **CLI 版本号不一致**：`package.json` 是 `0.1.1`，但 `cli/bin/yyx-new.mjs` 里 `VERSION = '0.1.0'`，`--version` 会报旧号。
-2. **历史需求缺归档文件**：5 个 slug 都没有 `05-record.md`，`docs/INDEX.md` 也不存在，流水线阶段 5 从未真正走完。
+2. **历史需求缺归档文件**：5 个 slug 都没有 `05-record.md`，需求索引条目也不存在（当时是独立 `docs/INDEX.md`，现已并入 `docs/README.md`），流水线阶段 5 从未真正走完。
 3. **三件套规则只对新需求生效**：历史目录里没有线稿和交互稿，不必回头补，但要知道「按老文件判断进度」时它们本来就不该存在。
 
 ## 10. 硬规则速查

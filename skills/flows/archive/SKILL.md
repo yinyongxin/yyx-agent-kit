@@ -40,12 +40,12 @@ description: 每个阶段结束或需求交付后整理决策记录、产出清�
 第一步行什么、看哪个文件、问谁确认。
 ```
 
-## 索引 `docs/INDEX.md`
+## 需求索引（写在 `docs/README.md` 的「需求索引」一节）
 
 ```markdown
 | 需求 | 状态 | 更新日期 | 入口 |
 | --- | --- | --- | --- |
-| 20261123-user-login | 已交付 | 2026-11-23 | docs/20261123-user-login/05-record.md |
+| 20261123-user-login | 已交付 | 2026-11-23 | docs/deliverables/20261123-user-login/05-record.md |
 ```
 
 ## 原则

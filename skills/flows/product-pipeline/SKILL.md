@@ -15,7 +15,7 @@ description: 产品从需求到上线的五阶段流程与门禁。当用户说�
 | 2 技术方案 | chief + `tech-design` | `02-tech-design.md` | 逐条给出可行性结论，无「需调整」「不可做」 |
 | 3 开发实施 | `general` | 代码 + `03-dev-log.md` | 任务全部完成；类型检查/lint/构建通过 |
 | 4 测试回归 | `qa` | `04-test-plan.md`、`04-test-report.md` | 报告结论为「通过」；无未处理高优缺陷 |
-| 5 记录归档 | chief + `archive` | `05-record.md`、`docs/INDEX.md` | 决策与遗留项可追溯；索引入口正确 |
+| 5 记录归档 | chief + `archive` | `05-record.md` + `docs/README.md`「需求索引」追加一行 | 决策与遗留项可追溯；索引入口正确 |
 
 **判断真实进度靠文件，不靠记忆**：先用 glob 查 `docs/deliverables/<slug>/` 下已有哪些交付物，文件不存在就说明该阶段没做过。阶段 1、2 必须由同一个执行者完成，因为它们之间要来回修订同一份 PRD，拆成两个独立上下文会丢掉修订理由。
 
@@ -67,7 +67,7 @@ description: 产品从需求到上线的五阶段流程与门禁。当用户说�
 
 ## 并行与拆分
 
-- 一个 slug 对应一个需求；大需求按子域拆成多个 slug，用 `docs/INDEX.md` 串起来。
+- 一个 slug 对应一个需求；大需求按子域拆成多个 slug，用 `docs/README.md` 串起来。
 - 阶段 3 可并行启动多个 `general`，但每个必须拿到不重叠的文件范围，否则串行。
 
 ## 与工具链的关系

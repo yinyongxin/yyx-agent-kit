@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "这个需求做完了，把关键决策、交付物和遗留风险归档一下。",
-      "expected_output": "docs/deliverables/<slug>/05-record.md 含概览/ADR/交付物/验证结论/遗留风险/下次接手，并更新 docs/INDEX.md",
+      "expected_output": "docs/deliverables/<slug>/05-record.md 含概览/ADR/交付物/验证结论/遗留风险/下次接手，并在 docs/README.md 的「需求索引」追加一行",
       "files": []
     },
     {
@@ -15,7 +15,7 @@
     },
     {
       "id": 3,
-      "prompt": "更新一下 docs/INDEX.md，把刚交付的 20261124-todo 加进去。",
+      "prompt": "更新 docs/README.md 里的「需求索引」，把刚交付的 20261124-todo 加进去。",
       "expected_output": "索引新增一行，需求/状态/更新日期/入口字段齐全，入口指向 05-record.md",
       "files": []
     }
