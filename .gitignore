@@ -1,2 +1,4 @@
 node_modules/
 dist/
+# 源仓库本身不装依赖；在根目录跑 pnpm 命令会生成锁文件，不应提交
+pnpm-lock.yaml
