@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **新增 Agent 系统与 Skills 说明文档**：`docs/agent-system.md` 用一张流程图 + 分工表讲清角色、五阶段门禁、10 个 skill、文件流转、agents/skills/模板三套同步机制、常用场景与现有交付物进度，并标出 CLI 版本号不一致等 3 处现状；README 文档入口置顶
 - **PM 阶段三件套与强制自检**：阶段 1 交付物从单份 `01-prd.md` 扩为 `01-prd.md` + `01-wireframe.md`（页面显示什么）+ `01-interaction.md`（页面联动/状态流转），用 Markdown + Mermaid、不做精细视觉；`prd` skill 新增「产出后交叉自检」7 条（编号闭环、页面闭环、状态唯一、状态机闭合、Mermaid 可渲染、中文一致、规则有落点），流水线门禁与 chief agent（全局+模板副本）同步，模板 README 目录树同步
 - **Prisma schema 多文件拆分**：主文件 `prisma/schema.prisma` 只放 generator/datasource/enum，模型按领域拆到 `prisma/models/{tenant,user,rbac,billing}.prisma`；`prisma.config.ts` 的 `schema` 改指向目录 `"prisma"`（指向文件会静默丢模型，见踩坑记录 #21）。PoC 验证 + `migrate status` 确认无新迁移，typecheck/build 通过
 - **文件命名规范**：确定"按生态惯例、场景内统一"原则（`docs/conventions.md` 第 7 节），chief agent 派活时提醒；后端边角文件对齐：`user.ts` → `user.types.ts`、`tenant-context.ts` → `tenant-context.util.ts`，同步所有 import
