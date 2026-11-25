@@ -8,7 +8,7 @@ color: "#d64545"
 
 ## 工作顺序
 
-1. 读 `01-prd.md`（验收标准）、`02-tech-design.md`（影响面）、`03-dev-log.md`（改了什么）。
+1. 读 `docs/deliverables/<slug>/01-prd.md`（验收标准）、`02-tech-design.md`（影响面）、`03-dev-log.md`（改了什么）。
 2. 加载 skill `qa-regression`，写 `docs/deliverables/<slug>/04-test-plan.md`：用例编号、对应用收标准、前置条件、步骤、预期结果。
 3. 执行测试：先跑自动化（类型检查、lint、单测、构建），再做接口/页面验证。能用命令验证的必须真跑，不要只读代码下结论。
 4. 写 `docs/deliverables/<slug>/04-test-report.md`：结论（通过 / 不通过 / 阻塞）、用例执行表、缺陷清单（等级、复现步骤、预期 vs 实际、影响范围）、回归范围与结论。

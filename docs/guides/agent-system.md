@@ -29,7 +29,7 @@ chief（总管，primary agent）判断阶段、守门禁
    ├─ 阶段4 测试回归（派 qa subagent）
    │     → 04-test-plan.md + 04-test-report.md
    └─ 阶段5 记录归档（chief 自己 + archive skill）
-         → 05-record.md + docs/README.md
+         → 05-record.md + 在 docs/README.md 需求索引追加一行
 ```
 
 ## 1. 角色：agents
@@ -63,7 +63,7 @@ chief（总管，primary agent）判断阶段、守门禁
 | 2 技术方案 | chief + `tech-design` | `02-tech-design.md` | 逐条给可行性结论，无「需调整」「不可做」 | 全部「可做」+ 文件存在 → 才能派 general；出现「需调整/不可做」→ 回 PRD 修订重评 |
 | 3 开发实施 | general | 代码 + `03-dev-log.md` | 任务完成；typecheck / lint / build 通过 | dev-log 任务完成 → 才能派 qa |
 | 4 测试回归 | qa | `04-test-plan.md`、`04-test-report.md` | 报告结论「通过」，无未处理高优缺陷 | 结论=通过 → 才能归档 |
-| 5 记录归档 | chief + `archive` | `05-record.md`、`docs/README.md` | 决策与遗留项可追溯、索引入口正确 | 每道门禁通过后即可追加一条记录，不必等全部做完 |
+| 5 记录归档 | chief + `archive` | `05-record.md` + `docs/README.md`「需求索引」追加一行 | 决策与遗留项可追溯、索引入口正确 | 每道门禁通过后即可追加一条记录，不必等全部做完 |
 
 ### 门禁为什么这样设
 

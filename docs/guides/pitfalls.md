@@ -120,6 +120,7 @@
   - TS 7.x：**移除了 node10**（TS5108），`ignoreDeprecations` 也救不了；且 TS 7.0 不提供 programmatic compiler API → `nest start --watch` 直接跑不了（官方说 7.1 才回归）
 - **不要这样修**：升 TS 7（nest 跑不了）；迁 `node16`/`bundler`（强制 import 加 `.js`，且 CJS server 不能 require ESM 的 shared 包，改动面太大）；锁 TS 5.8 + `.vscode tsdk`（编辑器仍可能用自带 TS，不生效）。
 - **正解**：项目统一升到 **TS 6.0.3**（根 + server 的 devDependency 都升），tsconfig 保留 `module: commonjs` + `moduleResolution: node` + 加 `"ignoreDeprecations": "6.0"`。本地与编辑器都在 TS 6，报错消失，nest CLI 正常，产物仍是 CommonJS。
+- **后续**：当前基线已改为**前端 TS 7 / 后端 TS 6**（见 `workspace` skill）。本条记录当时的决策过程，不要照此回退前端版本。
 - **附带现象**：升级/重装依赖会清空生成的 Prisma client，导致 `@prisma/client did not initialize yet` 或 `has no exported member PrismaClient` —— 重新跑 `prisma generate` 即可。
 - **排查大坑**：反复改 tsconfig 会让多个 `nest start --watch` 残留进程堆积，出现 EADDRINUSE、旧配置反复编译报错。修完配置后务必杀掉所有 node/nest/vite 残留进程再干净启动。
 
@@ -128,7 +129,7 @@
 - **现象**：`import "./globals.css"` 报 TS2882 `Cannot find module or type declarations for side-effect import`。
 - **原因**：TS 6 对副作用 import 做更严格的模块解析，`moduleResolution: bundler` 下 Next 15 的 `next-env.d.ts` 声明未覆盖 CSS 模块。
 - **解决**：在 portal 加 `src/global.d.ts` 声明 `declare module "*.css";`。
-- **备注**：官网 Next 已是 16.x，项目还在 15.x——按"新建/引入技术先去官网查"的约定，后续升级 Next 时用 ego 查官网最新用法。
+- **后续**：项目已升到 Next.js 16.4.6（见 `workspace` skill 基线）；本条记录当时的排查过程，当前版本以基线为准。
 
 ### 16. 官方认证包 JWT_SECRET 必须 ≥32 字节 + .env 改动要重启
 

@@ -24,7 +24,6 @@ description: 产品从需求到上线的五阶段流程与门禁。当用户说�
 ```
 01-prd.md + 01-wireframe.md + 01-interaction.md 齐备、交叉自检通过且用户确认  →  才能做技术方案
 技术方案有可行性结论且全部「可做」  →  才能派 general
-02-tech-design.md 存在   →  才能开工
 03-dev-log.md 任务完成   →  才能派 qa
 04 报告结论=通过          →  才能归档
 ```

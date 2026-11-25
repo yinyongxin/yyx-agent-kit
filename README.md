@@ -1,4 +1,4 @@
-# skills
+# yyx-agent-kit
 
 个人 OpenCode 配置源仓库，位于 `F:\project\yyx-agent-kit`。
 
@@ -12,21 +12,14 @@ F:\project\yyx-agent-kit\
 │   ├── chief.md             # primary：编排、门禁、设计文档
 │   └── qa.md                # subagent：独立测试与回归
 ├── skills\
-│   ├── flows\               # 流程
-│   │   ├── product-pipeline   五阶段与门禁（主流程）
-│   │   ├── prd                PRD 模板
-│   │   ├── tech-design        技术方案 + 可行性结论
-│   │   ├── qa-regression      测试与回归方法
-│   │   └── archive            归档模板
-│   ├── tools\               # 工具
-│   │   └── tooling           ardot、opencode CLI、docker
-│   └── standards\           # 规范（按技术栈拆分，新增栈只需加一个目录）
-│       ├── workspace        通用工程规范（pnpm/mise/monorepo/部署/Docker）
-│       ├── nestjs           NestJS 后端规范
-│       └── react            React 前端规范
-├── templates\
-│   └── base\                项目模板：客户端/管理端/门户/后端 + packages 共享层
-├── scripts\sync.ps1
+│   ├── flows\               # 5 个流程 skill（product-pipeline / prd / tech-design / qa-regression / archive）
+│   ├── tools\tooling\       # 工具链索引（ardot / ego-browser / opencode CLI）
+│   └── standards\           # 4 个规范 skill：workspace / nestjs / react / next
+├── templates\base\          # 项目模板：client/admin/portal/server + packages 共享层
+├── cli\bin\yyx-new.mjs      # npm CLI 入口
+├── scripts\                 # sync.ps1（同步 agents）/ new.ps1（仓库内建项目）
+├── docs\                    # 文档地图、需求交付物、踩坑与约定
+├── package.json             # npm 包定义，bin: yyx-new / yyx-agent-kit
 └── README.md
 ```
 

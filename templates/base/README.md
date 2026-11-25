@@ -17,10 +17,10 @@ clone 到其他机器后路径不同也没关系，相对路径会跟着走。
 
 ```text
 apps/
-├── client/     客户端   React 19 + Vite 6 + TS + Tailwind 4   47173
-├── admin/      管理端   React 19 + Vite 6 + TS + Tailwind 4   47174
-├── portal/     门户     Next.js 16 App Router + Tailwind 4     47175
-└── server/     后端     NestJS 11                              47100，路由前缀 /api
+├── client/     客户端   React 19 + Vite 8 + TS 7 + Tailwind 4   47173
+├── admin/      管理端   React 19 + Vite 8 + TS 7 + Tailwind 4   47174
+├── portal/     门户     Next.js 16 App Router + TS 7 + Tailwind 4  47175
+└── server/     后端     NestJS 12 + TS 6                        47100，路由前缀 /api
 packages/
 ├── shared/     常量、路由表、业务枚举、类型（TS 源码直供）
 └── api/        接口层：类型、SDK、错误处理
@@ -47,7 +47,7 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | postgres | `pgvector/pgvector:pg17` | 54732 | 关系库 + pgvector 扩展；认证状态表也在此库 |
 | redis | `redis:7-alpine` | 46379 | 限流共享存储 / 业务缓存 |
 
-**认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`，状态存 PostgreSQL，无独立 IdP 容器。多平台共用一个 server 天然共享登录态。当前骨架：JWT bearer + `@Public()` 豁免探活 + `@Can()` policy 示例；生产按官网补齐 store / Google OIDC / 2FA / 微信（详见 `skills/standards/nestjs/SKILL.md` 和 `docs/guides/credentials.md`）。
+**认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`，状态存 PostgreSQL，无独立 IdP 容器。多平台共用一个 server 天然共享登录态。当前骨架：JWT bearer + `@Public()` 豁免探活 + `@Can()` policy 示例；生产按官网补齐 store / Google OIDC / 2FA / 微信（详见 `.opencode/skills/standards/nestjs/SKILL.md` 与 `.env.example` 的注释）。
 
 > 改了 `.env`（尤其 JWT_SECRET）必须重启服务——env 在进程启动时读取，nest watch 只监听 TS 文件。
 

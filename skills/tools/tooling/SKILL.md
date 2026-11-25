@@ -11,7 +11,7 @@ description: 需要调用 ardot 设计工具、opencode CLI 或其它第三方 C
 
 | 需求 | 用什么 | 备注 |
 | --- | --- | --- |
-| 画界面原型、设计稿、设计规范落地 | ardot（MCP `ardot-remote`） | 需要文件 URL；工具含创建节点、应用样式、导出 |
+| 画界面原型、设计稿、设计规范落地 | ardot（MCP server 名 `ardot`） | 需要文件 URL；工具含创建节点、应用样式、导出 |
 | 无人值守批量执行、CI 里跑任务 | opencode CLI | `opencode run`、`opencode api`、`opencode mcp` |
 | 本地依赖服务（PostgreSQL/Redis/…） | docker compose | 项目自带的 `docker-compose.yml`，项目自包含；见 `workspace` 规范 |
 | 浏览器操作（登录后台、验证页面、配第三方 OAuth） | ego-browser | **优先用**；复用用户已登录的浏览器上下文。先 `ego-browser skill` 读指南，`ego-browser nodejs` 跑脚本 |

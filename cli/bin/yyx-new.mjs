@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const PKG_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TEMPLATE = join(PKG_ROOT, 'templates', 'base');
-const VERSION = '0.1.0';
+const VERSION = JSON.parse(readFileSync(join(PKG_ROOT, 'package.json'), 'utf8')).version;
 
 const HELP = `yyx-new — 从 yyx-agent-kit 模板创建新项目
 
