@@ -5,7 +5,7 @@ description: 每个阶段结束或需求交付后整理决策记录、产出清�
 
 # 记录与归档
 
-## 归档文件 `docs/<slug>/05-record.md`
+## 归档文件 `docs/deliverables/<slug>/05-record.md`
 
 ```markdown
 # <需求名> 交付记录

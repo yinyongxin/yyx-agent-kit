@@ -5,7 +5,7 @@ description: 把模糊想法变成可验收的功能清单、写出产品需求�
 
 # PRD 模板
 
-目标产出：`docs/<slug>/` 下三份——`01-prd.md`（做什么）、`01-wireframe.md`（页面上显示什么）、`01-interaction.md`（页面怎么联动）。slug 用 `YYYYMMDD-简短英文名`，用户给了就用用户的。三份都是 Markdown 结构描述 + Mermaid 图，不做精细视觉设计。
+目标产出：`docs/deliverables/<slug>/` 下三份——`01-prd.md`（做什么）、`01-wireframe.md`（页面上显示什么）、`01-interaction.md`（页面怎么联动）。slug 用 `YYYYMMDD-简短英文名`，用户给了就用用户的。三份都是 Markdown 结构描述 + Mermaid 图，不做精细视觉设计。
 
 PRD 的价值不是把想法写漂亮，而是让技术方案、开发、测试引用同一组编号和验收标准。所以编号稳定、每条标准可判定，比文采重要——后面每个阶段都靠它对齐。
 

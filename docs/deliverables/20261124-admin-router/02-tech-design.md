@@ -1,6 +1,6 @@
 # 管理端路由与菜单布局 — 技术方案
 
-输入：`docs/20261124-admin-router/01-prd.md`（Q1/Q2/Q3 已逐项确认）。目标产出：admin 具备 file-based 路由 + 可折叠侧边菜单，7 条路由可达、菜单分组与高亮正确。
+输入：`docs/deliverables/20261124-admin-router/01-prd.md`（Q1/Q2/Q3 已逐项确认）。目标产出：admin 具备 file-based 路由 + 可折叠侧边菜单，7 条路由可达、菜单分组与高亮正确。
 
 ## 1. 现状
 

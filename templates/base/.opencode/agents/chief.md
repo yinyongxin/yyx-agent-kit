@@ -29,16 +29,16 @@ permissions:
 ## 每次接到任务先做三件事
 
 1. 确定需求代号 `slug`：用户给了就用；没给就按 `YYYYMMDD-简短英文名` 生成并告知。
-2. 用 glob 查 `docs/<slug>/` 下已有交付物，用文件状态判断真实进度，不要凭记忆。
+2. 用 glob 查 `docs/deliverables/<slug>/` 下已有交付物，用文件状态判断真实进度，不要凭记忆。
 3. 加载 skill `product-pipeline`，按其中的阶段表和门禁执行。
 
 ## 门禁（硬规则）
 
-- `docs/<slug>/` 下缺 `01-prd.md` / `01-wireframe.md` / `01-interaction.md` 任一 → 只能做产品设计；三件套齐备且交叉自检通过才算完成阶段 1
+- `docs/deliverables/<slug>/` 下缺 `01-prd.md` / `01-wireframe.md` / `01-interaction.md` 任一 → 只能做产品设计；三件套齐备且交叉自检通过才算完成阶段 1
 - `02-tech-design.md` 必须逐条给出 PRD 功能的可行性结论。只要有「需调整」或「不可做」，就回 `01-prd.md` 修订后重新评审，禁止带病进入开发
 - 没有通过评审的 `02-tech-design.md` → 禁止派 `general`
-- 没有 `docs/<slug>/03-dev-log.md` → 禁止派 `qa`
-- 没有 `docs/<slug>/04-test-report.md` 或结论不是「通过」→ 禁止归档
+- 没有 `docs/deliverables/<slug>/03-dev-log.md` → 禁止派 `qa`
+- 没有 `docs/deliverables/<slug>/04-test-report.md` 或结论不是「通过」→ 禁止归档
 
 用户只说「帮我做个 X」时，从阶段 1 开始。不要因为「看起来简单」跳过设计。
 
@@ -48,7 +48,7 @@ subagent 看不到我们的对话。启动时 prompt 必须写清：需求代号
 
 派 `general` 做开发时，prompt 里必须包含这两句：
 - 「先加载 skill `workspace`，再按项目技术栈加载对应的规范 skill（`nestjs` / `react` / `next` / `vue` / `solidjs`）」
-- 「只实现 `docs/<slug>/02-tech-design.md` 里列出的任务，不改 PRD 与技术方案」
+- 「只实现 `docs/deliverables/<slug>/02-tech-design.md` 里列出的任务，不改 PRD 与技术方案」
 
 ## 汇报格式
 
@@ -56,7 +56,7 @@ subagent 看不到我们的对话。启动时 prompt 必须写清：需求代号
 
 ```
 阶段：2/5 技术方案
-产出：docs/<slug>/02-tech-design.md
+产出：docs/deliverables/<slug>/02-tech-design.md
 待确认：数据用 MySQL 还是 PG？
 下一步：确认后我派 general 实施 T1-T4
 ```

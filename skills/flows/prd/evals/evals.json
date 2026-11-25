@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "帮我写个需求文档：做一个待办清单，登录用户能新增、完成、删除待办。删除要二次确认，完成状态要能撤销。",
-      "expected_output": "docs/<slug>/01-prd.md，功能带 F1/F2/F3 编号，每条有 Given/When/Then 验收标准，写明非目标与假设",
+      "expected_output": "docs/deliverables/<slug>/01-prd.md，功能带 F1/F2/F3 编号，每条有 Given/When/Then 验收标准，写明非目标与假设",
       "files": []
     },
     {

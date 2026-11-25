@@ -13,7 +13,7 @@
 | `skills/` | **怎么做** | 5 个流程 skill + 4 个工程规范 skill + 1 个工具 skill |
 | `templates/base/` | **从哪开始** | 新项目的目录结构、Docker、认证、路由、Prisma 骨架 |
 
-一个需求按固定五阶段推进，**每阶段产出文件，文件齐了才准进下一阶段**。进度靠 `docs/<slug>/` 里实际存在的文件判断，不靠记忆。
+一个需求按固定五阶段推进，**每阶段产出文件，文件齐了才准进下一阶段**。进度靠 `docs/deliverables/<slug>/` 里实际存在的文件判断，不靠记忆。
 
 ```text
 用户说「做个 X」
@@ -45,7 +45,7 @@ chief（总管，primary agent）判断阶段、守门禁
 ### chief 每次接任务固定做三件事
 
 1. 定需求代号 `slug`：用户给了就用，没给就生成 `YYYYMMDD-简短英文名`（如 `20261126-makeup-miniapp`）。
-2. 用 glob 查 `docs/<slug>/` 已有文件，**用文件判断真实进度**。
+2. 用 glob 查 `docs/deliverables/<slug>/` 已有文件，**用文件判断真实进度**。
 3. 加载 `product-pipeline` skill，按阶段表和门禁执行。
 
 ### chief 的汇报格式
@@ -55,7 +55,7 @@ chief（总管，primary agent）判断阶段、守门禁
 
 ## 2. 五阶段流水线与门禁
 
-所有交付物都在 `docs/<slug>/` 一个目录里。
+所有交付物都在 `docs/deliverables/<slug>/` 一个目录里。
 
 | 阶段 | 负责人 | 交付物 | 准出标准 | 进入下一步的硬条件 |
 | --- | --- | --- | --- | --- |
@@ -119,7 +119,7 @@ Skill ID = 目录名。加载靠 description 自动匹配，不用手写配置�
 ## 4. 文件是怎么流转的
 
 ```text
-docs/<slug>/
+docs/deliverables/<slug>/
 ├── 01-prd.md               chief 写：做什么、验收标准
 ├── 01-wireframe.md         chief 写：页面上显示什么
 ├── 01-interaction.md       chief 写：页面怎么联动、状态机
@@ -128,9 +128,10 @@ docs/<slug>/
 ├── 04-test-plan.md         qa 写：用例
 ├── 04-test-report.md       qa 写：结论 + 缺陷
 ├── 04-visual-check.md      可选：视觉/浏览器验证
-├── 05-record.md            chief 写：决策与遗留
-└── docs/INDEX.md           全局索引（所有 slug 的入口）
+└── 05-record.md            chief 写：决策与遗留
 ```
+
+全局索引 `docs/INDEX.md` 在 docs 根目录，按 slug 串起所有交付物。
 
 **编号是跨阶段唯一连接键**：`F1`、`F2` 是功能编号；`AC` 是验收标准；`I/G/E/Q` 是交互/规则/异常/待确认编号。编号只增不改，废弃就保留并标注「已废弃」，不回收再用——因为改一次编号，下游四份文档都要同步改。
 
@@ -160,7 +161,7 @@ docs/<slug>/
 
 ## 7. 现有交付物走到哪了
 
-`docs/20261124-*` 是历史需求，按文件判断进度：
+`docs/deliverables/20261124-*` 是历史需求，按文件判断进度：
 
 | slug | 已有文件 | 实际进度 |
 | --- | --- | --- |

@@ -9,7 +9,7 @@
     },
     {
       "id": 2,
-      "prompt": "docs/20261124-todo/ 下有 01-prd.md 和 02-tech-design.md，03-dev-log.md 还没建。现在到哪一步了，能不能派测试？",
+      "prompt": "docs/deliverables/20261124-todo/ 下有 01-prd.md 和 02-tech-design.md，03-dev-log.md 还没建。现在到哪一步了，能不能派测试？",
       "expected_output": "判定为阶段 3 开发实施；因缺 03-dev-log.md 禁止派 qa，说明门禁依据",
       "files": []
     },

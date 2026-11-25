@@ -39,7 +39,7 @@ description: 需要调用 ardot 设计工具、opencode CLI 或其它第三方 C
 ## opencode CLI
 
 ```bash
-opencode run "按 docs/<slug>/02-tech-design.md 实现 T1"   # 单次无头执行
+opencode run "按 docs/deliverables/<slug>/02-tech-design.md 实现 T1"   # 单次无头执行
 opencode api get /api/info                                # 探活与接口调用
 opencode mcp list                                         # 查看 MCP 连接状态
 ```

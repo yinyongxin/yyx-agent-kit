@@ -1,6 +1,6 @@
 # 管理端引入 Mantine — 技术方案
 
-输入：`docs/20261124-admin-mantine/01-prd.md`。目标产出：admin 具备「Mantine 组件 + Tailwind 布局」共存能力，并有可复用的样板页与规范边界。
+输入：`docs/deliverables/20261124-admin-mantine/01-prd.md`。目标产出：admin 具备「Mantine 组件 + Tailwind 布局」共存能力，并有可复用的样板页与规范边界。
 
 ## 1. 现状
 

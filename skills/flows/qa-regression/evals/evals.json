@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "开发完了，dev-log 在 docs/20261124-todo/03-dev-log.md，PRD 在 01-prd.md。设计测试用例并出测试报告。",
+      "prompt": "开发完了，dev-log 在 docs/deliverables/20261124-todo/03-dev-log.md，PRD 在 01-prd.md。设计测试用例并出测试报告。",
       "expected_output": "04-test-plan.md 用例按 AC 编号对齐、覆盖边界与异常；04-test-report.md 有结论/执行明细/缺陷/回归结论",
       "files": []
     },

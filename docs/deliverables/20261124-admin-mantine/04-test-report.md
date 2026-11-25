@@ -16,7 +16,7 @@
 | pnpm / Node | 11.9.0 / v24.22.3 |
 | 命令环境 | `$env:CI="true"; $env:npm_config_store_dir="D:\pnpm-store"; $env:npm_config_minimumReleaseAge="0"` |
 | 依赖版本 | `@mantine/core` 9.8.1、`@mantine/hooks` 9.8.2（core 传递解析）、`tailwind-preset-mantine` 4.1.0、Tailwind 4.3.5 |
-| 视觉验证证据 | `docs/20261124-admin-mantine/04-visual-check.md`（主会话产出，ego-browser 0.6.3.17 / chromium 156） |
+| 视觉验证证据 | `docs/deliverables/20261124-admin-mantine/04-visual-check.md`（主会话产出，ego-browser 0.6.3.17 / chromium 156） |
 | 截图 | `D:/opencode-poc/ego-admin/admin.png`（临时目录，不入库） |
 
 ## 1. 用例执行表

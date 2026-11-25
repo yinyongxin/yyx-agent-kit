@@ -24,7 +24,7 @@ apps/
 packages/
 ├── shared/     常量、路由表、业务枚举、类型（TS 源码直供）
 └── api/        接口层：类型、SDK、错误处理
-docs/           需求交付物，按 docs/<slug>/ 存放
+docs/           需求交付物，按 docs/deliverables/<slug>/ 存放
 ```
 
 工程约定见 `AGENTS.md`。
@@ -99,7 +99,7 @@ pwsh -NoProfile -File ..\..\scripts\sync.ps1 -ConfigDir .opencode
 ## 产物
 
 ```text
-docs/<slug>/
+docs/deliverables/<slug>/
 ├── 01-prd.md
 ├── 01-wireframe.md       ← 页面上显示什么（Markdown 结构 + Mermaid）
 ├── 01-interaction.md     ← 页面怎么联动（交互编号 + Mermaid 状态机）

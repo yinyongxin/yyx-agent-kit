@@ -1,15 +1,15 @@
 # 需求索引
 
-按 `docs/<slug>/` 里的实际文件判断进度（不靠记忆）；每道门禁通过后追加一条，不覆盖旧条目。
+按 `docs/deliverables/<slug>/` 里的实际文件判断进度（不靠记忆）；每道门禁通过后追加一条，不覆盖旧条目。
 状态口径：未归档的需求即使报告「通过」也标「未归档」。
 
 | 需求 | 状态 | 更新日期 | 入口 |
 | --- | --- | --- | --- |
-| 20261124-admin-mantine | 阶段 4 通过（未归档） | 2026-11-24 | [04-test-report.md](20261124-admin-mantine/04-test-report.md) |
-| 20261124-admin-router | 阶段 3 完成（未测试） | 2026-11-24 | [03-dev-log.md](20261124-admin-router/03-dev-log.md) |
-| 20261124-db-migration | 阶段 3 完成（未测试） | 2026-11-24 | [03-dev-log.md](20261124-db-migration/03-dev-log.md) |
-| 20261124-mantine-ui-mcp | 阶段 3 完成（阶段 1+2 合并，未测试） | 2026-11-24 | [03-dev-log.md](20261124-mantine-ui-mcp/03-dev-log.md) |
-| 20261124-prisma7-upgrade | 阶段 3 完成（阶段 1+2 合并，未测试） | 2026-11-24 | [03-dev-log.md](20261124-prisma7-upgrade/03-dev-log.md) |
+| 20261124-admin-mantine | 阶段 4 通过（未归档） | 2026-11-24 | [04-test-report.md](deliverables/20261124-admin-mantine/04-test-report.md) |
+| 20261124-admin-router | 阶段 3 完成（未测试） | 2026-11-24 | [03-dev-log.md](deliverables/20261124-admin-router/03-dev-log.md) |
+| 20261124-db-migration | 阶段 3 完成（未测试） | 2026-11-24 | [03-dev-log.md](deliverables/20261124-db-migration/03-dev-log.md) |
+| 20261124-mantine-ui-mcp | 阶段 3 完成（阶段 1+2 合并，未测试） | 2026-11-24 | [03-dev-log.md](deliverables/20261124-mantine-ui-mcp/03-dev-log.md) |
+| 20261124-prisma7-upgrade | 阶段 3 完成（阶段 1+2 合并，未测试） | 2026-11-24 | [03-dev-log.md](deliverables/20261124-prisma7-upgrade/03-dev-log.md) |
 
 ## 说明
 

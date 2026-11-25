@@ -1,6 +1,6 @@
 # 数据库迁移规范 — 技术方案
 
-输入：`docs/20261124-db-migration/01-prd.md`。目标产出：模板具备「migrate 生成 → 入库 review → deploy 应用」的完整迁移链路。
+输入：`docs/deliverables/20261124-db-migration/01-prd.md`。目标产出：模板具备「migrate 生成 → 入库 review → deploy 应用」的完整迁移链路。
 
 ## 1. 现状
 

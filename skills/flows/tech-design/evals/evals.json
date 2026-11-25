@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "需求文档在 docs/20261124-todo/01-prd.md，你评估一下技术上能不能做，然后拆成开发任务。",
-      "expected_output": "docs/20261124-todo/02-tech-design.md，逐条对照 F 编号给出可行性结论且全部为「可做」，任务表 T1..Tn 有依赖与验收方式",
+      "prompt": "需求文档在 docs/deliverables/20261124-todo/01-prd.md，你评估一下技术上能不能做，然后拆成开发任务。",
+      "expected_output": "docs/deliverables/20261124-todo/02-tech-design.md，逐条对照 F 编号给出可行性结论且全部为「可做」，任务表 T1..Tn 有依赖与验收方式",
       "files": []
     },
     {

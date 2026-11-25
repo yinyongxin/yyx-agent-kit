@@ -43,7 +43,7 @@ apps/portal        门户网站：Next.js App Router + Tailwind（端口 47175�
 apps/server        后端：NestJS + TypeScript（端口 47100，路由前缀 /api）
 packages/shared    共享常量、工具函数、类型（TS 源码直供，无构建产物）
 packages/api       接口层：类型、SDK、错误处理
-docs               需求交付物，按 docs/<slug>/ 存放
+docs               需求交付物，按 docs/deliverables/<slug>/ 存放
 ```
 
 ## 多端边界
