@@ -22,6 +22,12 @@
 
 新建项目或引入框架时，先跑官方脚手架（`create-vite` / `create-next-app` / `nest new`）拿到当前正确的模板，再往 monorepo 规范上改。经验会过时，例如 TS 7 移除了 compiler API 导致 Nest CLI 跑不了。
 
+### 1.4 OpenDesign 设计任务：生成不可靠就直接写文件
+
+- 用户要求用 OpenDesign 做设计时，优先走官方便捷流程（`collect_brief` → `confirm_brief` → `start_run`），但 **`start_run` 失败一次就立即切换到直接写文件**，不要反复重试或换模型 burn 时间（本机已多次遇到余额不足 / 首 token 超时，见踩坑记录 #24）。
+- 直接写的路径：`create_project` → `create_artifact(name, content)` 写入口 → `write_file` 迭代 → `get_project` 拿 previewUrl → ego 截图验证。产物质量由我们自己把控。
+- OpenDesign 的连接配置在全局 `~/.config/opencode/opencode.json` 的 `mcp.servers.open-design`（本地 command + OD_* 环境变量 + `pool:true`）。
+
 ## 2. 技术引入与版本升级
 
 - 引入框架/工具、升级版本前，先查官网当前最新用法与版本要求，不靠记忆。

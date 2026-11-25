@@ -190,6 +190,18 @@
 - **解决**：只写 `paths`（`"@/*": ["./src/*"]`），不要 `baseUrl`。Vite 运行时另配 `resolve.alias` 指向 src（Vite 8 官方推荐双配置，不用 `resolve.tsconfigPaths`）。
 - **备注**：这是"别靠记忆写配置、先查官网"的又一个例子；前端构建（Vite 的 Rolldown）不报错，只有 tsc typecheck 报，容易漏。
 
+### 24. OpenDesign 生成流水线不可靠——直接用 MCP 文件工具做设计
+
+- **现象**：用 OpenDesign 的 `start_run` 生成产品介绍页，连续失败：① `amr` agent 报 `AMR_INSUFFICIENT_BALANCE`（云端余额不足）；② 换 `opencode` agent（deepseek-v4.1-flash-free）后 `Agent stalled without emitting any new output for 600s`，`failure_stage: first_token_wait`，重试仍卡死；③ 再换 `opencode/hy4-flash-free` 仍卡在 `done_key` 后无输出。三次都 0 产物，累计耗时约 20 分钟。
+- **原因**：OpenDesign 的 `start_run` 依赖它自己的 agent runtime（云端额度 or 本地 CLI 拉模型），本机这条链路不稳定；排队时间也曾高达 10 分钟（`queueDurationMs: 603692`）。`get_run` 长时间显示 `running` 并不代表在干活——要看事件日志，若停在 `spawn pending` / `first_token_wait` 就是真卡了。
+- **解决**：**直接用 OpenDesign 的 MCP 文件工具自己写设计**，不依赖它的生成流水线：
+  1. `collect_brief` → `confirm_brief`（确认需求方向，可选但有助于对齐）
+  2. `create_project`（若无项目）
+  3. `create_artifact(name, content)` 写入口文件（HTML/Markdown/SVG 会自动推断 artifactManifest）
+  4. `write_file(path, content)` 迭代修正（如 HTML 里 `D:\projects` 要写 `D:\\projects`）
+  5. `get_project` 拿 `previewUrl`，用 ego 打开截图验证
+- **备注**：官方指令说"不要用 write_file 替代生成流水线（会丢设计质量）"，但那是针对"流水线可用"的前提；当流水线因额度/模型卡死不可用时，自己写是唯一可行路径，且质量可控。以后遇到 OpenDesign：`start_run` 失败一次就直接切文件工具，不要反复重试 burn 时间。
+
 ## 相关约定
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。
