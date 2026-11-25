@@ -1,6 +1,6 @@
 # 文档地图
 
-`docs/` 里的内容分三类，按目的找，不用从头翻。**全仓库只用 `README.md` 作为目录说明文件**，不另设 `INDEX.md`。
+`docs/` 里的内容分三类，按目的找，不用从头翻。**全仓库只用 `README.md` 作为目录说明文件。**
 
 | 你想做什么 | 去哪 | 说明 |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ docs/
         └── 01-prd.md / 01-wireframe.md / 01-interaction.md / 02-tech-design.md / 03-dev-log.md / 04-*.md / 05-record.md
 ```
 
-- **每个目录用 `README.md` 说明职责、文件索引、关联和同步要求**；不创建 `INDEX.md`，避免两种命名混用。
+- **每个目录用 `README.md` 说明职责、文件索引、关联和同步要求。**
 - **需求交付物固定放 `docs/deliverables/<slug>/`**，这是流水线的硬约定（`product-pipeline` / `prd` / `archive` skill 都按这个路径找文件）；slug 目录下不要再套子目录。
 - **常设文档放 `guides/`**，改完要同步更新引用它的 skills / agents / README。
 - **参考资料放 `reference/`**，官方脚手架配置保持原样，便于升级时对照。
@@ -54,4 +54,4 @@ docs/
 - 这 5 个历史需求都还没有 `05-record.md`，流水线阶段 5 尚未走完。
 - 历史目录里也没有 `01-wireframe.md` / `01-interaction.md`——三件套是后来加入的规则（见 [CHANGELOG](CHANGELOG.md) 的 Unreleased），不必回头补。
 - 新需求按 [guides/agent-system.md](guides/agent-system.md) 的五阶段推进，slug 形如 `YYYYMMDD-kebab-case`。
-- 原独立的 `docs/INDEX.md` 已并入本文，流水线阶段 5 现在更新本节的表格。
+- 流水线阶段 5 更新本节的表格。
