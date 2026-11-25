@@ -40,7 +40,7 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 
 ## 开发规范
 
-- **数据库迁移**：改 schema 后用 `db:migrate -- --name <语义名>` 生成 SQL 迁移文件，review 后入库；部署用 `db:deploy`（幂等）；生产禁止 `db push`。结构变更走 migrate、初始数据走 seed，边界见 `docs/conventions.md` 第 5 节。
+- **数据库迁移**：改 schema 后用 `db:migrate -- --name <语义名>` 生成 SQL 迁移文件，review 后入库；部署用 `db:deploy`（幂等）；生产禁止 `db push`。结构变更走 migrate、初始数据走 seed，边界见 `docs/guides/conventions.md` 第 5 节。
 
 - 模块按 NestJS 规范分层：`module / controller / service / dto / entity`
 - 使用 Prisma Schema 定义数据模型，通过 `prisma generate` 同步类型（生成物在 `src/generated/prisma`，随应用编译）

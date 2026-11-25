@@ -153,8 +153,11 @@ description: 开发 Next.js 项目时加载。App Router、服务端组件、数
 
 ## 文档
 
-- [Agent 系统与 Skills 说明](docs/agent-system.md) —— 有哪些角色、规范、阶段与门禁，文件怎么流转，怎么同步（建议先读这份）
-- [智能体工作约定](docs/conventions.md) —— 一手来源、多方验证、脚手架、模板同步等规则的分类整理
-- [踩坑记录](docs/pitfalls.md) —— npm 发布、代理、编码等环境问题的现象与解法
+完整分类入口见 [docs/README.md（文档地图）](docs/README.md)。
+
+- [Agent 系统与 Skills 说明](docs/guides/agent-system.md) —— 有哪些角色、规范、阶段与门禁，文件怎么流转，怎么同步（建议先读这份）
+- [需求索引](docs/INDEX.md) —— 各需求的实际进度与交付物入口
+- [智能体工作约定](docs/guides/conventions.md) —— 一手来源、多方验证、脚手架、模板同步等规则的分类整理
+- [踩坑记录](docs/guides/pitfalls.md) —— npm 发布、代理、编码等环境问题的现象与解法
 - [变更记录](docs/CHANGELOG.md) —— 版本与功能变更
-- [本地默认凭据](docs/credentials.md) —— Docker 环境初始化账号密码（仅 dev，生产必改）
+- [本地默认凭据](docs/guides/credentials.md) —— Docker 环境初始化账号密码（仅 dev，生产必改）

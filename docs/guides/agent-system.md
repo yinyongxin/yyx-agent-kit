@@ -156,7 +156,7 @@ docs/<slug>/
 | 仓库内开发时建项目 | `pwsh -NoProfile -File F:\project\yyx-agent-kit\scripts\new.ps1 -Name myapp -Path D:\projects`（skills 用本机绝对路径，不复制） |
 | 改了 agent 想让全局生效 | 跟助手说「同步全局」→ 跑 `sync.ps1` → `/reload`（首次新建 agents 目录需 `opencode service restart`） |
 | 发布新版本 CLI | `npm login` → `npm pack --dry-run` → `npm publish`；包内容由 `package.json` 的 `files` 控制（`cli/`、`templates/`、`agents/`、`skills/`） |
-| 查某个坑/约定 | `docs/pitfalls.md`（踩坑）、`docs/conventions.md`（工作约定）、`docs/scaffolds/`（官方脚手架基线） |
+| 查某个坑/约定 | `docs/guides/pitfalls.md`（踩坑）、`docs/guides/conventions.md`（工作约定）、`docs/reference/scaffolds/`（官方脚手架基线） |
 
 ## 7. 现有交付物走到哪了
 

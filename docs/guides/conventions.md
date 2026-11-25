@@ -1,6 +1,6 @@
 # 智能体工作约定
 
-跨需求复用的工作规则集中在这里，按类别组织。一次性环境问题见 [踩坑记录](pitfalls.md)，需求交付流程见 [产品交付流水线](../skills/flows/product-pipeline/SKILL.md)，具体工程的硬规则见各项目 `AGENTS.md`。
+跨需求复用的工作规则集中在这里，按类别组织。一次性环境问题见 [踩坑记录](pitfalls.md)，需求交付流程见 [产品交付流水线](../../skills/flows/product-pipeline/SKILL.md)，具体工程的硬规则见各项目 `AGENTS.md`。
 
 ## 1. 信息获取与结论判定
 
@@ -130,5 +130,5 @@ apps/admin/src/
 
 - 需求交付物按 `docs/<slug>/` 组织。PM 阶段产出三件套：`01-prd.md`（做什么）+ `01-wireframe.md`（页面上显示什么）+ `01-interaction.md`（页面怎么联动）。线稿与交互稿用 Markdown 结构描述 + Mermaid 图，不做精细视觉。
 - 三件套产出后必须按 `prd` skill 的「产出后交叉自检」逐条核对：编号闭环、页面闭环、状态唯一、状态机闭合、Mermaid 可渲染、中文一致、规则有落点。**修完再交付**，不要等使用者指出矛盾。
-- 发版手动流程与 npm 包结构：[README.md](../README.md) 的「创建新项目」「发布 CLI」章节。
+- 发版手动流程与 npm 包结构：[README.md](../../README.md) 的「创建新项目」「发布 CLI」章节。
 - 全局偏好（pwsh、代理、mise 等）：`~/.config/opencode/AGENTS.md`。

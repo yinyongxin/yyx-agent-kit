@@ -47,7 +47,7 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | postgres | `pgvector/pgvector:pg17` | 54732 | 关系库 + pgvector 扩展；认证状态表也在此库 |
 | redis | `redis:7-alpine` | 46379 | 限流共享存储 / 业务缓存 |
 
-**认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`，状态存 PostgreSQL，无独立 IdP 容器。多平台共用一个 server 天然共享登录态。当前骨架：JWT bearer + `@Public()` 豁免探活 + `@Can()` policy 示例；生产按官网补齐 store / Google OIDC / 2FA / 微信（详见 `skills/standards/nestjs/SKILL.md` 和 `docs/credentials.md`）。
+**认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`，状态存 PostgreSQL，无独立 IdP 容器。多平台共用一个 server 天然共享登录态。当前骨架：JWT bearer + `@Public()` 豁免探活 + `@Can()` policy 示例；生产按官网补齐 store / Google OIDC / 2FA / 微信（详见 `skills/standards/nestjs/SKILL.md` 和 `docs/guides/credentials.md`）。
 
 > 改了 `.env`（尤其 JWT_SECRET）必须重启服务——env 在进程启动时读取，nest watch 只监听 TS 文件。
 

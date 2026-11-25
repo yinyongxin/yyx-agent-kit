@@ -17,14 +17,14 @@
 
 | 编号 | 关联 AC | 前置 | 步骤 | 预期 | 优先级 |
 | --- | --- | --- | --- | --- | --- |
-| TC-F1-01 | F1-AC1 | 已读取 `templates/base/AGENTS.md` | 查看「硬性规则」第 16 行及上下文 | 写明 admin 允许 Mantine；client/portal 不引入第三方 UI 组件库、只用 Tailwind 原子类；并指向 `docs/conventions.md`「前端样式与组件库」 | P0 |
+| TC-F1-01 | F1-AC1 | 已读取 `templates/base/AGENTS.md` | 查看「硬性规则」第 16 行及上下文 | 写明 admin 允许 Mantine；client/portal 不引入第三方 UI 组件库、只用 Tailwind 原子类；并指向 `docs/guides/conventions.md`「前端样式与组件库」 | P0 |
 | TC-F1-02 | F1-AC1 | 同上 | grep「不引入第三方 UI 组件库」「export const」「原生 fetch」「页面文件」 | 禁用规则仅约束 client/portal；`export const` 写法、原生 fetch、页面目录等其它前端约定均保留，未被放宽 | P1 |
 | TC-F2-01 | F2-AC1 | 已读取 `apps/admin/package.json` | 检查 dependencies / devDependencies | 含 `@mantine/core`、`@mantine/hooks`（版本 ^9.x），devDependencies 含 `tailwind-preset-mantine`；无 form/notification/chart 等扩展包 | P0 |
 | TC-F2-02 | F2-AC1 | 已读取 client/portal 的 package.json | grep `mantine`（忽略大小写）于两文件；并查 `git status --short` | 两端 package.json 零命中；git 修改列表不含 client/portal 任何文件 | P0 |
 | TC-F2-03 | F2-AC2 | 已读取 `apps/admin/src/main.tsx` | 检查 import 顺序与 JSX 结构 | 导入 `@mantine/core/styles.css` 与 `MantineProvider`；`<StrictMode>` 内 `<MantineProvider>` 包裹 `<App />`；顺序为样式导入 → Provider → App | P0 |
 | TC-F2-04 | F2-AC2 | 已读取 `apps/admin/src/index.css` | 查看文件内容 | 仅 `@import "tailwind-preset-mantine";`，不再含 `@import "tailwindcss";` | P0 |
 | TC-F2-05 | F2-AC3 | workspace 依赖已安装 | 在 `templates/base` 执行 `pnpm build` | 退出码 0；6 子项目构建 + 全量 typecheck 全部通过；无 Tailwind preflight 覆盖 Mantine / layer 顺序冲突报错 | P0 |
-| TC-F3-01 | F3-AC1 | 已读取 `docs/conventions.md` | 查找样式分工章节 | 存在独立分类（第 6 节「前端样式与组件库」），写明 Mantine 管交互控件、Tailwind 管布局微调、`tailwind-preset-mantine` 对齐主题与 layer、只装按需包、`export const` 写法 | P0 |
+| TC-F3-01 | F3-AC1 | 已读取 `docs/guides/conventions.md` | 查找样式分工章节 | 存在独立分类（第 6 节「前端样式与组件库」），写明 Mantine 管交互控件、Tailwind 管布局微调、`tailwind-preset-mantine` 对齐主题与 layer、只装按需包、`export const` 写法 | P0 |
 | TC-F3-02 | F3-AC2 | 已读取 `apps/admin/src/App.tsx` | grep `export default`、`function`；确认组件导出 | 全部为 `export const`；无 `export default`、无 `function` 声明 | P1 |
 | TC-F3-03 | F3-AC2 | 已定位 admin 源码目录 | 对 `apps/admin/src/**/*.tsx` grep `export default` 与 `function <Name>(` | admin 全部 TSX 组件遵守 `export const`，无违规写法（回归：规则影响面） | P1 |
 | TC-F4-01 | F4-AC1 | 已读取 react skill | grep `Mantine` 于 `skills/standards/react/SKILL.md` | 命中且写明仅 admin 可用、Mantine/Tailwind 分工、preset 对齐、`export const` 不变 | P1 |

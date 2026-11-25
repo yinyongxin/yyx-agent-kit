@@ -4,10 +4,11 @@
 
 ## [Unreleased]
 
-- **新增 Agent 系统与 Skills 说明文档**：`docs/agent-system.md` 用一张流程图 + 分工表讲清角色、五阶段门禁、10 个 skill、文件流转、agents/skills/模板三套同步机制、常用场景与现有交付物进度，并标出 CLI 版本号不一致等 3 处现状；README 文档入口置顶
+- **docs 目录重构**：按用途分成四类——文档地图 `docs/README.md`、需求索引 `docs/INDEX.md`（补齐流水线要求的索引）、常设文档 `docs/guides/`（agent-system / conventions / pitfalls / credentials）、参考资料 `docs/reference/scaffolds/`；需求交付物仍固定 `docs/<slug>/` 不动（流水线硬约定）。17 个文件的交叉引用同步更新
+- **新增 Agent 系统与 Skills 说明文档**：`docs/guides/agent-system.md` 用一张流程图 + 分工表讲清角色、五阶段门禁、10 个 skill、文件流转、agents/skills/模板三套同步机制、常用场景与现有交付物进度，并标出 CLI 版本号不一致等 3 处现状；README 文档入口置顶
 - **PM 阶段三件套与强制自检**：阶段 1 交付物从单份 `01-prd.md` 扩为 `01-prd.md` + `01-wireframe.md`（页面显示什么）+ `01-interaction.md`（页面联动/状态流转），用 Markdown + Mermaid、不做精细视觉；`prd` skill 新增「产出后交叉自检」7 条（编号闭环、页面闭环、状态唯一、状态机闭合、Mermaid 可渲染、中文一致、规则有落点），流水线门禁与 chief agent（全局+模板副本）同步，模板 README 目录树同步
 - **Prisma schema 多文件拆分**：主文件 `prisma/schema.prisma` 只放 generator/datasource/enum，模型按领域拆到 `prisma/models/{tenant,user,rbac,billing}.prisma`；`prisma.config.ts` 的 `schema` 改指向目录 `"prisma"`（指向文件会静默丢模型，见踩坑记录 #21）。PoC 验证 + `migrate status` 确认无新迁移，typecheck/build 通过
-- **文件命名规范**：确定"按生态惯例、场景内统一"原则（`docs/conventions.md` 第 7 节），chief agent 派活时提醒；后端边角文件对齐：`user.ts` → `user.types.ts`、`tenant-context.ts` → `tenant-context.util.ts`，同步所有 import
+- **文件命名规范**：确定"按生态惯例、场景内统一"原则（`docs/guides/conventions.md` 第 7 节），chief agent 派活时提醒；后端边角文件对齐：`user.ts` → `user.types.ts`、`tenant-context.ts` → `tenant-context.util.ts`，同步所有 import
 - **admin 目录结构重组**：routes/（文件路由声明，access/* → URL `/access/*`）与 features/（home/dashboard/access/settings 按领域）分离；两套 header/navbar 布局保留；导航链接同步新 URL；ego 验证新路由可用（踩坑 #22：改路由先 build 生成 routeTree 再 typecheck）
 - **admin 组件/页面文件夹化 + 壳内容分离**：所有组件和页面改为目录 + `index.tsx` barrel（只 re-export），可带 css/types/enums/functions；页面统一 `<PageShell>` 外壳 + `XxxContent` 可复用内容（Home/Dashboard 的真实逻辑也拆到 Content）；`PlaceholderPage` 拆成 `PageShell` + `PlaceholderContent`；ego 验证三个页面正常
 - **侧栏去掉折叠**：AdminLayout 移除展开/收起和移动端抽屉，侧栏固定 260px；删除多余的静态 starter 标题
@@ -39,13 +40,13 @@
 - server dev 脚本修正：`tsx watch` 无 decorator metadata 导致 DI 失效，改 `nest start --watch` + `nest-cli.json`；`main.ts` 加 findEnv 从 cwd 向上找 .env；`nest-cli.json` 补 `entryFile` 修复入口查找
 - 编辑器 moduleResolution 弃用报错：项目统一升 TS 6.0.3 + `ignoreDeprecations: "6.0"`（TS 7 移除 node10 且无 compiler API 不兼容 Nest CLI；TS 5.8 不认 6.0；详见踩坑记录第 14 条）。所有子项目（admin/client/portal/api/shared/server）与根统一 TS 6.0.3
 - 新增硬规则：新建项目/引入技术必须用 ego 去官网学习 + 用官方脚手架（`create-vite`/`nest new` 等）生成，不靠经验手写配置
-- **全栈大版本升级**（按官网+官方脚手架实测，见 `docs/scaffolds/`）：Vite 6→8.3.6、React 19.3.1、NestJS 11→12、Next.js 15→16.4.6；TS 前后端分开（前端 7 / 后端 6）；Next 16 移除 postcss.config 改用 turbopack + eslint flat config；全量 typecheck/build/lint 通过
+- **全栈大版本升级**（按官网+官方脚手架实测，见 `docs/reference/scaffolds/`）：Vite 6→8.3.6、React 19.3.1、NestJS 11→12、Next.js 15→16.4.6；TS 前后端分开（前端 7 / 后端 6）；Next 16 移除 postcss.config 改用 turbopack + eslint flat config；全量 typecheck/build/lint 通过
 - 模板目录 `examples/agent-test` → `templates/base`；项目名 `agent-test` → `starter`，包名前缀 `@agent-test/*` → `@starter/*`
 - 全局 skill：旧的 `yyx` 移除，改为 `skills/standards` junction（`workspace` / `nestjs` / `next` / `react`）
 - 所有 `.ps1` 调用统一为 `pwsh -NoProfile -File`（本机 PowerShell 7）
 - `agents/` 收敛为 2 个（`chief` primary + `qa` subagent），skills 按 `flows` / `tools` / `standards` 分组
-- **数据库迁移规范**：权限系统表结构变更从 `db push` 切到 Prisma Migrate（`db:migrate` 生成迁移文件入库 review、`db:deploy` 幂等部署、生产禁止 `db push`）；seed 收窄为只写初始数据；新增初始迁移 `init_permissions`。规范见 `docs/conventions.md` 第 5 节
-- **管理端 UI 选型**：`apps/admin` 引入 Mantine 9（仅管理端），交互组件用 Mantine、布局微调用 Tailwind，用 `tailwind-preset-mantine` 对齐主题；client / portal 仍只用 Tailwind。规则见 `docs/conventions.md` 第 6 节
+- **数据库迁移规范**：权限系统表结构变更从 `db push` 切到 Prisma Migrate（`db:migrate` 生成迁移文件入库 review、`db:deploy` 幂等部署、生产禁止 `db push`）；seed 收窄为只写初始数据；新增初始迁移 `init_permissions`。规范见 `docs/guides/conventions.md` 第 5 节
+- **管理端 UI 选型**：`apps/admin` 引入 Mantine 9（仅管理端），交互组件用 Mantine、布局微调用 Tailwind，用 `tailwind-preset-mantine` 对齐主题；client / portal 仍只用 Tailwind。规则见 `docs/guides/conventions.md` 第 6 节
 - **管理端路由与菜单布局**：admin 引入 `@tanstack/react-router`（file-based），Vite 插件自动生成 `routeTree.gen.ts`（不手改）；7 个路由页（首页/工作台/用户/角色/租户/权限/设置），Mantine AppShell 可折叠侧边菜单，菜单项集中配置在 `AdminMenu.tsx`
 - **复用官方预制布局 + LLM 支持**：管理端菜单改用 ui.mantine.dev 官方 `NavbarNested`/`LinksGroup`（CSS Module + `@tabler/icons-react` + `postcss-preset-mantine`），替掉手写菜单；模板 `.opencode/opencode.json` 接入 `mantine` MCP server，规范写明用 MCP / llms.txt 查最新官方用法
 
@@ -67,4 +68,4 @@
 
 ## 链接
 
-- [踩坑记录](pitfalls.md)
+- [踩坑记录](guides/pitfalls.md)

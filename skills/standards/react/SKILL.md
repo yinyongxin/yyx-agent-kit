@@ -9,7 +9,7 @@ description: 开发 React / TypeScript 前端时加载。Vite、Tailwind、路�
 
 - **框架**: React + TypeScript
 - **构建工具**: Vite（`@vitejs/plugin-react`）
-- **CSS / 组件库**: 管理端（`apps/admin`）用 Mantine 组件 + Tailwind 布局微调（`tailwind-preset-mantine` 对齐主题）；client / portal 只用 Tailwind 原子类，不引入第三方 UI 组件库。分工见 `docs/conventions.md`「前端样式与组件库」
+- **CSS / 组件库**: 管理端（`apps/admin`）用 Mantine 组件 + Tailwind 布局微调（`tailwind-preset-mantine` 对齐主题）；client / portal 只用 Tailwind 原子类，不引入第三方 UI 组件库。分工见 `docs/guides/conventions.md`「前端样式与组件库」
 - **图标**: lucide-react
 - **路由**: @tanstack/react-router
 - **状态管理**: Zustand

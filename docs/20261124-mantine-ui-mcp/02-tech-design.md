@@ -47,7 +47,7 @@
 ### 3.3 LLM 支持接入
 
 - `templates/base/.opencode/opencode.json` 加 `mcp.servers.mantine`（local，`npx -y @mantine/mcp-server`）
-- `docs/conventions.md` 新增约定：查 Mantine 组件用法优先用 `mantine` MCP 或 `https://mantine.dev/llms.txt`（官方随版本更新），不靠记忆
+- `docs/guides/conventions.md` 新增约定：查 Mantine 组件用法优先用 `mantine` MCP 或 `https://mantine.dev/llms.txt`（官方随版本更新），不靠记忆
 - react skill 同步该约定
 
 ## 4. 任务拆分

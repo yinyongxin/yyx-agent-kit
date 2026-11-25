@@ -10,7 +10,7 @@ description: 通用工程规范：pnpm、mise、monorepo、构建产物、部署
 - **包管理**: pnpm（禁止使用 npm 或 yarn）
 - **运行时**: mise 管理（node、bun 等），用 `mise install` / `mise use` / `mise global` 切换版本
 - **Node.js 版本**: 项目根目录 `mise.toml` 指定，使用 `mise install` 安装。当前框架最低要求：NestJS 12 需 v22.22.3+/v24.15+（CLI），Next.js 16 需 v20.9+
-- **技术栈版本基线**（2026-11-24 官网查询，用 ego 复核，见 `docs/scaffolds/`）: Vite 8.x + React 19.3 + TS 7（前端）、NestJS 12 + TS 6（后端，Nest CLI 限制）、Next.js 16（门户）。**升级时重新用 ego 查官网 + 跑官方脚手架，不靠旧版本经验**
+- **技术栈版本基线**（2026-11-24 官网查询，用 ego 复核，见 `docs/reference/scaffolds/`）: Vite 8.x + React 19.3 + TS 7（前端）、NestJS 12 + TS 6（后端，Nest CLI 限制）、Next.js 16（门户）。**升级时重新用 ego 查官网 + 跑官方脚手架，不靠旧版本经验**
 - **TS 版本前后端分开**: 前端 admin/client/portal 用 TS 7（跟 Vite 官方脚手架一致）；后端 server 锁 TS 6（Nest CLI 依赖 compiler API，TS 7 无此 API）
 - **升级方法**: 用官方脚手架在临时目录生成最新基础项目（`npm create vite@latest` / `npx @nestjs/cli@latest new` / `pnpm create next-app`），对照其 package.json/tsconfig/lint 配置迁移到本 monorepo，再叠加我们的端口/代理/共享包/Prisma RBAC/Docker 约定
 
@@ -104,11 +104,11 @@ docker compose down -v          # 停止并删数据卷（危险）
 ```
 
 - 数据库：**PostgreSQL + pgvector**（`pgvector/pgvector:pg17`），初始化 SQL 已 `CREATE EXTENSION vector`，向量检索单库搞定，不另起向量库；访问封装成 `VectorStore` 接口，将来可换 Qdrant。
-- **数据库结构变更强制走 Prisma Migrate**（详见 `docs/conventions.md` 第 5 节）：改 `schema.prisma` → `pnpm --filter @starter/server db:migrate -- --name <语义名>` 生成迁移文件 → review SQL 后提交入库 → 生产/CI `db:deploy` 应用。`prisma:push` **仅一次性原型验证**，禁止用于正式开发与生产；`migrate` 管 DDL、`db:seed` 管初始数据，不可混用；已应用迁移禁止手改，修正走新迁移或反向迁移。
+- **数据库结构变更强制走 Prisma Migrate**（详见 `docs/guides/conventions.md` 第 5 节）：改 `schema.prisma` → `pnpm --filter @starter/server db:migrate -- --name <语义名>` 生成迁移文件 → review SQL 后提交入库 → 生产/CI `db:deploy` 应用。`prisma:push` **仅一次性原型验证**，禁止用于正式开发与生产；`migrate` 管 DDL、`db:seed` 管初始数据，不可混用；已应用迁移禁止手改，修正走新迁移或反向迁移。
 - 端口：默认 54732(Postgres) / 46379(Redis)，映射到宿主，**多项目并存时每个项目的 `.env` 用不同端口**。应用端口仍走 47xxx 段。
 - 连接：本地进程用 `localhost` + 映射端口（见 `.env` 的 `DATABASE_URL` / `REDIS_URL`）；容器内用 service 名 `postgres` / `redis`。
 - 密码只放 `.env`（已 gitignore），不写死在代码或提交里。
-- **认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`（非外部 IdP）。session/refreshToken/mfa/oidcState/emailToken 存进同一个 PostgreSQL（store 契约，见 nestjs skill）。多平台共用一个 server，天然共享登录态；Google OIDC 开箱即用，微信需自定义 provider。生产必须注册全部 store 并配 HTTPS/CSRF/trustedOrigins，详见 `docs/credentials.md`。
+- **认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`（非外部 IdP）。session/refreshToken/mfa/oidcState/emailToken 存进同一个 PostgreSQL（store 契约，见 nestjs skill）。多平台共用一个 server，天然共享登录态；Google OIDC 开箱即用，微信需自定义 provider。生产必须注册全部 store 并配 HTTPS/CSRF/trustedOrigins，详见 `docs/guides/credentials.md`。
 
 ### 跨项目共享中间件池（仅临时验证）
 

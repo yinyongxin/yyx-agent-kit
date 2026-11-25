@@ -82,8 +82,8 @@
 
 ### F5 文档与规范同步
 
-- `docs/credentials.md`：初始化步骤从 `prisma:push` 改为 `prisma migrate deploy` + `db:seed`
-- `docs/conventions.md`：新增「数据库迁移」类别，写清命令、职责边界、禁止事项
+- `docs/guides/credentials.md`：初始化步骤从 `prisma:push` 改为 `prisma migrate deploy` + `db:seed`
+- `docs/guides/conventions.md`：新增「数据库迁移」类别，写清命令、职责边界、禁止事项
 - `skills/standards/nestjs/SKILL.md`：补迁移约定
 - `docs/CHANGELOG.md`：记录本次变更
 
@@ -131,7 +131,7 @@ When  重跑 prisma:seed
 Then  name 恢复为"管理员"（展示字段仍由 seed 管理）
 
 F5-AC1
-Given 查看 docs/credentials.md 初始化步骤
+Given 查看 docs/guides/credentials.md 初始化步骤
 When  搜索 prisma:push
 Then  无匹配；步骤中为 migrate deploy + seed
 

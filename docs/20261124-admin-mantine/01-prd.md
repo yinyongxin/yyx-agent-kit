@@ -74,7 +74,7 @@
 
 - `templates/base/AGENTS.md`：F1 的规则改写
 - `skills/standards/react/SKILL.md`：补 Mantine 接入与分工约定
-- `docs/conventions.md`：新增「前端样式与组件库」类别
+- `docs/guides/conventions.md`：新增「前端样式与组件库」类别
 - `docs/CHANGELOG.md`：记录本次变更
 
 ### F5 样板页
@@ -107,7 +107,7 @@ When  admin 子项目构建
 Then  成功，无 Tailwind/Mantine 样式冲突报错
 
 F3-AC1
-Given 查看 docs/conventions.md
+Given 查看 docs/guides/conventions.md
 When  查找样式分工章节
 Then  存在独立分类，写明 Mantine 管交互组件、Tailwind 管布局微调、主题由 preset 对齐
 

@@ -30,7 +30,7 @@
 | TC-F2-03 | F2-AC2 | 通过 | `main.tsx` 第 1 行导入 `@mantine/core/styles.css`，第 2 行导入 `MantineProvider`；`<StrictMode>` 内 `<MantineProvider>` 包裹 `<App />` | `apps/admin/src/main.tsx:1,2,8-14` |
 | TC-F2-04 | F2-AC2 | 通过 | `index.css` 仅 `@import "tailwind-preset-mantine";`，无 `@import "tailwindcss";` | `apps/admin/src/index.css:1`；CSS grep 仅此一处命中 |
 | TC-F2-05 | F2-AC3 | 通过（复测） | 首次与 lint 并发执行时 admin vite build 报 `memory allocation of 67600 bytes failed`（exit 3221226505）；单独重跑 `pnpm build` 退出码 0，6 子项目构建 + 全量 typecheck 全通过，无样式冲突报错，admin CSS 510.51 kB、client CSS 6.45 kB | 日志 `qa-build.log`（首次）/`qa-build-rerun.log`（复测），均在 `C:\Users\admin\AppData\Local\Temp\1\opencode\` |
-| TC-F3-01 | F3-AC1 | 通过 | `docs/conventions.md` 存在独立第 6 节「前端样式与组件库」，写明分端方案、Mantine 管交互控件、Tailwind 管布局微调、preset 对齐主题与 layer、只装按需包、`export const`、不启用深色模式 | `docs/conventions.md:61-72` |
+| TC-F3-01 | F3-AC1 | 通过 | `docs/guides/conventions.md` 存在独立第 6 节「前端样式与组件库」，写明分端方案、Mantine 管交互控件、Tailwind 管布局微调、preset 对齐主题与 layer、只装按需包、`export const`、不启用深色模式 | `docs/guides/conventions.md:61-72` |
 | TC-F3-02 | F3-AC2 | 通过 | `App.tsx` 为 `export const App = () => {...}`；admin/src 全量 TSX grep `export default` 与 `function Name(` 零命中 | `apps/admin/src/App.tsx:8`；grep "No matches found" |
 | TC-F3-03 | F3-AC2 | 通过 | 同上，admin 其它 TSX 无违规组件写法 | 同上 |
 | TC-F4-01 | F4-AC1 | 通过 | react skill 第 12 行写明仅 admin 可用 Mantine + Tailwind 分工 + preset，第 26 行写明交互控件用 Mantine、写法仍为 `export const` | `skills/standards/react/SKILL.md:12,26` |

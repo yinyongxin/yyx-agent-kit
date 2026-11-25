@@ -64,7 +64,7 @@ flowchart LR
 | `apps/admin/src/main.tsx` | 改 | 导入 `@mantine/core/styles.css`，包 `MantineProvider` |
 | `apps/admin/src/App.tsx` | 改 | 样板页：Mantine 组件 + Tailwind 布局 |
 | `skills/standards/react/SKILL.md` | 改 | 补 Mantine 接入与分工约定 |
-| `docs/conventions.md` | 改 | 新增「前端样式与组件库」类别 |
+| `docs/guides/conventions.md` | 改 | 新增「前端样式与组件库」类别 |
 | `docs/CHANGELOG.md` | 改 | 记录本次变更 |
 
 ## 8. 关键流程

@@ -207,5 +207,5 @@
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。
 
-- 发版手动流程与 npm 包结构见 [README.md](../README.md) 的「创建新项目」「发布 CLI」章节。
+- 发版手动流程与 npm 包结构见 [README.md](../../README.md) 的「创建新项目」「发布 CLI」章节。
 - 全局偏好（pwsh、代理、mise 等）在 `~/.config/opencode/AGENTS.md`。

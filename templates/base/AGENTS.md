@@ -13,7 +13,7 @@
 - 业务接口按领域命名（`/todos`、`/orders`、`/patients`），`health` 只做运维探活，不承载业务逻辑。
 - 跨端共用的常量必须放 `packages/shared`：`API_PREFIX`、`API_ROUTES`、业务枚举、类型。新增接口先加常量，再由 controller 与 api 层引用，不要前后端各写一份字符串。
 - 前端 HTTP 使用原生 `fetch`，不引入 axios。
-- 前端样式与组件库：**管理端（`apps/admin`）允许使用 Mantine 组件库**；`apps/client`、`apps/portal` 不引入第三方 UI 组件库，样式用 Tailwind 原子类。分工与接入约定见 `docs/conventions.md`「前端样式与组件库」章节。
+- 前端样式与组件库：**管理端（`apps/admin`）允许使用 Mantine 组件库**；`apps/client`、`apps/portal` 不引入第三方 UI 组件库，样式用 Tailwind 原子类。分工与接入约定见 `docs/guides/conventions.md`「前端样式与组件库」章节。
 - 组件写法统一 `export const Comp = () => {}`，不使用 `function` 声明，不使用 `export default`。
 - 页面文件放在 `[业务名]/[业务名].tsx`，页面内组件放同级 `components/`。
 - 后端 Controller 只做参数校验和转发，业务逻辑放 Service。

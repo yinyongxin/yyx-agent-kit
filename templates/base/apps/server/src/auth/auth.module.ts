@@ -12,7 +12,7 @@ import { UsersRepository } from "./users.repository";
  * 当前是最小闭环：Bearer JWT 凭证 provider + 全局 guard（除 @Public() 路由）。
  * health 用 @Public() 豁免；其余路由需要登录。
  *
- * 生产上线前按官网文档补齐（见 docs/pitfalls.md #16 与 README TODO）：
+ * 生产上线前按官网文档补齐（见 docs/guides/pitfalls.md #16 与 README TODO）：
  *   1. 注册 6 个 store（sessions / refreshTokens / mfa / magicLinks / oidcStates / emailTokens）
  *      到同一个 PostgreSQL（写 Prisma store，跑官方 contract tests）
  *   2. Google OIDC：oidc.providers 加 google() + 环境变量 GOOGLE_CLIENT_ID/SECRET

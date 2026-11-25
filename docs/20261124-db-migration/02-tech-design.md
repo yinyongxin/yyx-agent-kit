@@ -7,7 +7,7 @@
 - `apps/server/prisma/` 只有 `schema.prisma` 与 `seed.ts`，**无 `migrations/` 目录**
 - `apps/server/package.json` 只有 `prisma:push`（`prisma db push`）、`prisma:generate`、`prisma:seed`
 - `apps/server/prisma7.config.ts` 已配 `migrations.path = "prisma/migrations"`，但未启用
-- `docs/credentials.md` 初始化步骤写的是 `prisma:push`
+- `docs/guides/credentials.md` 初始化步骤写的是 `prisma:push`
 - seed 用 upsert 保证幂等；其中内置角色的 `update` 含 `isSystem`
 
 ## 2. 可行性结论
@@ -78,8 +78,8 @@ apps/server/prisma/migrations/
 | `apps/server/package.json` | 改 | scripts 新增 `db:migrate` / `db:deploy` / `db:seed` / `db:reset`；`prisma:push` 保留但加"仅原型"注释 |
 | `apps/server/prisma/migrations/` | 新增 | 迁移文件入库 |
 | `apps/server/prisma/seed.ts` | 改 | role 的 `update` 去掉 `isSystem`，加职责边界注释 |
-| `docs/credentials.md` | 改 | 初始化步骤改为 `migrate deploy` + `seed` |
-| `docs/conventions.md` | 改 | 新增「数据库迁移」类别 |
+| `docs/guides/credentials.md` | 改 | 初始化步骤改为 `migrate deploy` + `seed` |
+| `docs/guides/conventions.md` | 改 | 新增「数据库迁移」类别 |
 | `skills/standards/nestjs/SKILL.md` | 改 | 补迁移约定与禁止事项 |
 | `docs/CHANGELOG.md` | 改 | 记录变更 |
 
