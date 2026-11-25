@@ -140,3 +140,11 @@ apps/admin/src/
 - **工作顺序**：进入陌生目录先读该目录的 `README.md` → 按职责和关联筛出相关文件、列出候选 → 再读具体文件形成结论。**结论必须以具体文件为准，README 只用来决定"读哪些"**，不得只凭目录说明下判断。
 - 改动了文件清单、职责或关联，必须同步更新该目录的 `README.md`；qa 回归时把"目录说明与实际文件一致"作为一条检查项。
 - 例外：`docs/reference/scaffolds/{nest,next,vite}` 是官方原样配置，由 `reference/README.md` 统一说明，不单独加；生成物目录（`dist/`、`.next/`）与框架保留目录不适用。
+
+## 10. 配置文件的注释与脚本声明
+
+- **严格 JSON 不支持注释**：`package.json` 用 `JSON.parse` 解析，写 `//` 会直接报错。硬规则不要靠 JSON 注释承载——注释会腐烂，agent 也不一定读到。
+- **`package.json` 的 `scripts` 只做纯声明**：一行调用即可。复杂逻辑抽到 `scripts/<语义名>.ps1` / `.mjs`，说明写在脚本头部注释（如 `scripts/sync.ps1`、`scripts/new.ps1`）。
+- **人类可读的命令说明写进 README 表格**（如 `templates/base/README.md` 的「命令」表）。agent 查命令用途时读 README，不依赖 JSON 里的注释。
+- **`"//"` 伪注释 key 是权宜之计，不作为规范**：npm 会忽略未知 key 所以能跑，但格式化工具可能重排、linter 可能警告，不要用它承载重要规则。
+- **支持 JSONC 的配置可以直接写注释**：`tsconfig.json` 原生支持；OpenCode 配置需要注释时改用 `opencode.jsonc`。`package.json` 不行，别试。
