@@ -201,6 +201,7 @@
   4. `write_file(path, content)` 迭代修正（如 HTML 里 `D:\projects` 要写 `D:\\projects`）
   5. `get_project` 拿 `previewUrl`，用 ego 打开截图验证
 - **备注**：官方指令说"不要用 write_file 替代生成流水线（会丢设计质量）"，但那是针对"流水线可用"的前提；当流水线因额度/模型卡死不可用时，自己写是唯一可行路径，且质量可控。以后遇到 OpenDesign：`start_run` 失败一次就直接切文件工具，不要反复重试 burn 时间。
+- **补充**：第一次直接写时没读 OpenDesign 的设计规范/技能参考，纯按自己审美写了双字体 + 冷色 + 卡片阴影版本，被用户指出"没用上 OpenDesign 的设计规范"才发现漏了。正确做法见 conventions 1.4：先用 `list_mcp_resources` / `read_mcp_resource` 读 `od://design-systems/<id>/DESIGN.md` 与 `od://skills/<id>/SKILL.md`。本项目按 `opencode-ai` 规范（单一等宽字体、暖调 #201d1d、蓝色 #007aff、4px 圆角、零阴影、860px 窄容器）重做后才真正用上 OpenDesign 的设计资产。
 
 ## 相关约定
 

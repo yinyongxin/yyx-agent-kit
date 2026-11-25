@@ -10,7 +10,7 @@
 - **admin 组件/页面文件夹化 + 壳内容分离**：所有组件和页面改为目录 + `index.tsx` barrel（只 re-export），可带 css/types/enums/functions；页面统一 `<PageShell>` 外壳 + `XxxContent` 可复用内容（Home/Dashboard 的真实逻辑也拆到 Content）；`PlaceholderPage` 拆成 `PageShell` + `PlaceholderContent`；ego 验证三个页面正常
 - **侧栏去掉折叠**：AdminLayout 移除展开/收起和移动端抽屉，侧栏固定 260px；删除多余的静态 starter 标题
 - **Vite 前端加 `@/*` 别名**：admin/client 双配置（tsconfig paths + Vite resolve.alias），跨目录 import 改用 `@/`；TS 7 移除 baseUrl（踩坑 #23）
-- **OpenDesign 接入与踩坑**：全局 MCP 接入 open-design（本地 CLI + OD_* 环境变量 + pool）；其生成流水线多次因余额不足/模型首 token 超时失败，改为直接用 MCP 文件工具（`create_artifact`/`write_file`）完成介绍页设计；工作规则写入 conventions 1.4，踩坑 #24
+- **OpenDesign 接入与踩坑**：全局 MCP 接入 open-design（本地 CLI + OD_* 环境变量 + pool）；其生成流水线多次因余额不足/模型首 token 超时失败，改为直接用 MCP 文件工具（`create_artifact`/`write_file`）完成介绍页设计；工作规则写入 conventions 1.4，踩坑 #24；直接写前必须先读 `od://design-systems` 与 `od://skills` 资源，按 OpenCode 官方规范重做介绍页
 - **数据库变更强制走 migrate 写入 agent 规则**：chief/qa 的 prompt 与 workspace/nestjs skill 明确禁止 `prisma:push` 用于正式开发/生产，schema 变更必须生成迁移文件；新增踩坑 #20（P3005 baseline）
 
 ## [0.1.0] - 2026-11-23

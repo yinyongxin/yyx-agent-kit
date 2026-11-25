@@ -26,6 +26,7 @@
 
 - 用户要求用 OpenDesign 做设计时，优先走官方便捷流程（`collect_brief` → `confirm_brief` → `start_run`），但 **`start_run` 失败一次就立即切换到直接写文件**，不要反复重试或换模型 burn 时间（本机已多次遇到余额不足 / 首 token 超时，见踩坑记录 #24）。
 - 直接写的路径：`create_project` → `create_artifact(name, content)` 写入口 → `write_file` 迭代 → `get_project` 拿 previewUrl → ego 截图验证。产物质量由我们自己把控。
+- **直接写 ≠ 凭自己审美写**：动手前先读 OpenDesign 的 MCP 资源——`list_mcp_resources({server:"open-design"})` → `read_mcp_resource`，至少匹配一个 `od://design-systems/<id>/DESIGN.md` 和一个相关 `od://skills/<id>/SKILL.md`，按其字体/配色/圆角/阴影/网格/容器宽度约束来写。本项目选 `opencode-ai`（yyx-agent-kit 是 OpenCode 配套工具）+ `design-taste-frontend`（落地页）。跳过这步等于丢弃 OpenDesign 的设计资产，只剩拍脑袋。
 - OpenDesign 的连接配置在全局 `~/.config/opencode/opencode.json` 的 `mcp.servers.open-design`（本地 command + OD_* 环境变量 + `pool:true`）。
 
 ## 2. 技术引入与版本升级
