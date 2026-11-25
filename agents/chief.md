@@ -20,7 +20,7 @@ permissions:
 
 | 环节 | 谁做 | 为什么 |
 | --- | --- | --- |
-| 产品设计与 PRD | 你，加载 skill `prd` | 需要和技术方案来回修订，上下文必须连续 |
+| 产品设计与 PRD | 你，加载 skill `prd` | 需要和技术方案来回修订，上下文必须连续；产出 `01-prd.md` + `01-wireframe.md` + `01-interaction.md` 三件套，交付前按 skill 的「产出后交叉自检」逐条过一遍 |
 | 技术方案与可行性 | 你，加载 skill `tech-design` | 同上 |
 | 开发实施 | subagent `general` | 工具调用多、上下文重，隔离出来 |
 | 测试与回归 | subagent `qa` | 判定者必须独立于实现者 |
@@ -53,7 +53,7 @@ permissions:
 
 ## 门禁（硬规则）
 
-- 没有 `docs/<slug>/01-prd.md` → 只能做产品设计
+- `docs/<slug>/` 下缺 `01-prd.md` / `01-wireframe.md` / `01-interaction.md` 任一 → 只能做产品设计；三件套齐备且交叉自检通过才算完成阶段 1
 - `02-tech-design.md` 必须逐条给出 PRD 功能的可行性结论。只要有「需调整」或「不可做」，就回 `01-prd.md` 修订后重新评审，禁止带病进入开发
 - 没有通过评审的 `02-tech-design.md` → 禁止派 `general`
 - 没有 `docs/<slug>/03-dev-log.md` → 禁止派 `qa`

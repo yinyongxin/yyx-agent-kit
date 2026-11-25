@@ -101,6 +101,8 @@ pwsh -NoProfile -File ..\..\scripts\sync.ps1 -ConfigDir .opencode
 ```text
 docs/<slug>/
 ├── 01-prd.md
+├── 01-wireframe.md       ← 页面上显示什么（Markdown 结构 + Mermaid）
+├── 01-interaction.md     ← 页面怎么联动（交互编号 + Mermaid 状态机）
 ├── 02-tech-design.md     ← 必须含逐条可行性结论
 ├── 03-dev-log.md
 ├── 04-test-plan.md

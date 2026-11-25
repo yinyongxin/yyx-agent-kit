@@ -11,7 +11,7 @@ description: 产品从需求到上线的五阶段流程与门禁。当用户说�
 
 | 阶段 | 负责人 | 交付物 | 通过标准（准出） |
 | --- | --- | --- | --- |
-| 1 产品设计 | chief + `prd` | `01-prd.md` | 每条功能有可判定验收标准；非目标写明；假设单列 |
+| 1 产品设计 | chief + `prd` | `01-prd.md`、`01-wireframe.md`、`01-interaction.md` | PRD 每条功能有可判定验收标准；线稿+交互稿齐备且通过交叉自检（见 `prd` skill）；非目标写明；假设单列 |
 | 2 技术方案 | chief + `tech-design` | `02-tech-design.md` | 逐条给出可行性结论，无「需调整」「不可做」 |
 | 3 开发实施 | `general` | 代码 + `03-dev-log.md` | 任务全部完成；类型检查/lint/构建通过 |
 | 4 测试回归 | `qa` | `04-test-plan.md`、`04-test-report.md` | 报告结论为「通过」；无未处理高优缺陷 |
@@ -22,7 +22,7 @@ description: 产品从需求到上线的五阶段流程与门禁。当用户说�
 ## 门禁（顺序不可逆）
 
 ```
-01-prd.md 存在且用户确认  →  才能做技术方案
+01-prd.md + 01-wireframe.md + 01-interaction.md 齐备、交叉自检通过且用户确认  →  才能做技术方案
 技术方案有可行性结论且全部「可做」  →  才能派 general
 02-tech-design.md 存在   →  才能开工
 03-dev-log.md 任务完成   →  才能派 qa
