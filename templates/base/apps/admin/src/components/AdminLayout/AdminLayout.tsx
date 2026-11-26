@@ -1,48 +1,23 @@
-import { IconArrowsExchange } from "@tabler/icons-react";
-import { ActionIcon, Tooltip } from "@mantine/core";
 import { Outlet } from "@tanstack/react-router";
 import { useState } from "react";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
+import { LayoutModeProvider, type AdminLayoutMode } from "@/components/LayoutMode";
 import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
 import { HeaderMenu } from "@/components/header/HeaderMenu";
 import { DoubleNavbar } from "@/components/navbar/DoubleNavbar";
 import { NavbarNested } from "@/components/navbar/NavbarNested";
-
-type Layout = "nested" | "double" | "header-menu" | "header-mega-menu";
-
-const LAYOUTS: Layout[] = ["nested", "double", "header-menu", "header-mega-menu"];
-const LABELS: Record<Layout, string> = {
-  nested: "嵌套侧栏",
-  double: "双栏侧栏",
-  "header-menu": "顶部菜单",
-  "header-mega-menu": "顶部大菜单",
-};
+import classes from "./AdminLayout.module.css";
 
 export const AdminLayout = () => {
-  const [layout, setLayout] = useState<Layout>("nested");
-
-  const nextLayout = () =>
-    setLayout((current) => LAYOUTS[(LAYOUTS.indexOf(current) + 1) % LAYOUTS.length]!);
-  const isHeader = layout === "header-menu" || layout === "header-mega-menu";
+  const [mode, setMode] = useState<AdminLayoutMode>("nested");
+  const isHeader = mode === "header-menu" || mode === "header-mega-menu";
 
   return (
-    <>
-      {/* 浮动切换按钮：四种布局模式通用 */}
-      <Tooltip label={`当前：${LABELS[layout]}，点击切换`} position="bottom">
-        <ActionIcon
-          variant="filled"
-          onClick={nextLayout}
-          aria-label="切换布局模式"
-          style={{ position: "fixed", top: 12, right: 12, zIndex: 2000 }}
-        >
-          <IconArrowsExchange size={18} />
-        </ActionIcon>
-      </Tooltip>
-
+    <LayoutModeProvider mode={mode} setMode={setMode}>
       {isHeader ? (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-          {layout === "header-menu" ? <HeaderMenu /> : <HeaderMegaMenu />}
-          <AdminScrollArea style={{ flex: 1, minHeight: 0 }}>
+          {mode === "header-menu" ? <HeaderMenu /> : <HeaderMegaMenu />}
+          <AdminScrollArea className={classes.main} style={{ flex: 1, minHeight: 0 }}>
             <div style={{ padding: "var(--mantine-spacing-md)" }}>
               <Outlet />
             </div>
@@ -50,7 +25,7 @@ export const AdminLayout = () => {
         </div>
       ) : (
         <div style={{ display: "flex", height: "100vh" }}>
-          {/* 侧栏固定宽度，不折叠 */}
+          {/* 侧栏固定宽度，不折叠；背景为白色/深色，主内容区另有浅灰/更深背景以区分 */}
           <div
             style={{
               width: 260,
@@ -60,19 +35,18 @@ export const AdminLayout = () => {
           >
             <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
               <div style={{ flex: 1, minHeight: 0 }}>
-                {layout === "nested" ? <NavbarNested /> : <DoubleNavbar />}
+                {mode === "nested" ? <NavbarNested /> : <DoubleNavbar />}
               </div>
             </div>
           </div>
 
-          <AdminScrollArea h="100%" style={{ flex: 1, minWidth: 0 }}>
+          <AdminScrollArea className={classes.main} h="100%" style={{ flex: 1, minWidth: 0 }}>
             <div style={{ padding: "var(--mantine-spacing-md)" }}>
               <Outlet />
             </div>
           </AdminScrollArea>
         </div>
       )}
-    </>
+    </LayoutModeProvider>
   );
 };
-

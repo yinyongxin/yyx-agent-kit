@@ -2,7 +2,7 @@
 
 ## 职责
 
-放在四种菜单里的用户信息入口：显示头像、姓名（侧栏/抽屉还显示邮箱），点击展开面板，提供主题设置、系统设置、退出登录。模板阶段用示例用户与禁用态退出项，接认证后由调用方注入真实数据与回调。
+放在四种菜单里的用户信息入口：显示头像、姓名（侧栏/抽屉还显示邮箱），点击展开面板，提供导航菜单模式切换、主题设置、系统设置、退出登录。模板阶段用示例用户与禁用态退出项，接认证后由调用方注入真实数据与回调。
 
 ## 文件索引
 
@@ -17,6 +17,7 @@
 
 - 三种形态覆盖四种菜单：`sidebar` → `NavbarNested` / `DoubleNavbar`；`header` → `HeaderMenu` / `HeaderMegaMenu`；`drawer` → 两种顶部菜单的移动端抽屉。
 - 主题设置用 Mantine 官方 `useMantineColorScheme` 的 `setColorScheme`（官网 Color schemes），支持浅色/深色/跟随系统；值存 localStorage，Provider 默认 light。
+- 导航菜单模式通过 `components/LayoutMode` 的 `useOptionalLayoutMode()` 读取并切换四种模式；不在 Provider 内时不显示该项（组件可独立复用）。
 - 设置项跳 `/settings`（`settingsTo` 可覆盖）；退出登录需要 `onLogout` 回调，未接认证时禁用并显示「待接入」。
 - 接入认证后：由 `apps/server` 的 `@nestjs/authentication` 提供用户，调用方传 `user` 与 `onLogout`。
 

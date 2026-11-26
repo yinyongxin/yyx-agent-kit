@@ -1,4 +1,5 @@
 import {
+  IconArrowsExchange,
   IconCheck,
   IconChevronDown,
   IconDeviceDesktop,
@@ -18,6 +19,7 @@ import {
   type MantineColorScheme,
 } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
+import { LAYOUT_MODES, useOptionalLayoutMode } from "@/components/LayoutMode";
 import classes from "./UserMenu.module.css";
 import type { UserInfo, UserMenuProps } from "./types";
 
@@ -43,6 +45,7 @@ export const UserMenu = ({
   extraItems,
 }: UserMenuProps) => {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const layoutMode = useOptionalLayoutMode();
   const compact = variant === "header";
   const initial = user.name.slice(0, 1);
 
@@ -94,6 +97,29 @@ export const UserMenu = ({
         <Menu.Divider />
 
         {extraItems}
+
+        {layoutMode && (
+          <Menu.Sub>
+            <Menu.Sub.Target>
+              <Menu.Sub.Item leftSection={<IconArrowsExchange size={14} />}>
+                导航菜单模式
+              </Menu.Sub.Item>
+            </Menu.Sub.Target>
+            <Menu.Sub.Dropdown>
+              {LAYOUT_MODES.map((item) => (
+                <Menu.Item
+                  key={item.value}
+                  rightSection={
+                    layoutMode.mode === item.value ? <IconCheck size={14} /> : null
+                  }
+                  onClick={() => layoutMode.setMode(item.value)}
+                >
+                  {item.label}
+                </Menu.Item>
+              ))}
+            </Menu.Sub.Dropdown>
+          </Menu.Sub>
+        )}
 
         <Menu.Sub>
           <Menu.Sub.Target>
