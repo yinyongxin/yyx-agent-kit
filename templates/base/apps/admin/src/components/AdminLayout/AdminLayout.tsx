@@ -3,20 +3,19 @@ import { useState } from "react";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { LayoutModeProvider, type AdminLayoutMode } from "@/components/LayoutMode";
 import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
-import { HeaderMenu } from "@/components/header/HeaderMenu";
 import { DoubleNavbar } from "@/components/navbar/DoubleNavbar";
 import { NavbarNested } from "@/components/navbar/NavbarNested";
 import classes from "./AdminLayout.module.css";
 
 export const AdminLayout = () => {
   const [mode, setMode] = useState<AdminLayoutMode>("nested");
-  const isHeader = mode === "header-menu" || mode === "header-mega-menu";
+  const isHeader = mode === "header-mega-menu";
 
   return (
     <LayoutModeProvider mode={mode} setMode={setMode}>
       {isHeader ? (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-          {mode === "header-menu" ? <HeaderMenu /> : <HeaderMegaMenu />}
+          <HeaderMegaMenu />
           <AdminScrollArea className={classes.main} style={{ flex: 1, minHeight: 0 }}>
             <div style={{ padding: "var(--mantine-spacing-md)" }}>
               <Outlet />

@@ -79,7 +79,7 @@
 - 组件写法统一 `export const Comp = () => {}`，不受组件库影响
 - 不启用深色模式（Mantine 开箱支持，按需再开）
 - 查 Mantine 最新用法优先用 `mantine` MCP（`npx -y @mantine/mcp-server`）或 `https://mantine.dev/llms.txt`——官方随版本更新，不靠记忆；管理端菜单等布局优先复用 ui.mantine.dev 的现成组件（MIT），不重复手写
-- **主内容背景**：admin 侧栏用白色 / `dark-6`，主内容区用 `gray-0` / `dark-8`（`AdminLayout.module.css` 的 `.main`），两者必须可区分；四种菜单模式共用这套背景。
+- **主内容背景**：admin 侧栏用白色 / `dark-6`，主内容区用 `gray-0` / `dark-8`（`AdminLayout.module.css` 的 `.main`），两者必须可区分；三种菜单模式共用这套背景。
 - **布局模式切换**：状态由 `AdminLayout` 持有，经纯 `components/LayoutMode` Provider 暴露；用户面板用 `useOptionalLayoutMode()` 切换，不再保留调试用的浮动按钮。
 - **交互光标**：admin 入口用 `createTheme({ cursorType: "pointer" })` 传给 `MantineProvider`——Mantine 9 默认 `cursorType: "default"`，不设置的话 Button / Checkbox / Pagination 等交互元素鼠标悬停都不是小手（见踩坑 #26）。
 - **滚动容器**：admin 内所有可滚动区域统一用 `components/AdminScrollArea`（封装 Mantine `ScrollArea`，保持默认配置），不要用原生 `overflow: auto` 或 `type="native"`；Mantine 自定义滚动条是覆盖层、不占布局宽度，不会出现原生滚动条出现/消失时的页面跳动。也不需要 `offsetScrollbars`——它只用于内容会被滚动条盖住的场景。
@@ -95,7 +95,7 @@
 | NestJS 后端文件 | 小写连字符 + 点分隔角色后缀 | `app.module.ts`、`jwt-auth.provider.ts`、`users.repository.ts`、`tenant-context.util.ts`、`todo.policy.ts` |
 | 纯类型定义 | `<name>.types.ts` | `user.types.ts` |
 | React 组件 | PascalCase，文件名 = 组件名 | `AdminLayout.tsx`、`DashboardPage.tsx` |
-| CSS Modules | 与组件同名 + `.module.css` | `HeaderMenu.module.css` |
+| CSS Modules | 与组件同名 + `.module.css` | `HeaderMegaMenu.module.css` |
 | Next.js 路由文件 | 框架保留名，**不可改** | `page.tsx`、`layout.tsx`、`route.ts` |
 | TanStack Router 路由 | 小写，路由路径即文件名 | `routes/dashboard.tsx`、`routes/__root.tsx` |
 | 工具生成文件 | `*.gen.ts`，**不可手改/改名** | `routeTree.gen.ts` |
@@ -122,7 +122,7 @@ apps/admin/src/
     ├── PageShell/{index.tsx, PageShell.tsx, PageShell.module.css, types.ts}
     ├── PlaceholderContent/{index.tsx, PlaceholderContent.tsx}
     ├── AdminLayout/{index.tsx, AdminLayout.tsx}
-    └── header/{HeaderMenu,HeaderMegaMenu}、navbar/{DoubleNavbar,NavbarNested}（两套布局保留，各含 index.tsx + tsx + css）
+    └── header/HeaderMegaMenu、navbar/{DoubleNavbar,NavbarNested}（三种菜单模式，各含 index.tsx + tsx + css）
 ```
 
 - **routes 与页面分离**：route 文件只声明路由并指向 features 里的页面，页面实现不写在 route 里。

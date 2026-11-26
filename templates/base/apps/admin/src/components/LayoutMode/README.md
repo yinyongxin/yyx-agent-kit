@@ -16,7 +16,7 @@
 
 - 状态源在 `components/AdminLayout/AdminLayout.tsx`，默认 `nested`。
 - `components/UserMenu` 用 `useOptionalLayoutMode()` 读取：有 Provider 才显示「导航菜单模式」子菜单，没有则不显示。
-- 四种模式对应的组件：`NavbarNested` / `DoubleNavbar` / `HeaderMenu` / `HeaderMegaMenu`。
+- 三种模式对应的组件：`NavbarNested` / `DoubleNavbar` / `HeaderMegaMenu`（顶部菜单与顶部大菜单重复，只保留后者）。
 
 ## 同步要求
 

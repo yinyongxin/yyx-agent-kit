@@ -15,7 +15,7 @@
 
 ## 关联
 
-- 四种形态对应四种菜单：`sidebar` → `NavbarNested`（整行含邮箱）；`icon` → `DoubleNavbar`（只显示头像，放一级图标菜单下方）；`header` → `HeaderMenu` / `HeaderMegaMenu`（紧凑含姓名）；`drawer` → 两种顶部菜单的移动端抽屉。
+- 四种形态对应三种菜单：`sidebar` → `NavbarNested`（整行含邮箱）；`icon` → `DoubleNavbar`（只显示头像，放一级图标菜单下方）；`header` → `HeaderMegaMenu`（紧凑含姓名）；`drawer` → 顶部大菜单的移动端抽屉。
 - 主题设置用 Mantine 官方 `useMantineColorScheme` 的 `setColorScheme`（官网 Color schemes），支持浅色/深色/跟随系统；值存 localStorage，Provider 默认 light。
 - 导航菜单模式通过 `components/LayoutMode` 的 `useOptionalLayoutMode()` 读取并切换四种模式；不在 Provider 内时不显示该项（组件可独立复用）。
 - 设置项跳 `/settings`（`settingsTo` 可覆盖）；退出登录需要 `onLogout` 回调，未接认证时禁用并显示「待接入」。
