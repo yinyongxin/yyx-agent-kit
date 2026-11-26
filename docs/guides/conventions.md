@@ -81,6 +81,7 @@
 - 查 Mantine 最新用法优先用 `mantine` MCP（`npx -y @mantine/mcp-server`）或 `https://mantine.dev/llms.txt`——官方随版本更新，不靠记忆；管理端菜单等布局优先复用 ui.mantine.dev 的现成组件（MIT），不重复手写
 - **背景色**：admin 页面级背景在 `src/index.css` 的 `body` 上统一设为 `gray-0` / `dark-8`；侧栏组件自己用白色 / `dark-6`，与页面背景区分。不要只在内容区局部设背景。
 - **布局模式切换**：状态由 `AdminLayout` 持有，经纯 `components/LayoutMode` Provider 暴露；用户面板用 `useOptionalLayoutMode()` 切换，不再保留调试用的浮动按钮。
+- **设计工具 Penpot**：自托管 compose 在 `tools/penpot/`（官方原样），本地 MCP 免 key（`npx @penpot/mcp@stable` + 浏览器插件）；MCP 配置只放全局 `opencode.json`，key/token 不进仓库；作用于当前焦点页、写操作先确认（详见 `skills/tools/penpot/SKILL.md`）。
 - **交互光标**：admin 入口用 `createTheme({ cursorType: "pointer" })` 传给 `MantineProvider`——Mantine 9 默认 `cursorType: "default"`，不设置的话 Button / Checkbox / Pagination 等交互元素鼠标悬停都不是小手（见踩坑 #26）。
 - **滚动容器**：admin 内所有可滚动区域统一用 `components/AdminScrollArea`（封装 Mantine `ScrollArea`，保持默认配置），不要用原生 `overflow: auto` 或 `type="native"`；Mantine 自定义滚动条是覆盖层、不占布局宽度，不会出现原生滚动条出现/消失时的页面跳动。也不需要 `offsetScrollbars`——它只用于内容会被滚动条盖住的场景。
 - 模板项目已在 `.opencode/opencode.json` 配好 `mantine` MCP，生成的新项目自动带

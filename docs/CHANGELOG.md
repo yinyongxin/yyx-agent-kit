@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **接入 Penpot 设计工具**：`tools/penpot/` 放官方自托管 compose；新增 `skills/tools/penpot/SKILL.md` 与工具索引条目；本地免 key MCP（npx + 浏览器插件）配置写入全局 opencode.json，token 不进仓库；conventions 与 agent-system 同步
 - **移除 todos 示例模块**：工作台与客户端只显示公开的 `/api/health`；删除后端 `todos.controller.ts` / `todos.service.ts` / `todo.policy.ts` 与 `app.module.ts` 注册，删除 shared 的 `Todo`/`TODO_STATUS`/路由常量和 api client 的 `todos()`；README、AGENTS、workspace skill、conventions 的示例同步；历史需求文档保留原样
 - **去掉独立首页，工作台即默认页**：`routes/index.tsx` 改为渲染 `DashboardPage`，删除 `routes/dashboard.tsx` 与 `features/home/`；三种导航的「首页」项移除，「工作台」指向 `/`；Brand 点击回工作台；现行目录约定同步
 - **新增统一 Brand 组件**：三种导航都有 Logo——嵌套侧栏头部与顶栏左侧用完整形态（`S starter`），双栏图标栏用 compact 形态（仅图标）；点击回首页，纯 CSS 渐变方块不依赖图片；顶栏菜单仍绝对居中
