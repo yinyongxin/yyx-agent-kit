@@ -9,18 +9,17 @@ description: 通过 Penpot 官方 MCP 读写当前焦点设计页，做线稿审
 
 ## 前置条件（缺一不可）
 
-- Penpot 已自托管并打开：`F:\project\yyx-agent-kit\tools\penpot\docker-compose.yaml` 启动，访问 `http://localhost:9001`
-- 本地 MCP server 在跑：`npx -y @penpot/mcp@stable`（manifest `localhost:4400`，MCP `http://localhost:4401/mcp`）
-- Penpot 里已 **Plugins → Load from URL → `http://localhost:4400/manifest.json`** 并 **Connect to MCP server**
-- 全局 `opencode.json` 配了 `penpot` MCP server（URL 不含 key，见 tools/penpot/README.md）
+- Penpot 已自托管并打开：`templates/base/docker-compose.yml` 启动，访问 `http://localhost:9001`
+- Penpot 里打开一个设计文件并 **File → MCP Server → Connect**（MCP 作用于当前焦点页）
+- 全局 `opencode.json` 配了 `penpot` 远程 MCP（`http://localhost:9001/mcp/stream?userToken=<KEY>`，key 只放全局配置、**不进仓库**）
 
 ## 工具能力（官方 MCP）
 
 - `high_level_overview` — 页面/结构概览
 - `penpot_api_info` — API 能力说明
 - `execute_code` — 在 Penpot 内执行读写脚本（建 token、改组件、重命名图层等）
-- `export_shape` — 导出图形（本地模式支持导出到本地路径）
-- `import_image` — 导入图片（本地路径仅本地模式）
+- `export_shape` — 导出图形（远程模式不写本地路径）
+- `import_image` — **仅本地模式可用**（见 tools/penpot/README.md）
 
 ## 工作流
 

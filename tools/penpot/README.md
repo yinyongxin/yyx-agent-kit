@@ -23,17 +23,28 @@ docker compose up -d
 
 Penpot 用独立的 PostgreSQL 15 容器（`starter-penpot-postgres`）和 Valkey，不复用业务库；容器名/卷都带 `starter-` 前缀，多项目并存不冲突。端口和密码在 `.env.example` 里配（`PENPOT_PORT` / `PENPOT_MAILPIT_PORT` / `PENPOT_DB_PASSWORD` / `PENPOT_SECRET_KEY`）。compose 已带 `enable-mcp` flag。
 
-### 本地 MCP（免 key，推荐）
+### 远程 MCP（当前采用）
 
-1. 终端跑 `npx -y @penpot/mcp@stable` 并保持运行（Node 22；manifest `localhost:4400`，MCP `http://localhost:4401/mcp`）
-2. 浏览器打开 `http://localhost:9001` 的设计文件
-3. **Plugins → Load from URL** → `http://localhost:4400/manifest.json` → 运行插件 → **Connect to MCP server**
-4. MCP client（OpenCode）连 `http://localhost:4401/mcp`——配置在全局 `~/.config/opencode/opencode.json`，**不进仓库**
-5. 先用只读 prompt 验证：`List pages in this file.`
+自托管实例的远程端点：`http://localhost:9001/mcp/stream?userToken=<MCP_KEY>`。
 
-### 远程 MCP（需要 key，本系统不用）
+1. Penpot 账户 → **Integrations → MCP Server** → 启用并生成一次性 key（只显示一次）
+2. 把带 `userToken` 的 URL 写进**全局** `~/.config/opencode/opencode.json` 的 `mcp.servers.penpot`，**绝不进仓库**（key 是密码级凭据；泄露后到 Integrations 页 regenerate）
+3. 浏览器打开 `http://localhost:9001` 的设计文件 → **File → MCP Server → Connect**（插件连当前文件）
+4. 先用只读 prompt 验证：`List pages in this file.`
 
-账户 → Integrations → MCP Server → 启用并生成一次性 key → URL `https://<domain>/mcp/stream?userToken=<KEY>`。key 只显示一次、不能写进仓库文档或提交。compose 里的 `penpot-mcp` 容器走这条路径，但与本地模式二选一即可。
+### 本地 MCP（备用，免 key）
+
+终端跑 `npx -y @penpot/mcp@stable`（manifest `localhost:4400`、MCP `http://localhost:4401/mcp`），插件用 **Plugins → Load from URL → `http://localhost:4400/manifest.json`**。本地模式可用 `import_image` 从本地路径导入图片、导出到指定路径；远程模式不支持这两点。
+
+> pnpm 12 会拦截 esbuild/sharp 的构建脚本，本地模式首次启动需在 npx 缓存包的 `pnpm-workspace.yaml` 把 `allowBuilds` 占位值改成 `true`，再 `pnpm run build && pnpm run start`。
+
+### 两种模式对比
+
+| | 远程（当前） | 本地（备用） |
+|---|---|---|
+| 认证 | 一次性 key（全局配置，不进仓库） | 免 key，靠浏览器插件会话 |
+| 本地文件系统 | 不可用（`import_image` 无；导出不写本地路径） | 可用 |
+| 启动 | compose 起 Penpot + 插件连接即可 | 另跑 npx server + 插件 |
 
 ### 文件格式
 

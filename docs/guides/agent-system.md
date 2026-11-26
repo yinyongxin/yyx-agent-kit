@@ -119,7 +119,7 @@ Skill ID = 目录名。加载靠 description 自动匹配，不用手写配置�
 | Skill | 什么时候加载 | 管什么 |
 | --- | --- | --- |
 | `tooling` | 要用 ardot / opencode CLI / 第三方 MCP 时 | **先探测再调用**（`--help`、列 MCP 工具名）；失败不伪造；ego-browser 为浏览器首选（含 handOff 交还用户）；用 ego 查官网 + 官方脚手架；token/cookie 不入文档 |
-| `penpot` | 看 Penpot 设计 / 设计稿转代码 / 整理组件与 token | 官方 MCP 读写当前焦点页；本地免 key；写操作先描述并确认；详见 `tools/penpot/README.md` |
+| `penpot` | 看 Penpot 设计 / 设计稿转代码 / 整理组件与 token | 官方远程 MCP 读写当前焦点页；key 只放全局配置不进仓库；写操作先描述并确认；详见 `tools/penpot/README.md` |
 
 ## 4. 文件是怎么流转的
 
@@ -188,7 +188,7 @@ docs/deliverables/<slug>/
 | --- | --- | --- |
 | `browse` | local | 浏览器自动化（`browse.exe mcp`） |
 | `ardot` | remote | 矢量设计画布（`http://127.0.0.1:50501/api/v1/mcp`） |
-| `open-design` | local | HTML 源码式设计工作台（本地 daemon） |
+| `MCP_DOCKER` | local | Docker MCP gateway（`docker mcp gateway run`），统一管理容器化 MCP server |
 
 全局没有配 `skills` 数组和 `default_agent`——流水线只在项目级启用 chief。
 

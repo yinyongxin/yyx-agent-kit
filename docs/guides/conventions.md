@@ -22,13 +22,11 @@
 
 新建项目或引入框架时，先跑官方脚手架（`create-vite` / `create-next-app` / `nest new`）拿到当前正确的模板，再往 monorepo 规范上改。经验会过时，例如 TS 7 移除了 compiler API 导致 Nest CLI 跑不了。
 
-### 1.4 OpenDesign 设计任务：生成不可靠就直接写文件
+### 1.4 设计任务的通用原则
 
-- 用户要求用 OpenDesign 做设计时，优先走官方便捷流程（`collect_brief` → `confirm_brief` → `start_run`），但 **`start_run` 失败一次就立即切换到直接写文件**，不要反复重试或换模型 burn 时间（本机已多次遇到余额不足 / 首 token 超时，见踩坑记录 #24）。
-- 直接写的路径：`create_project` → `create_artifact(name, content)` 写入口 → `write_file` 迭代 → `get_project` 拿 previewUrl → ego 截图验证。产物质量由我们自己把控。
-- **直接写 ≠ 凭自己审美写**：动手前先读 OpenDesign 的 MCP 资源——`list_mcp_resources({server:"open-design"})` → `read_mcp_resource`，至少匹配一个 `od://design-systems/<id>/DESIGN.md` 和一个相关 `od://skills/<id>/SKILL.md`，按其字体/配色/圆角/阴影/网格/容器宽度约束来写。本项目选 `opencode-ai`（yyx-agent-kit 是 OpenCode 配套工具）+ `design-taste-frontend`（落地页）。跳过这步等于丢弃 OpenDesign 的设计资产，只剩拍脑袋。
-- OpenDesign 的连接配置在全局 `~/.config/opencode/opencode.json` 的 `mcp.servers.open-design`（本地 command + OD_* 环境变量 + `pool:true`）。
-- **连接失败时降级**：`opencode mcp list` 显示 `failed` / timeout 时，跳过资源读取，按本节和 [踩坑记录 #24](pitfalls.md#24-opendesign-生成流水线不可靠直接用-mcp-文件工具做设计) 已记录的规范要点执行，不要卡在连接上。
+- **OpenDesign MCP 已从全局移除**（其生成流水线多次因余额不足 / 首 token 超时失败，见踩坑记录 #24）。现在做设计用 Penpot（PM 线稿 / 设计稿转代码，见 `skills/tools/penpot/SKILL.md`）或直接写代码 artifact，不再依赖 OpenDesign。
+- **不要凭审美写设计**：动手前先读对应设计系统的规范（如 Penpot 的设计系统、项目已有的视觉约定），按其字体/配色/圆角/阴影/网格/容器宽度约束来写。跳过这步等于只剩拍脑袋。
+- **失败一次就换路**：任何生成工具失败一次就立即切换到直接写文件或其它工具，不要反复重试 burn 时间；工具连接失败时按已记录的规范要点执行，不要卡在连接上。
 
 ## 2. 技术引入与版本升级
 
@@ -81,7 +79,7 @@
 - 查 Mantine 最新用法优先用 `mantine` MCP（`npx -y @mantine/mcp-server`）或 `https://mantine.dev/llms.txt`——官方随版本更新，不靠记忆；管理端菜单等布局优先复用 ui.mantine.dev 的现成组件（MIT），不重复手写
 - **背景色**：admin 页面级背景在 `src/index.css` 的 `body` 上统一设为 `gray-0` / `dark-8`；侧栏组件自己用白色 / `dark-6`，与页面背景区分。不要只在内容区局部设背景。
 - **布局模式切换**：状态由 `AdminLayout` 持有，经纯 `components/LayoutMode` Provider 暴露；用户面板用 `useOptionalLayoutMode()` 切换，不再保留调试用的浮动按钮。
-- **设计工具 Penpot**：自托管 compose 在 `tools/penpot/`（官方原样），本地 MCP 免 key（`npx @penpot/mcp@stable` + 浏览器插件）；MCP 配置只放全局 `opencode.json`，key/token 不进仓库；作用于当前焦点页、写操作先确认（详见 `skills/tools/penpot/SKILL.md`）。
+- **设计工具 Penpot**：服务合并进 `templates/base/docker-compose.yml`（官方配置），当前用远程 MCP（`localhost:9001/mcp/stream?userToken=<KEY>`）；MCP key 只放全局 `opencode.json`，**绝不进仓库**；作用于当前焦点页、写操作先确认（详见 `skills/tools/penpot/SKILL.md`）。
 - **交互光标**：admin 入口用 `createTheme({ cursorType: "pointer" })` 传给 `MantineProvider`——Mantine 9 默认 `cursorType: "default"`，不设置的话 Button / Checkbox / Pagination 等交互元素鼠标悬停都不是小手（见踩坑 #26）。
 - **滚动容器**：admin 内所有可滚动区域统一用 `components/AdminScrollArea`（封装 Mantine `ScrollArea`，保持默认配置），不要用原生 `overflow: auto` 或 `type="native"`；Mantine 自定义滚动条是覆盖层、不占布局宽度，不会出现原生滚动条出现/消失时的页面跳动。也不需要 `offsetScrollbars`——它只用于内容会被滚动条盖住的场景。
 - 模板项目已在 `.opencode/opencode.json` 配好 `mantine` MCP，生成的新项目自动带
