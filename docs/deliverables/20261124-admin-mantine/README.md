@@ -14,6 +14,7 @@
 | `04-test-plan.md` | 对应用收标准的测试用例 |
 | `04-test-report.md` | 测试结论（通过）与缺陷清单 |
 | `04-visual-check.md` | ego-browser 视觉验证证据 |
+| `05-record.md` | 交付记录（已归档，阶段 4 通过） |
 
 ## 关联
 
