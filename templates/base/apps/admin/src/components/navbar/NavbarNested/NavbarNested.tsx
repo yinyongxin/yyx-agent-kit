@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { Group, Text } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
+import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
 import { LinksGroup } from "@/components/navbar/NavbarLinksGroup";
 import classes from "./NavbarNested.module.css";
@@ -49,7 +50,8 @@ export const NavbarNested = () => (
   <nav className={classes.navbar}>
     <div className={classes.header}>
       <Group justify="space-between">
-        <Text fw={700}>管理菜单</Text>
+        <Brand />
+        <Text size="xs" c="dimmed">管理菜单</Text>
       </Group>
     </div>
     <AdminScrollArea className={classes.links}>

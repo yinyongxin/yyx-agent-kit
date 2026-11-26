@@ -1,0 +1,28 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  text-decoration: none;
+  color: var(--mantine-color-text);
+}
+
+.mark {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--mantine-color-blue-5), var(--mantine-color-blue-7));
+  color: var(--mantine-color-white);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.name {
+  font-weight: 700;
+  font-size: var(--mantine-font-size-md);
+  letter-spacing: -0.3px;
+}

@@ -25,6 +25,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
+import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
@@ -79,7 +80,7 @@ export const HeaderMegaMenu = () => {
     <Box>
       <header className={classes.header}>
         <>
-          <Text fw={700}>starter</Text>
+          <Brand />
 
           <Group className={classes.nav} h="100%" gap={0} visibleFrom="sm">
             <Link to="/" className={classes.link}>首页</Link>

@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
+import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import classes from "./DoubleNavbar.module.css";
@@ -56,7 +57,7 @@ export const DoubleNavbar = () => {
     <nav className={classes.navbar}>
       <div className={classes.wrapper}>
         <div className={classes.aside}>
-          <div className={classes.logo}>S</div>
+          <div className={classes.logo}><Brand compact /></div>
           {/* 上：logo；中：一级图标菜单占满并可滚动；下：头像 */}
           <AdminScrollArea className={classes.mainLinks}>
             <div className={classes.mainLinksInner}>
