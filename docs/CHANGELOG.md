@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-- **admin 滚动条可预测化**：新增 `AdminScrollArea`（强制 Mantine `ScrollArea` 的 `type="always"` + `offsetScrollbars`，始终预留滚动条空间）；替换 AdminLayout 主内容区、`NavbarNested` / `DoubleNavbar` 侧栏、`HeaderMenu` / `HeaderMegaMenu` 移动菜单、`DataTableTable` 表格容器；约定写入 `conventions.md` 第 6 节
+- **admin 滚动条可预测化**：新增 `AdminScrollArea`（Mantine 自定义覆盖层滚动条 + `offsetScrollbars`，不用原生滚动条）；替换 AdminLayout 主内容区、`NavbarNested` / `DoubleNavbar` 侧栏、`HeaderMenu` / `HeaderMegaMenu` 移动菜单、`DataTableTable` 表格容器；约定写入 `conventions.md` 第 6 节
 - **PageShell 去掉 Paper**：壳只提供位置（内容槽的 padding 与 min-height 留在 CSS），边框/背景/阴影等视觉表面交由页面内容自己决定；占位内容 `PlaceholderContent` 自带 Paper 面板
 - **DataTable 改为 Headless 设计**：`useDataTable` 接收完整配置并返回 `DataTableApi<TRow>`，视图组件显式收 `table` prop、类型从实例推断；`DataTable` 换成纯 `DataTableProvider`（不渲染 DOM），`useDataTableApi` 兼容显式 props 与 Provider 两种用法，消除「必须在内部使用」的硬约束与 `unknown` 类型强转
 - **DataTable 封装批量操作条**：新增 `DataTableBatchBar`（ActionBar + 确认弹窗 + 清空选中），业务只给 `DataTableBatchAction[]`；`UsersContent` 移除内联的 ActionBar/Modal/批量 state，改用动作清单；`labels` 补 batchTitle/cancel/confirm

@@ -27,7 +27,7 @@ export const DataTableTable = <TRow,>({ table: propTable }: DataTableTableProps<
     <Table.ScrollContainer
       minWidth={980}
       maxHeight={520}
-      scrollAreaProps={{ type: "always", offsetScrollbars: true }}
+      scrollAreaProps={{ offsetScrollbars: true }}
     >
       <Table stickyHeader highlightOnHover withTableBorder>
         <Table.Thead>

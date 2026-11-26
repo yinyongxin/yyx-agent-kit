@@ -30,7 +30,7 @@ description: 开发完成后审查代码的正确性与质量时加载。当用�
 ### 3. 约定一致
 
 - [ ] 命名与目录符合 `conventions.md` 第 7 节；barrel 只 re-export
-- [ ] 可滚动区域用 `AdminScrollArea`（或 `ScrollArea type="always"`），没有原生 `overflow: auto` / `type="native"` 导致滚动条跳动
+- [ ] 可滚动区域用 `AdminScrollArea`（Mantine 自定义覆盖层滚动条 + `offsetScrollbars`），没有原生 `overflow: auto` / `type="native"` 导致滚动条跳动
 - [ ] 每个目录 `README.md` 与实际文件清单、职责一致（`conventions.md` 第 9 节）
 - [ ] 数据库变更有迁移文件、未用 `prisma:push`（第 5 节）
 - [ ] 用官方 API / 组件，不重复手写；新引入技术有官网一手依据

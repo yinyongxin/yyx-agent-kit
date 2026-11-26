@@ -79,7 +79,7 @@
 - 组件写法统一 `export const Comp = () => {}`，不受组件库影响
 - 不启用深色模式（Mantine 开箱支持，按需再开）
 - 查 Mantine 最新用法优先用 `mantine` MCP（`npx -y @mantine/mcp-server`）或 `https://mantine.dev/llms.txt`——官方随版本更新，不靠记忆；管理端菜单等布局优先复用 ui.mantine.dev 的现成组件（MIT），不重复手写
-- **滚动容器**：admin 内所有可滚动区域统一用 `components/AdminScrollArea`（封装 Mantine `ScrollArea`，强制 `type="always"` + `offsetScrollbars`），不要用原生 `overflow: auto` 或 `type="native"`；滚动条空间始终预留，内容增减时页面不会跳动。
+- **滚动容器**：admin 内所有可滚动区域统一用 `components/AdminScrollArea`（封装 Mantine `ScrollArea` + `offsetScrollbars`），不要用原生 `overflow: auto` 或 `type="native"`；Mantine 自定义滚动条是覆盖层、不占布局宽度，不会出现原生滚动条出现/消失时的页面跳动。
 - 模板项目已在 `.opencode/opencode.json` 配好 `mantine` MCP，生成的新项目自动带
 - Mantine 官方 agent skills（`mantine-form` / `mantine-combobox` / `mantine-custom-components`）装在用户全局 `~/.agents/skills`，安装命令：`npx skills add https://github.com/mantinedev/skills --skill <name> -g -y`。**skills 不随项目走**，换机器 / 新环境需重装；MCP 配置随模板项目走。不要把这些第三方 skills 复制进仓库 `skills/`（官方随版本更新，复制会滞后）
 
