@@ -1,1 +1,6 @@
 @import "tailwind-preset-mantine";
+
+/* 页面级背景：整页统一使用浅灰/深色，侧栏组件自己有 white/dark-6 背景与之区分 */
+body {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+}

@@ -5,7 +5,6 @@ import { LayoutModeProvider, type AdminLayoutMode } from "@/components/LayoutMod
 import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
 import { DoubleNavbar } from "@/components/navbar/DoubleNavbar";
 import { NavbarNested } from "@/components/navbar/NavbarNested";
-import classes from "./AdminLayout.module.css";
 
 export const AdminLayout = () => {
   const [mode, setMode] = useState<AdminLayoutMode>("nested");
@@ -16,7 +15,7 @@ export const AdminLayout = () => {
       {isHeader ? (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
           <HeaderMegaMenu />
-          <AdminScrollArea className={classes.main} style={{ flex: 1, minHeight: 0 }}>
+          <AdminScrollArea style={{ flex: 1, minHeight: 0 }}>
             <div style={{ padding: "var(--mantine-spacing-md)" }}>
               <Outlet />
             </div>
@@ -35,7 +34,7 @@ export const AdminLayout = () => {
             </div>
           </div>
 
-          <AdminScrollArea className={classes.main} h="100%" style={{ flex: 1, minWidth: 0 }}>
+          <AdminScrollArea h="100%" style={{ flex: 1, minWidth: 0 }}>
             <div style={{ padding: "var(--mantine-spacing-md)" }}>
               <Outlet />
             </div>

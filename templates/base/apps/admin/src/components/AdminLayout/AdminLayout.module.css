@@ -1,4 +1,0 @@
-/* 主内容区背景需与侧栏区分：侧栏为 white / dark-6，这里用 gray-0 / dark-8 */
-.main {
-  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
-}
