@@ -19,10 +19,7 @@ const GROUPS: {
   {
     label: "概览",
     icon: IconHome2,
-    links: [
-      { label: "首页", to: "/" },
-      { label: "工作台", to: "/dashboard" },
-    ],
+    links: [{ label: "工作台", to: "/" }],
   },
   {
     label: "权限管理",

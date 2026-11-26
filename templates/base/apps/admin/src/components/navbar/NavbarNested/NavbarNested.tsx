@@ -21,10 +21,7 @@ const MENU: {
     label: "概览",
     icon: IconGauge,
     initiallyOpened: true,
-    links: [
-      { label: "首页", link: "/" },
-      { label: "工作台", link: "/dashboard" },
-    ],
+    links: [{ label: "工作台", link: "/" }],
   },
   {
     label: "权限管理",

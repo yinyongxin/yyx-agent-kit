@@ -111,10 +111,9 @@
 apps/admin/src/
 ├── main.tsx / index.css / routeTree.gen.ts（生成，勿改）
 ├── routes/                  # 文件路由：只放 createFileRoute 声明（约 5 行），指向 features 的页面组件
-│   ├── __root.tsx / index.tsx / dashboard.tsx / settings.tsx
+│   ├── __root.tsx / index.tsx（工作台，默认页）/ settings.tsx
 │   └── access/{users,roles,tenants,permissions}.tsx   # 目录结构=URL：/access/users
 ├── features/                # 按业务领域组织，页面/组件都文件夹化
-│   ├── home/HomePage/{index.tsx, HomePage.tsx, HomeContent.tsx}
 │   ├── dashboard/DashboardPage/{index.tsx, DashboardPage.tsx, DashboardContent.tsx}
 │   ├── access/users/{index.tsx, UsersPage.tsx, UsersContent.tsx}（roles/tenants/permissions 同）
 │   └── settings/SettingsPage/{index.tsx, SettingsPage.tsx, SettingsContent.tsx}

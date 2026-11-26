@@ -34,8 +34,7 @@ import classes from "./HeaderMegaMenu.module.css";
 type MegaItem = { icon: typeof IconHome2; title: string; description: string; to: string };
 
 const OVERVIEW: MegaItem[] = [
-  { icon: IconHome2, title: "首页", description: "后端连通状态", to: "/" },
-  { icon: IconGauge, title: "工作台", description: "待办列表", to: "/dashboard" },
+  { icon: IconGauge, title: "工作台", description: "待办列表与常用入口", to: "/" },
 ];
 
 const PERMISSIONS: MegaItem[] = [
@@ -83,7 +82,7 @@ export const HeaderMegaMenu = () => {
           <Brand />
 
           <Group className={classes.nav} h="100%" gap={0} visibleFrom="sm">
-            <Link to="/" className={classes.link}>首页</Link>
+            <Link to="/" className={classes.link}>工作台</Link>
             <HoverCard width={520} position="bottom" radius="md" shadow="md" withinPortal>
               <HoverCard.Target>
                 <Link to="/" className={classes.link} onClick={(e) => e.preventDefault()}>
@@ -96,7 +95,7 @@ export const HeaderMegaMenu = () => {
               <HoverCard.Dropdown style={{ overflow: "hidden" }}>
                 <Group justify="space-between" px="md">
                   <Text fw={500}>概览</Text>
-                  <Anchor component={Link} to="/" fz="xs">查看首页</Anchor>
+                  <Anchor component={Link} to="/" fz="xs">前往工作台</Anchor>
                 </Group>
                 <Divider my="sm" />
                 <MegaLinks items={OVERVIEW} />
@@ -144,7 +143,7 @@ export const HeaderMegaMenu = () => {
       <Drawer opened={drawerOpened} onClose={closeDrawer} size="100%" padding="md" title="Navigation" hiddenFrom="sm" zIndex={1000000}>
         <AdminScrollArea h="calc(100vh - 80px)" mx="-md">
           <Divider my="sm" />
-          <Link to="/" className={classes.link}>首页</Link>
+          <Link to="/" className={classes.link}>工作台</Link>
           <UnstyledButton className={classes.link} onClick={toggleLinks}>
             <Center inline>
               <Box component="span" mr={5}>概览</Box>
