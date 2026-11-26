@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-- **双栏侧栏结构与宽度**：左侧改为上 logo / 中一级图标菜单（`AdminScrollArea` 占满并可滚动）/ 下头像；宽度按模式各自决定——单栏 `260`，双栏 = 图标栏 `60` + 二级菜单 `240`（总 300），不再共用一个外层固定宽度；修复 `DataTableCardList` 中 `Text`（默认 `<p>`）包裹 `Badge`（`<div>`）导致的嵌套错误，改为 `component="span"`
+- **双栏侧栏结构与宽度**：左侧改为上 logo / 中一级图标菜单（`AdminScrollArea` 占满并可滚动）/ 下头像；宽度按模式各自决定——单栏 `260`，双栏 = 图标栏 `60` + 二级菜单 `200`（总 260），不再共用一个外层固定宽度；修复 `DataTableCardList` 中 `Text`（默认 `<p>`）包裹 `Badge`（`<div>`）导致的嵌套错误，改为 `component="span"`
 - **双栏布局用户信息收窄为头像**：`UserMenu` 新增 `icon` 形态（只渲染头像，置底于一级图标菜单），`DoubleNavbar` 从文字子导航底部移除整行用户信息；四种形态分别对应四种菜单模式
 - **修复双栏侧栏激活组**：`DoubleNavbar` 原来用 `useState("概览")` 写死激活组，进入「用户管理」时侧栏仍显示概览组、当前页不高亮；改为 `useLocation()` 从当前路由推导激活组，图标点击跳到该组首屏；ego 四种菜单模式逐项审查确认
 - **主内容背景与布局模式入口**：AdminLayout 主内容区加 `gray-0`/`dark-8` 背景，与侧栏 white/`dark-6` 区分；新增 `components/LayoutMode` 纯 Provider 暴露四种菜单模式状态；UserMenu 面板加「导航菜单模式」子菜单，移除调试用浮动切换按钮；侧栏分隔线只由导航组件自己的 `.navbar` 画（light-dark 自适应），移除 AdminLayout 外层重复的固定 gray-3 边框；约定写入 conventions 第 6 节

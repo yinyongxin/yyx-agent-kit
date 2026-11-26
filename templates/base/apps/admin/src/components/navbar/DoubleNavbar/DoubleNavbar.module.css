@@ -21,10 +21,10 @@
   border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-7));
 }
 
-/* 二级菜单显式定宽：图标栏 60 + 这里 240 = 双栏总宽 300，不依赖外层 */
+/* 二级菜单显式定宽：图标栏 60 + 这里 200 = 双栏总宽 260，不依赖外层 */
 .main {
-  flex: 0 0 240px;
-  width: 240px;
+  flex: 0 0 200px;
+  width: 200px;
   display: flex;
   flex-direction: column;
   background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
