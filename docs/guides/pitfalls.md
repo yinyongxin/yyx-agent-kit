@@ -219,6 +219,14 @@
 - **验证**：重启后日志中 `LegacyRouteConverter` 警告为 0；`/api/health`、`/api/todos` 仍正常映射，`GET /api/health` 返回 `ok`。
 - **参考**：Nest 官网 https://docs.nestjs.com/middleware#route-wildcards （一手来源，2026-11-26 查）
 
+### 26. Mantine 9 按钮悬停不是小手（cursorType 默认值）
+
+- **现象**：Button、Checkbox、Pagination、`UnstyledButton` 等交互元素鼠标移上去都是默认箭头；只有原生 `<a>` 是小手。
+- **原因**：Mantine 9 的 `styles.css` 里 `--mantine-cursor-type: default`，组件统一用 `cursor: var(--mantine-cursor-type)`。官网 Theme object 明确写了默认 `default`，需显式改 `pointer`。不是 Tailwind preflight 重置，也不是我们组件的 CSS 问题。
+- **解决**：入口 `main.tsx` 用 `createTheme({ cursorType: "pointer" })`，传给 `<MantineProvider theme={theme}>`。
+- **验证**：浏览器读 computed style，Button / UnstyledButton 菜单入口 / Checkbox / Pagination 的 cursor 均为 `pointer`。
+- **参考**：Mantine 官网 https://mantine.dev/theming/theme-object/#cursortype （一手来源，2026-11-26 查）
+
 ## 相关约定
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。
