@@ -7,8 +7,7 @@ import {
 import { Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { UserMenu } from "@/components/UserMenu";
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import classes from "./DoubleNavbar.module.css";
 
 const GROUPS: {
@@ -41,10 +40,17 @@ const GROUPS: {
   },
 ];
 
+/** 从当前路由推导激活组：进入 /access/users 时应显示「权限管理」组，而不是写死的「概览」 */
+const groupForPath = (pathname: string) =>
+  GROUPS.find((item) =>
+    item.links.some((link) => (link.to === "/" ? pathname === "/" : pathname.startsWith(link.to))),
+  ) ?? GROUPS[0]!;
+
 // 基于 ui.mantine.dev 官方 DoubleNavbar：左侧图标主导航 + 右侧文字子导航
 export const DoubleNavbar = () => {
-  const [active, setActive] = useState("概览");
-  const group = GROUPS.find((item) => item.label === active) ?? GROUPS[0]!;
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const group = groupForPath(pathname);
 
   return (
     <nav className={classes.navbar}>
@@ -60,9 +66,9 @@ export const DoubleNavbar = () => {
               key={item.label}
             >
               <UnstyledButton
-                onClick={() => setActive(item.label)}
+                onClick={() => navigate({ to: item.links[0]!.to })}
                 className={classes.mainLink}
-                data-active={item.label === active || undefined}
+                data-active={item.label === group.label || undefined}
                 aria-label={item.label}
               >
                 <item.icon size={22} stroke={1.5} />
@@ -72,7 +78,7 @@ export const DoubleNavbar = () => {
         </div>
         <div className={classes.main}>
           <Title order={4} className={classes.title}>
-            {active}
+            {group.label}
           </Title>
           <AdminScrollArea className={classes.links}>
             {group.links.map((link) => (

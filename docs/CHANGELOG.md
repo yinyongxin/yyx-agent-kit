@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **修复双栏侧栏激活组**：`DoubleNavbar` 原来用 `useState("概览")` 写死激活组，进入「用户管理」时侧栏仍显示概览组、当前页不高亮；改为 `useLocation()` 从当前路由推导激活组，图标点击跳到该组首屏；ego 四种菜单模式逐项审查确认
 - **主内容背景与布局模式入口**：AdminLayout 主内容区加 `gray-0`/`dark-8` 背景，与侧栏 white/`dark-6` 区分；新增 `components/LayoutMode` 纯 Provider 暴露四种菜单模式状态；UserMenu 面板加「导航菜单模式」子菜单，移除调试用浮动切换按钮；约定写入 conventions 第 6 节
 - **修复交互元素光标**：admin 入口用 `createTheme({ cursorType: "pointer" })`（Mantine 9 默认 `default`，Button / Checkbox / Pagination / UnstyledButton 悬停都不是小手）；浏览器实测各类元素 cursor 均为 pointer；写入 conventions 第 6 节与踩坑 #26
 - **新增 UserMenu 用户信息组件**：三种形态（`sidebar` / `header` / `drawer`）覆盖四种菜单模式——两种侧栏底部、两种顶栏右侧、移动端抽屉底部；点击展开 Mantine Menu 面板，含用户信息、主题设置（浅色/深色/跟随系统，官方 `setColorScheme`）、设置跳转、退出登录（未接认证时禁用标注）；模板示例用户由调用方注入替换；浏览器验证四种布局均可见、主题切换生效
