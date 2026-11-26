@@ -26,13 +26,8 @@ export const AdminLayout = () => {
       ) : (
         <div style={{ display: "flex", height: "100vh" }}>
           {/* 侧栏固定宽度，不折叠；背景为白色/深色，主内容区另有浅灰/更深背景以区分 */}
-          <div
-            style={{
-              width: 260,
-              flexShrink: 0,
-              borderRight: "1px solid var(--mantine-color-gray-3)",
-            }}
-          >
+          {/* 分隔线由两个导航组件自己的 .navbar 画（light-dark 自适应），这里不再重复 */}
+          <div style={{ flexShrink: 0 }}>
             <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
               <div style={{ flex: 1, minHeight: 0 }}>
                 {mode === "nested" ? <NavbarNested /> : <DoubleNavbar />}
