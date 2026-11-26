@@ -190,7 +190,7 @@ export const UsersContent = () => {
         <DataTablePagination />
       </DataTableProvider>
 
-      <DataTableBatchBar actions={batchActions} />
+      <DataTableBatchBar table={table} actions={batchActions} />
     </Stack>
   );
 };

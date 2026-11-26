@@ -49,7 +49,7 @@ const table = useDataTable({
 </DataTableProvider>
 ```
 
-`useDataTableApi(tableProp?)` 先取显式 prop，没传才读 Provider；所以「必须在 Provider 内部」不是硬约束。
+`useDataTableApi(tableProp?)` 先取显式 prop，没传才读 Provider；所以「必须在 Provider 内部」不是硬约束。**但放在 Provider 外面的组件必须显式传 `table`**——因为 prop 是可选的，typecheck 抓不到漏传，运行时才会报错。
 
 ## 关联
 
