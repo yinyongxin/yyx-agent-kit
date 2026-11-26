@@ -1,115 +1,36 @@
-import { createContext, useContext, useMemo, type ReactNode } from "react";
-import type { UseDataTableResult } from "./useDataTable";
-import type {
-  ColumnDef,
-  DataState,
-  DataTableLabels,
-  FilterField,
-  FilterValue,
-  FilterValues,
-  PaginationLabels,
-  RowKey,
-  SortDirection,
-} from "./types";
+import { createContext, useContext, type ReactNode } from "react";
+import type { DataTableApi } from "./useDataTable";
 
-/** Context 内部用 unknown 承载行，外部通过泛型 hook 取回类型 */
-interface DataTableContextValue {
-  state: DataState;
-  rows: unknown[];
-  allRows: unknown[];
-  columns: ColumnDef<never>[];
-  total: number;
-  pages: number;
-  page: number;
-  pageSize: number;
-  keyword: string;
-  filters: FilterValues;
-  setKeyword: (value: string) => void;
-  setFilter: (key: string, value: FilterValue) => void;
-  resetFilters: () => void;
-  setPage: (page: number) => void;
-  setPageSize: (size: number) => void;
-  sortKey: string | null;
-  sortDirection: SortDirection;
-  toggleSort: (key: string) => void;
-  selected: Set<RowKey>;
-  toggleRow: (key: RowKey) => void;
-  toggleAll: (checked: boolean) => void;
-  clearSelection: () => void;
-  isSelected: (key: RowKey) => boolean;
-  allPageSelected: boolean;
-  somePageSelected: boolean;
-  labels: DataTableLabels;
-  paginationLabels: PaginationLabels;
-  filterFields: FilterField[];
-  getRowKey: (row: unknown) => RowKey;
-  onRetry?: () => void;
-  onEmptyAction?: () => void;
-}
+const DataTableContext = createContext<DataTableApi<never> | null>(null);
 
-const DataTableContext = createContext<DataTableContextValue | null>(null);
-
-export interface TypedDataTableContext<TRow> extends Omit<
-  DataTableContextValue,
-  "rows" | "allRows" | "columns" | "sortKey" | "toggleSort" | "getRowKey"
-> {
-  rows: TRow[];
-  allRows: TRow[];
-  columns: ColumnDef<TRow>[];
-  sortKey: (keyof TRow & string) | null;
-  toggleSort: (key: keyof TRow & string) => void;
-  getRowKey: (row: TRow) => RowKey;
-}
-
-/** 组合组件内部取 Context；调用处用泛型拿回行类型 */
-export const useDataTableContext = <TRow,>(): TypedDataTableContext<TRow> => {
-  const ctx = useContext(DataTableContext);
-  if (!ctx) throw new Error("DataTable 组合组件必须在 <DataTable> 内部使用");
-  return ctx as unknown as TypedDataTableContext<TRow>;
-};
-
-export interface DataTableProps<TRow> {
-  list: UseDataTableResult<TRow>;
-  columns: ColumnDef<TRow>[];
-  filterFields: FilterField[];
-  labels: DataTableLabels;
-  paginationLabels: PaginationLabels;
-  getRowKey: (row: TRow) => RowKey;
-  onRetry?: () => void;
-  onEmptyAction?: () => void;
+export interface DataTableProviderProps<TRow> {
+  table: DataTableApi<TRow>;
   children: ReactNode;
 }
 
-/** Root：Provider + 容器，原子自由摆放 */
-export const DataTable = <TRow,>({
-  list,
-  columns,
-  filterFields,
-  labels,
-  paginationLabels,
-  getRowKey,
-  onRetry,
-  onEmptyAction,
-  children,
-}: DataTableProps<TRow>) => {
-  const value = useMemo(
-    () =>
-      ({
-        ...list,
-        columns,
-        filterFields,
-        labels,
-        paginationLabels,
-        getRowKey,
-        onRetry,
-        onEmptyAction,
-      }) as unknown as DataTableContextValue,
-    [list, columns, filterFields, labels, paginationLabels, getRowKey, onRetry, onEmptyAction],
-  );
+/**
+ * 纯 Provider：只传实例，不渲染 DOM。
+ * 组合组件可自由摆放（侧栏、头部、任意嵌套），不受表格根节点限制。
+ */
+export const DataTableProvider = <TRow,>({ table, children }: DataTableProviderProps<TRow>) => (
+  <DataTableContext.Provider value={table as unknown as DataTableApi<never>}>
+    {children}
+  </DataTableContext.Provider>
+);
 
-  return (
-    <DataTableContext.Provider value={value}>
-      <div>{children}</div>
-    </DataTableContext.Provider>
-  );
+/**
+ * 组合组件统一入口：显式传 table 优先，没传才从 Provider 读。
+ * 因此「先 Provider 再使用」只是可选糖，不是必须条件。
+ */
+export const useDataTableApi = <TRow,>(
+  propTable?: DataTableApi<TRow>,
+): DataTableApi<TRow> => {
+  const ctx = useContext(DataTableContext) as DataTableApi<TRow> | null;
+  const table = propTable ?? ctx;
+  if (!table) {
+    throw new Error(
+      "DataTable 组合组件需要 table prop 或外层 <DataTableProvider table={...}>",
+    );
+  }
+  return table;
 };

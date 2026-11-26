@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import {
-  DataTable,
+  DataTableProvider,
   DataTableBatchBar,
   DataTableCardList,
   DataTableContent,
@@ -131,10 +131,14 @@ const labels: DataTableLabels = {
 export const UsersContent = () => {
   const [users, setUsers] = useState<UserRow[]>(makeUsers);
 
-  const list = useDataTable({
+  const table = useDataTable({
     data: users,
     getRowKey: (row: UserRow) => row.id,
     keywordFields: ["name", "email"],
+    columns,
+    filterFields,
+    labels,
+    paginationLabels: pageLabels,
     initialFilters: { status: null },
   });
 
@@ -171,15 +175,8 @@ export const UsersContent = () => {
   ];
 
   return (
-    <Stack gap="md" pb={list.selected.size > 0 ? 80 : 0}>
-      <DataTable
-        list={list}
-        columns={columns}
-        filterFields={filterFields}
-        labels={labels}
-        paginationLabels={pageLabels}
-        getRowKey={(row: UserRow) => row.id}
-      >
+    <Stack gap="md" pb={table.selected.size > 0 ? 80 : 0}>
+      <DataTableProvider table={table}>
         <DataTableToolbar>
           <Button leftSection={<IconPlus size={16} />}>{labels.create}</Button>
         </DataTableToolbar>
@@ -191,7 +188,7 @@ export const UsersContent = () => {
           <DataTableCardList />
         </DataTableContent>
         <DataTablePagination />
-      </DataTable>
+      </DataTableProvider>
 
       <DataTableBatchBar actions={batchActions} />
     </Stack>

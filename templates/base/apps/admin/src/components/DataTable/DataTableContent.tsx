@@ -1,16 +1,18 @@
 import { Alert, Button, EmptyState, Skeleton, Stack } from "@mantine/core";
 import type { ReactNode } from "react";
-import { useDataTableContext } from "./DataTable";
+import { useDataTableApi } from "./DataTable";
+import type { DataTableApi } from "./useDataTable";
 
-export interface DataTableContentProps {
-  /** 成功态渲染的内容（表格或卡片），可传函数拿 Context */
-  children: ReactNode | ((context: unknown) => ReactNode);
+export interface DataTableContentProps<TRow> {
+  table?: DataTableApi<TRow>;
+  /** 成功态渲染的内容（表格或卡片），可传函数拿实例 */
+  children: ReactNode | ((table: DataTableApi<TRow>) => ReactNode);
 }
 
 /** 四态切换：loading / success / empty / error，同一时刻只显示一种 */
-export const DataTableContent = <TRow,>({ children }: DataTableContentProps) => {
-  const ctx = useDataTableContext<TRow>();
-  const { state, labels, onRetry, onEmptyAction } = ctx;
+export const DataTableContent = <TRow,>({ table: propTable, children }: DataTableContentProps<TRow>) => {
+  const table = useDataTableApi<TRow>(propTable);
+  const { state, labels, onRetry, onEmptyAction } = table;
 
   if (state === "loading") {
     return (
@@ -50,5 +52,5 @@ export const DataTableContent = <TRow,>({ children }: DataTableContentProps) => 
     );
   }
 
-  return <>{typeof children === "function" ? children(ctx) : children}</>;
+  return <>{typeof children === "function" ? children(table) : children}</>;
 };

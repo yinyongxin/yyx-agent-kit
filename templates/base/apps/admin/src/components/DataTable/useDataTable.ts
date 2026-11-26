@@ -9,9 +9,13 @@ import {
   togglePage,
 } from "./functions";
 import type {
+  ColumnDef,
   DataState,
+  DataTableLabels,
+  FilterField,
   FilterValue,
   FilterValues,
+  PaginationLabels,
   RowKey,
   SortDirection,
 } from "./types";
@@ -23,6 +27,12 @@ export interface UseDataTableOptions<TRow> {
   getRowKey: (row: TRow) => RowKey;
   /** 关键词匹配的字段 */
   keywordFields: (keyof TRow & string)[];
+  columns: ColumnDef<TRow>[];
+  filterFields: FilterField[];
+  labels: DataTableLabels;
+  paginationLabels: PaginationLabels;
+  onRetry?: () => void;
+  onEmptyAction?: () => void;
   initialPageSize?: number;
   initialFilters?: FilterValues;
   /** 可注入；本期静态数据默认 success */
@@ -60,16 +70,33 @@ export interface UseDataTableResult<TRow> {
   somePageSelected: boolean;
 }
 
-/** 状态 hook：四态 + 过滤排序分页 + 选中；回调与返回值身份稳定，避免 Consumer 无谓重渲染 */
+/** 完整实例：状态 + 动作 + 视图配置。组件显式接收它，类型从实例推断。 */
+export interface DataTableApi<TRow> extends UseDataTableResult<TRow> {
+  columns: ColumnDef<TRow>[];
+  filterFields: FilterField[];
+  labels: DataTableLabels;
+  paginationLabels: PaginationLabels;
+  getRowKey: (row: TRow) => RowKey;
+  onRetry?: () => void;
+  onEmptyAction?: () => void;
+}
+
+/** Headless 控制器：持有状态与配置，返回带类型的实例；不渲染任何 DOM */
 export const useDataTable = <TRow>({
   data,
   getRowKey,
   keywordFields,
+  columns,
+  filterFields,
+  labels,
+  paginationLabels,
+  onRetry,
+  onEmptyAction,
   initialPageSize = 10,
   initialFilters = {},
   state: injectedState,
   emptyWhen,
-}: UseDataTableOptions<TRow>): UseDataTableResult<TRow> => {
+}: UseDataTableOptions<TRow>): DataTableApi<TRow> => {
   const [keyword, setKeyword] = useState("");
   const [filters, setFilters] = useState<FilterValues>(initialFilters);
   const [sortKey, setSortKey] = useState<(keyof TRow & string) | null>(null);
@@ -186,6 +213,13 @@ export const useDataTable = <TRow>({
       isSelected,
       allPageSelected,
       somePageSelected,
+      columns,
+      filterFields,
+      labels,
+      paginationLabels,
+      getRowKey,
+      onRetry,
+      onEmptyAction,
     }),
     [
       state,
@@ -212,6 +246,13 @@ export const useDataTable = <TRow>({
       isSelected,
       allPageSelected,
       somePageSelected,
+      columns,
+      filterFields,
+      labels,
+      paginationLabels,
+      getRowKey,
+      onRetry,
+      onEmptyAction,
     ],
   );
 };

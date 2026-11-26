@@ -1,8 +1,13 @@
 import { Group, Pagination, Select, Text } from "@mantine/core";
-import { useDataTableContext } from "./DataTable";
+import { useDataTableApi } from "./DataTable";
+import type { DataTableApi } from "./useDataTable";
 
-/** 分页：页数读 Context 单一来源，杜绝死按钮 */
-export const DataTablePagination = <TRow,>() => {
+export interface DataTablePaginationProps<TRow> {
+  table?: DataTableApi<TRow>;
+}
+
+/** 分页：页数读实例单一来源，杜绝死按钮 */
+export const DataTablePagination = <TRow,>({ table: propTable }: DataTablePaginationProps<TRow>) => {
   const {
     page,
     pages,
@@ -11,7 +16,7 @@ export const DataTablePagination = <TRow,>() => {
     setPageSize,
     total,
     paginationLabels,
-  } = useDataTableContext<TRow>();
+  } = useDataTableApi<TRow>(propTable);
 
   return (
     <Group justify="space-between" mt="md" wrap="wrap">

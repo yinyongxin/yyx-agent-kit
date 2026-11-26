@@ -1,9 +1,14 @@
 import { IconRotate, IconSearch } from "@tabler/icons-react";
 import { Button, Group, Select, TextInput } from "@mantine/core";
-import { useDataTableContext } from "./DataTable";
+import { useDataTableApi } from "./DataTable";
+import type { DataTableApi } from "./useDataTable";
 
-/** 筛选栏：搜索 + 配置化下拉筛选 + 重置（借鉴 data-list 的受控筛选） */
-export const DataTableFilterBar = <TRow,>() => {
+export interface DataTableFilterBarProps<TRow> {
+  table?: DataTableApi<TRow>;
+}
+
+/** 筛选栏：搜索 + 配置化下拉筛选 + 重置（可显式传 table，也可从 Provider 读） */
+export const DataTableFilterBar = <TRow,>({ table: propTable }: DataTableFilterBarProps<TRow>) => {
   const {
     keyword,
     setKeyword,
@@ -12,7 +17,7 @@ export const DataTableFilterBar = <TRow,>() => {
     resetFilters,
     labels,
     filterFields,
-  } = useDataTableContext<TRow>();
+  } = useDataTableApi<TRow>(propTable);
 
   const selects = filterFields.filter((field) => field.type === "select");
 

@@ -1,10 +1,15 @@
 import { Checkbox, SimpleGrid, Paper, Group, Text } from "@mantine/core";
-import { useDataTableContext } from "./DataTable";
+import { useDataTableApi } from "./DataTable";
+import type { DataTableApi } from "./useDataTable";
 
-/** 移动卡片视图：一份列配置两套 DOM（借鉴 data-list 双视图，CSS 断点切换） */
-export const DataTableCardList = <TRow,>() => {
+export interface DataTableCardListProps<TRow> {
+  table?: DataTableApi<TRow>;
+}
+
+/** 移动卡片视图：一份列配置两套 DOM（CSS 断点切换） */
+export const DataTableCardList = <TRow,>({ table: propTable }: DataTableCardListProps<TRow>) => {
   const { rows, columns, getRowKey, isSelected, toggleRow } =
-    useDataTableContext<TRow>();
+    useDataTableApi<TRow>(propTable);
 
   return (
     <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm" hiddenFrom="sm">

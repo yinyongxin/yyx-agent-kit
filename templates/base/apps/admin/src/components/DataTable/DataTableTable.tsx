@@ -1,9 +1,14 @@
 import { IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons-react";
 import { Checkbox, Table, UnstyledButton } from "@mantine/core";
-import { useDataTableContext } from "./DataTable";
+import { useDataTableApi } from "./DataTable";
+import type { DataTableApi } from "./useDataTable";
 
-/** 桌面表格视图：列定义驱动，sticky 表头，行选择（借鉴 data-list 的 rows+columns） */
-export const DataTableTable = <TRow,>() => {
+export interface DataTableTableProps<TRow> {
+  table?: DataTableApi<TRow>;
+}
+
+/** 桌面表格视图：列定义驱动，sticky 表头，行选择 */
+export const DataTableTable = <TRow,>({ table: propTable }: DataTableTableProps<TRow>) => {
   const {
     rows,
     columns,
@@ -16,7 +21,7 @@ export const DataTableTable = <TRow,>() => {
     isSelected,
     allPageSelected,
     somePageSelected,
-  } = useDataTableContext<TRow>();
+  } = useDataTableApi<TRow>(propTable);
 
   return (
     <Table.ScrollContainer minWidth={980} maxHeight={520} type="native">
