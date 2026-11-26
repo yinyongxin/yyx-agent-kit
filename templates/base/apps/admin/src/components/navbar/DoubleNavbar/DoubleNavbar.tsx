@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
+import { UserMenu } from "@/components/UserMenu";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import classes from "./DoubleNavbar.module.css";
@@ -73,7 +74,7 @@ export const DoubleNavbar = () => {
           <Title order={4} className={classes.title}>
             {active}
           </Title>
-          <AdminScrollArea h="calc(100% - 60px)">
+          <AdminScrollArea className={classes.links}>
             {group.links.map((link) => (
               <Link
                 key={link.to}
@@ -85,6 +86,7 @@ export const DoubleNavbar = () => {
               </Link>
             ))}
           </AdminScrollArea>
+          <UserMenu variant="sidebar" />
         </div>
       </div>
     </nav>

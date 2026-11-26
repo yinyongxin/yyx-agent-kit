@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **新增 UserMenu 用户信息组件**：三种形态（`sidebar` / `header` / `drawer`）覆盖四种菜单模式——两种侧栏底部、两种顶栏右侧、移动端抽屉底部；点击展开 Mantine Menu 面板，含用户信息、主题设置（浅色/深色/跟随系统，官方 `setColorScheme`）、设置跳转、退出登录（未接认证时禁用标注）；模板示例用户由调用方注入替换；浏览器验证四种布局均可见、主题切换生效
 - **admin 滚动条可预测化**：新增 `AdminScrollArea`（Mantine 自定义覆盖层滚动条 + `offsetScrollbars`，不用原生滚动条）；替换 AdminLayout 主内容区、`NavbarNested` / `DoubleNavbar` 侧栏、`HeaderMenu` / `HeaderMegaMenu` 移动菜单、`DataTableTable` 表格容器；约定写入 `conventions.md` 第 6 节
 - **PageShell 去掉 Paper**：壳只提供位置（内容槽的 padding 与 min-height 留在 CSS），边框/背景/阴影等视觉表面交由页面内容自己决定；占位内容 `PlaceholderContent` 自带 Paper 面板
 - **DataTable 改为 Headless 设计**：`useDataTable` 接收完整配置并返回 `DataTableApi<TRow>`，视图组件显式收 `table` prop、类型从实例推断；`DataTable` 换成纯 `DataTableProvider`（不渲染 DOM），`useDataTableApi` 兼容显式 props 与 Provider 两种用法，消除「必须在内部使用」的硬约束与 `unknown` 类型强转

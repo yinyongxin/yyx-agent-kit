@@ -25,6 +25,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
+import { UserMenu } from "@/components/UserMenu";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import classes from "./HeaderMegaMenu.module.css";
@@ -130,6 +131,7 @@ export const HeaderMegaMenu = () => {
             <Link to="/settings" className={classes.link}>
               <Center inline><IconSettings size={16} /><Box component="span" ml={5}>设置</Box></Center>
             </Link>
+            <UserMenu variant="header" />
           </Group>
 
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" aria-label="打开菜单" />
@@ -160,6 +162,7 @@ export const HeaderMegaMenu = () => {
           </Collapse>
           <Link to="/settings" className={classes.link}>设置</Link>
         </AdminScrollArea>
+        <UserMenu variant="drawer" />
       </Drawer>
     </Box>
   );

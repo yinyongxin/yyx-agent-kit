@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { Group, Text } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
+import { UserMenu } from "@/components/UserMenu";
 import { LinksGroup } from "@/components/navbar/NavbarLinksGroup";
 import classes from "./NavbarNested.module.css";
 
@@ -58,6 +59,7 @@ export const NavbarNested = () => (
         ))}
       </div>
     </AdminScrollArea>
+    <UserMenu variant="sidebar" />
   </nav>
 );
 

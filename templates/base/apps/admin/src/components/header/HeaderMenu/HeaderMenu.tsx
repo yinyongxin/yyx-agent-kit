@@ -12,6 +12,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
+import { UserMenu } from "@/components/UserMenu";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import classes from "./HeaderMenu.module.css";
@@ -85,6 +86,7 @@ export const HeaderMenu = () => {
           <Text fw={700}>starter</Text>
           <Group gap={5} visibleFrom="sm">
             {items}
+            <UserMenu variant="header" />
           </Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" aria-label="打开菜单" />
         </div>
@@ -103,6 +105,7 @@ export const HeaderMenu = () => {
             ),
           )}
         </AdminScrollArea>
+        <UserMenu variant="drawer" />
       </Drawer>
     </header>
   );
