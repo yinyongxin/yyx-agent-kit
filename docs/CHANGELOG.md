@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **Penpot 本地开发账号**：用官方 CLI 创建 `dev@penpot.local` / `penpot_dev_pwd_2026`（`--skip-tutorial --skip-walkthrough`，本地免邮件验证），凭据记入 `docs/guides/credentials.md`；生产必改清单同步
 - **接入 Penpot 设计工具**：Penpot 服务合并进 `templates/base/docker-compose.yml`（独立 PG15/Valkey/容器名与卷前缀，端口 9001/8025，随本地依赖一起 up）；新增 `skills/tools/penpot/SKILL.md` 与工具索引条目；本地免 key MCP（npx + 浏览器插件）配置写入全局 opencode.json，token 不进仓库；conventions 与 agent-system 同步
 - **移除 todos 示例模块**：工作台与客户端只显示公开的 `/api/health`；删除后端 `todos.controller.ts` / `todos.service.ts` / `todo.policy.ts` 与 `app.module.ts` 注册，删除 shared 的 `Todo`/`TODO_STATUS`/路由常量和 api client 的 `todos()`；README、AGENTS、workspace skill、conventions 的示例同步；历史需求文档保留原样
 - **去掉独立首页，工作台即默认页**：`routes/index.tsx` 改为渲染 `DashboardPage`，删除 `routes/dashboard.tsx` 与 `features/home/`；三种导航的「首页」项移除，「工作台」指向 `/`；Brand 点击回工作台；现行目录约定同步
