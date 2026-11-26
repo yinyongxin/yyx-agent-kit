@@ -105,7 +105,8 @@ docs/deliverables/<slug>/
 ├── 01-interaction.md     ← 页面怎么联动（交互编号 + Mermaid 状态机）
 ├── 02-tech-design.md     ← 必须含逐条可行性结论
 ├── 03-dev-log.md
-├── 04-test-plan.md
-├── 04-test-report.md
-└── 05-record.md
+├── 04-code-review.md     ← 必须审查通过才能进测试
+├── 05-test-plan.md
+├── 05-test-report.md
+└── 06-record.md
 ```

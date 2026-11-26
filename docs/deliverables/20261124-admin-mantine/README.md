@@ -11,10 +11,10 @@
 | `01-prd.md` | F1~F5：硬规则改写、Mantine 接入、样式分工、规范同步、样板页 |
 | `02-tech-design.md` | 可行性与任务拆分 |
 | `03-dev-log.md` | 实际改动记录 |
-| `04-test-plan.md` | 对应用收标准的测试用例 |
-| `04-test-report.md` | 测试结论（通过）与缺陷清单 |
-| `04-visual-check.md` | ego-browser 视觉验证证据 |
-| `05-record.md` | 交付记录（已归档，阶段 4 通过） |
+| `05-test-plan.md` | 对应用收标准的测试用例 |
+| `05-test-report.md` | 测试结论（通过）与缺陷清单 |
+| `05-visual-check.md` | ego-browser 视觉验证证据 |
+| `06-record.md` | 交付记录（已归档，阶段 5 通过） |
 
 ## 关联
 

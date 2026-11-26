@@ -1,4 +1,4 @@
-# 管理端数据表格（Table）— 测试计划（阶段 4）
+# 管理端数据表格（Table）— 测试计划（阶段 5）
 
 依据：`01-prd.md`（F1–F6 验收标准、Q1–Q4 结论、第 10/11 节）、`02-tech-design.md`（影响面与 T1–T6）、`03-dev-log.md`（实际改动）、`skills/flows/qa-regression/SKILL.md`、`docs/guides/conventions.md` 第 7 节。
 
@@ -73,9 +73,9 @@
 - 上次缺陷复测：阶段 3 修复的 9 个类型错误（`typecheck`）、列宽挤压（`minWidth=980` + `nowrap` 后 7 列与操作/分页完整）、`ActionBar opened` 与 `size="compact-sm"`。
 - 不做：真实 API/数据库、鉴权与越权（本期静态数据、PRD 非目标）、全量 `pnpm build`（本机 Rolldown OOM 的环境问题，非代码缺陷）。
 
-## 5. 缺陷修复复测补记（阶段 4 复测）
+## 5. 缺陷修复复测补记（阶段 5 复测）
 
-首轮判定为「不通过」（D-01~D-07）。修复后复测结论为「通过」，用例编号、AC 映射与预期保持不变，无需改用例；执行结果见 `04-test-report.md`。
+首轮判定为「不通过」（D-01~D-07）。修复后复测结论为「通过」，用例编号、AC 映射与预期保持不变，无需改用例；执行结果见 `05-test-report.md`。
 
 | 原缺陷 | 关联用例 | 复测结论 |
 | --- | --- | --- |

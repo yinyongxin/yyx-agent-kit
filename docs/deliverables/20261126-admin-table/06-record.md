@@ -58,7 +58,7 @@
 | PRD 三件套 | `01-prd.md`、`01-wireframe.md`、`01-interaction.md` | F1–F6 + Q1–Q4 + data-list 理念 + 组件命名 |
 | 技术方案 | `02-tech-design.md` | 四层架构、14 文件改动面、6 任务拆分 |
 | 开发日志 | `03-dev-log.md` | 9 个类型错误、列宽修复、缺陷修复记录 |
-| 测试计划 / 报告 | `04-test-plan.md`、`04-test-report.md` | 首轮 36/43 不通过 → 复测 43/43 通过 |
+| 测试计划 / 报告 | `05-test-plan.md`、`05-test-report.md` | 首轮 36/43 不通过 → 复测 43/43 通过 |
 | DataTable 组件 | `templates/base/apps/admin/src/components/DataTable/`（14 文件含 README） | 四层底座 + 双视图 + barrel |
 | 用户页样板 | `templates/base/apps/admin/src/features/access/users/UsersContent.tsx` | 占位 → 25 条静态数据列表 |
 

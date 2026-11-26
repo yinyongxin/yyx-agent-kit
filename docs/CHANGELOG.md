@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **新增阶段 4「代码审查」**：流水线从五阶段扩为六阶段—— chief 用新增 `code-review` skill 独立审查 general 写的代码，产出 `04-code-review.md`，结论「通过」才准派 qa；原测试回归/归档顺延为阶段 5/6，文件名同步改为 `05-test-*`/`06-record.md`（6 个历史 slug 的文件一并重命名）。同步更新 product-pipeline / chief / qa（含模板副本）、qa-regression / archive / tooling skill、agent-system 说明、docs 地图与交付物 README、模板 README；历史需求不补造审查记录
 - **修复 Nest 12 路由警告**：模板 `app.module.ts` 的 `forRoutes("*")` 改为 `forRoutes("{*splat}")`（命名通配，官网 Middleware → Route wildcards），消除 `LegacyRouteConverter` 警告；重启后 health 探活返回 ok；踩坑 #25 与 nestjs skill 同步
 - **配置文件注释规范**：`conventions.md` 新增第 10 节——严格 JSON（尤其 package.json）不支持注释，硬规则写进约定/skill/agent、命令说明写进 README 表格、复杂逻辑抽到 `.ps1`/`.mjs` 并在头部注释，`"//"` 伪注释不作为规范，支持 JSONC 的配置可直接写注释
 - **目录导航优先落地**：`conventions.md` 新增第 9 节——目录 README 固定四段（职责/文件索引/关联/同步要求），agent 进目录先读 README 筛选文件再读具体内容，结论以具体文件为准；同步进 chief/qa agent（全局+模板副本）、`product-pipeline` 执行模板、`qa-regression` 回归核对、模板 `AGENTS.md` 与 docs 文档地图

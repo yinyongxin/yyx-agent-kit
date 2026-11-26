@@ -2,7 +2,7 @@
 
 ## 概览
 
-- 状态：已交付（阶段 4 通过）
+- 状态：已交付（阶段 5 通过）
 - 周期：2026-11-24 ~ 2026-11-26
 - 参与角色：chief（产品/技术）、coder（主会话）、qa（独立回归）、archivist
 
@@ -42,13 +42,13 @@
 | 类型 | 路径 | 说明 |
 | --- | --- | --- |
 | PRD / 技术方案 / 开发日志 | `01-prd.md`、`02-tech-design.md`、`03-dev-log.md` | 完整三件 |
-| 测试计划 / 报告 / 视觉验证 | `04-test-plan.md`、`04-test-report.md`、`04-visual-check.md` | 18/18 通过，0 缺陷 |
+| 测试计划 / 报告 / 视觉验证 | `05-test-plan.md`、`05-test-report.md`、`05-visual-check.md` | 18/18 通过，0 缺陷 |
 | 样板页 | `templates/base/apps/admin/src/App.tsx` | Mantine 组件 + Tailwind 布局 |
 | 规范 | `AGENTS.md`、react skill、`docs/guides/conventions.md` 第 6 节、`docs/CHANGELOG.md` | 分端约定与分工 |
 
 ## 验证结论
 
-qa 独立回归：18/18 用例通过，9 条 AC 全覆盖，0 缺陷、0 阻塞；`pnpm build` / `lint` / `typecheck` 通过；ego-browser 视觉验证 Mantine 与 Tailwind 共存正常（详见 `04-test-report.md`、`04-visual-check.md`）。后端 502 为环境限制（无 Docker），非 UI 缺陷。
+qa 独立回归：18/18 用例通过，9 条 AC 全覆盖，0 缺陷、0 阻塞；`pnpm build` / `lint` / `typecheck` 通过；ego-browser 视觉验证 Mantine 与 Tailwind 共存正常（详见 `05-test-report.md`、`05-visual-check.md`）。后端 502 为环境限制（无 Docker），非 UI 缺陷。
 
 ## 遗留与风险
 
@@ -59,4 +59,4 @@ qa 独立回归：18/18 用例通过，9 条 AC 全覆盖，0 缺陷、0 阻塞�
 
 ## 下次接手
 
-先读 `04-test-report.md` 的结论与 `docs/guides/conventions.md` 第 6 节；注意本需求的样板页已被后续路由/布局需求重构（见 `20261124-admin-router`、`20261124-mantine-ui-mcp`）。
+先读 `05-test-report.md` 的结论与 `docs/guides/conventions.md` 第 6 节；注意本需求的样板页已被后续路由/布局需求重构（见 `20261124-admin-router`、`20261124-mantine-ui-mcp`）。

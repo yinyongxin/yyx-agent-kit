@@ -12,7 +12,7 @@ F:\project\yyx-agent-kit\
 │   ├── chief.md             # primary：编排、门禁、设计文档
 │   └── qa.md                # subagent：独立测试与回归
 ├── skills\
-│   ├── flows\               # 5 个流程 skill（product-pipeline / prd / tech-design / qa-regression / archive）
+│   ├── flows\               # 6 个流程 skill（product-pipeline / prd / tech-design / code-review / qa-regression / archive）
 │   ├── tools\tooling\       # 工具链索引（ardot / ego-browser / opencode CLI）
 │   └── standards\           # 4 个规范 skill：workspace / nestjs / react / next
 ├── templates\base\          # 项目模板：client/admin/portal/server + packages 共享层

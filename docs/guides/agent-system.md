@@ -26,10 +26,12 @@ chief（总管，primary agent）判断阶段、守门禁
    │     → 02-tech-design.md
    ├─ 阶段3 开发实施（派 general subagent）
    │     → 代码 + 03-dev-log.md
-   ├─ 阶段4 测试回归（派 qa subagent）
-   │     → 04-test-plan.md + 04-test-report.md
-   └─ 阶段5 记录归档（chief 自己 + archive skill）
-         → 05-record.md + 在 docs/README.md 需求索引追加一行
+   ├─ 阶段4 代码审查（chief 自己 + code-review skill）
+   │     → 04-code-review.md，不通过退回 general 修复后复审
+   ├─ 阶段5 测试回归（派 qa subagent）
+   │     → 05-test-plan.md + 05-test-report.md
+   └─ 阶段6 记录归档（chief 自己 + archive skill）
+         → 06-record.md + 在 docs/README.md 需求索引追加一行
 ```
 
 ## 1. 角色：agents
@@ -38,8 +40,8 @@ chief（总管，primary agent）判断阶段、守门禁
 
 | 角色 | 文件 | 模式 | 负责阶段 | 关键约束 |
 | --- | --- | --- | --- | --- |
-| **chief** | `agents/chief.md` | primary（默认入口） | 1、2、5；派活给 3、4 | 只能派 `qa` 和 `general`；阶段 1、2 必须自己做（上下文连续）；守全部门禁 |
-| **qa** | `agents/qa.md` | subagent | 4 | 判定者独立于实现者；不改业务代码，只改测试文件；结论不确定就写「阻塞」 |
+| **chief** | `agents/chief.md` | primary（默认入口） | 1、2、4、6；派活给 3、5 | 只能派 `qa` 和 `general`；阶段 1、2、4 必须自己做（上下文连续）；守全部门禁 |
+| **qa** | `agents/qa.md` | subagent | 5 | 判定者独立于实现者；不改业务代码，只改测试文件；结论不确定就写「阻塞」 |
 | **general** | 无文件（OpenCode 内置 subagent） | subagent | 3 | 由 chief 派发；prompt 必须写清 slug、交付目录、先读文件、目标、禁止事项 |
 
 ### chief 每次接任务固定做三件事
@@ -53,7 +55,7 @@ chief（总管，primary agent）判断阶段、守门禁
 每阶段结束只回四行：**阶段 / 产出 / 待确认 / 下一步**。
 除非用户明确说「一次做完、不用问我」，否则每道门禁都停下等确认；需求矛盾或方案与 PRD 冲突时也停下问用户。
 
-## 2. 五阶段流水线与门禁
+## 2. 六阶段流水线与门禁
 
 所有交付物都在 `docs/deliverables/<slug>/` 一个目录里。
 
@@ -61,9 +63,10 @@ chief（总管，primary agent）判断阶段、守门禁
 | --- | --- | --- | --- | --- |
 | 1 产品设计 | chief + `prd` | `01-prd.md`、`01-wireframe.md`、`01-interaction.md` | 每条功能有可判定验收标准；三件套通过交叉自检；非目标写明、假设单列 | 三件套齐备 + 自检通过 + **用户确认** → 才能做方案（阶段 1、2 必须同一人） |
 | 2 技术方案 | chief + `tech-design` | `02-tech-design.md` | 逐条给可行性结论，无「需调整」「不可做」 | 全部「可做」+ 文件存在 → 才能派 general；出现「需调整/不可做」→ 回 PRD 修订重评 |
-| 3 开发实施 | general | 代码 + `03-dev-log.md` | 任务完成；typecheck / lint / build 通过 | dev-log 任务完成 → 才能派 qa |
-| 4 测试回归 | qa | `04-test-plan.md`、`04-test-report.md` | 报告结论「通过」，无未处理高优缺陷 | 结论=通过 → 才能归档 |
-| 5 记录归档 | chief + `archive` | `05-record.md` + `docs/README.md`「需求索引」追加一行 | 决策与遗留项可追溯、索引入口正确 | 每道门禁通过后即可追加一条记录，不必等全部做完 |
+| 3 开发实施 | general | 代码 + `03-dev-log.md` | 任务完成；typecheck / lint / build 通过 | dev-log 任务完成 → 才能进入代码审查 |
+| 4 代码审查 | chief + `code-review` | `04-code-review.md` | 审查清单逐项通过；缺陷为空或已复审通过 | 结论=通过 → 才能派 qa；不通过退回 general 修复 |
+| 5 测试回归 | qa | `05-test-plan.md`、`05-test-report.md` | 报告结论「通过」，无未处理高优缺陷 | 结论=通过 → 才能归档 |
+| 6 记录归档 | chief + `archive` | `06-record.md` + `docs/README.md`「需求索引」追加一行 | 决策与遗留项可追溯、索引入口正确 | 每道门禁通过后即可追加一条记录，不必等全部做完 |
 
 ### 门禁为什么这样设
 
@@ -87,19 +90,20 @@ chief（总管，primary agent）判断阶段、守门禁
 
 出现「需调整」或「不可做」→ 回 `01-prd.md` 修订 → 重新评审 → 不带疑问进开发。
 
-## 3. Skills：10 个，分三类
+## 3. Skills：11 个，分三类
 
 Skill ID = 目录名。加载靠 description 自动匹配，不用手写配置。
 
-### 3.1 流程类 `skills/flows/`（5 个，对应阶段）
+### 3.1 流程类 `skills/flows/`（6 个，对应阶段）
 
 | Skill | 什么时候加载 | 目标产出 | 要点 |
 | --- | --- | --- | --- |
-| `product-pipeline` | 「做个 X」「推进需求」「现在到哪一步」「能开工/测试/归档吗」 | 各阶段文件 | 五阶段表、门禁顺序、按文件判断进度；小需求可合并 1+2 但须在方案顶部写需求与验收；大需求拆多 slug 用 `docs/README.md` 串 |
+| `product-pipeline` | 「做个 X」「推进需求」「现在到哪一步」「能开工/审查/测试/归档吗」 | 各阶段文件 | 六阶段表、门禁顺序、按文件判断进度；小需求可合并 1+2 但须在方案顶部写需求与验收；大需求拆多 slug 用 `docs/README.md` 串 |
 | `prd` | 「写 PRD」「功能具体怎么做」「需求文档」 | 三件套：`01-prd.md` / `01-wireframe.md` / `01-interaction.md` | PRD 固定 9 节；AC 用 Given/When/Then 且可判定；编号只增不改；**产出后强制交叉自检 7 条** |
 | `tech-design` | 「能不能做」「怎么拆任务」「用什么框架」 | `02-tech-design.md` | 固定 12 节；可行性三选一；任务必须「一件事、文件可枚举、依赖编号、可独立验证」 |
-| `qa-regression` | 「测一下」「验收」「跑回归」「能上线吗」 | `04-test-plan.md` / `04-test-report.md` | 用例编号对齐 AC；等价类+边界；回归范围按 dev-log 改动推导；缺陷分 P0–P3 |
-| `archive` | 「归档」「记录决策」「更新索引」 | `05-record.md` / `docs/README.md` | 追加不覆盖；只记事实；只留路径不粘日志；可交接 |
+| `code-review` | 「审查代码」「review」「代码能不能进测试」 | `04-code-review.md` | 独立于实现者；正确性/质量/约定/证据四组清单逐项判定；不通过退回修复并复审；不靠「看起来没问题」 |
+| `qa-regression` | 「测一下」「验收」「跑回归」「能上线吗」 | `05-test-plan.md` / `05-test-report.md` | 用例编号对齐 AC；等价类+边界；回归范围按 dev-log 改动推导；缺陷分 P0–P3 |
+| `archive` | 「归档」「记录决策」「更新索引」 | `06-record.md` / `docs/README.md` | 追加不覆盖；只记事实；只留路径不粘日志；可交接 |
 
 ### 3.2 工程规范类 `skills/standards/`（4 个，约束代码不产文档）
 
@@ -125,10 +129,11 @@ docs/deliverables/<slug>/
 ├── 01-interaction.md       chief 写：页面怎么联动、状态机
 ├── 02-tech-design.md       chief 写：可行性结论 + 任务拆分
 ├── 03-dev-log.md           general 写：改了什么
-├── 04-test-plan.md         qa 写：用例
-├── 04-test-report.md       qa 写：结论 + 缺陷
-├── 04-visual-check.md      可选：视觉/浏览器验证
-└── 05-record.md            chief 写：决策与遗留
+├── 04-code-review.md       chief 写：代码审查结论与缺陷清单
+├── 05-test-plan.md         qa 写：用例
+├── 05-test-report.md       qa 写：结论 + 缺陷
+├── 05-visual-check.md      可选：视觉/浏览器验证
+└── 06-record.md            chief 写：决策与遗留
 ```
 
 全局索引 `docs/README.md` 在 docs 根目录，按 slug 串起所有交付物。
@@ -165,13 +170,14 @@ docs/deliverables/<slug>/
 
 | slug | 已有文件 | 实际进度 |
 | --- | --- | --- |
-| `20261124-admin-mantine` | 01 / 02 / 03 / 04-test-plan / 04-test-report / 04-visual-check | 阶段 4 完成（报告「通过」），**未归档** |
-| `20261124-admin-router` | 01 / 02 / 03 | 阶段 3 完成，未进阶段 4 |
-| `20261124-db-migration` | 01 / 02 / 03 | 阶段 3 完成，未进阶段 4 |
-| `20261124-mantine-ui-mcp` | 02 / 03（方案里合并写了需求+验收） | 阶段 1+2 合并后做到阶段 3，未测试 |
-| `20261124-prisma7-upgrade` | 02 / 03（同上） | 阶段 1+2 合并后做到阶段 3，未测试 |
+| `20261126-admin-table` | 01 / 02 / 03 / 05-test-plan / 05-test-report / 06-record | 五阶段完整走完（报告「通过」），已交付；无阶段 4 代码审查 |
+| `20261124-admin-mantine` | 01 / 02 / 03 / 05-test-plan / 05-test-report / 05-visual-check / 06-record | 阶段 5 通过，已归档；无代码审查 |
+| `20261124-admin-router` | 01 / 02 / 03 / 06-record | 阶段 3 完成、阶段 5 未独立执行，已归档 |
+| `20261124-db-migration` | 01 / 02 / 03 / 06-record | 阶段 3 完成、阶段 5 未独立执行，已归档 |
+| `20261124-mantine-ui-mcp` | 02 / 03 / 06-record（方案里合并写了需求+验收） | 阶段 1+2 合并后做到阶段 3，已归档 |
+| `20261124-prisma7-upgrade` | 02 / 03 / 06-record（同上） | 阶段 1+2 合并后做到阶段 3，已归档 |
 
-> 这些历史目录里**没有** `01-wireframe.md` / `01-interaction.md` / `05-record.md`，需求索引条目也没建——三件套和强制自检是后加的规则（见 CHANGELOG Unreleased）。
+> 历史目录普遍缺 `01-wireframe.md` / `01-interaction.md`（三件套是后加规则），也都没有 `04-code-review.md`（代码审查是后加阶段）；2026-11-26 已补 `06-record.md` 完成归档，其中阶段 5 未独立执行的条目如实标注，未伪造 QA 结论。
 
 ## 8. 全局 MCP 配置（当前）
 
@@ -185,13 +191,11 @@ docs/deliverables/<slug>/
 
 全局没有配 `skills` 数组和 `default_agent`——流水线只在项目级启用 chief。
 
-## 9. 现状里值得注意的三处不一致
+## 9. 现状说明
 
-审查时发现，不是文档错误，是后续需要处理的现状：
-
-1. **CLI 版本号不一致**：`package.json` 是 `0.1.1`，但 `cli/bin/yyx-new.mjs` 里 `VERSION = '0.1.0'`，`--version` 会报旧号。
-2. **历史需求缺归档文件**：5 个 slug 都没有 `05-record.md`，需求索引条目也不存在（现已并入 `docs/README.md`），流水线阶段 5 从未真正走完。
-3. **三件套规则只对新需求生效**：历史目录里没有线稿和交互稿，不必回头补，但要知道「按老文件判断进度」时它们本来就不该存在。
+1. **CLI 版本号**：已改为运行时从 `package.json` 读取，`--version` 与包版本一致，不再硬编码。
+2. **历史需求归档**：2026-11-26 已补 `06-record.md` 完成归档；其中 4 个需求阶段 5 未独立执行，已在各自记录里如实标注，不伪造 QA 结论。
+3. **新增规则不回溯**：历史目录没有三件套与 `04-code-review.md`——分别是后加的规则与后加的阶段，不必回头补；按老文件判断进度时它们本来就不该存在。
 
 ## 10. 硬规则速查
 

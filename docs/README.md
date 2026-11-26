@@ -27,7 +27,7 @@ docs/
 │   └── scaffolds/         官方脚手架原样配置
 └── deliverables/          需求交付物（统一收敛在这里）
     └── <slug>/            目录名 YYYYMMDD-kebab-case
-        └── 01-prd.md / 01-wireframe.md / 01-interaction.md / 02-tech-design.md / 03-dev-log.md / 04-*.md / 05-record.md
+        └── 01-prd.md / 01-wireframe.md / 01-interaction.md / 02-tech-design.md / 03-dev-log.md / 04-code-review.md / 05-*.md / 06-record.md
 ```
 
 - **每个目录用 `README.md` 说明职责、文件索引、关联和同步要求**；agent 进目录先读它筛选文件，再读具体内容，结论以具体文件为准（见 `guides/conventions.md` 第 9 节）。
@@ -43,16 +43,17 @@ docs/
 
 | 需求 | 状态 | 更新日期 | 入口 |
 | --- | --- | --- | --- |
-| 20261126-admin-table | 已交付 | 2026-11-26 | [05-record.md](deliverables/20261126-admin-table/05-record.md) |
-| 20261124-admin-mantine | 已归档（阶段 4 通过） | 2026-11-26 | [05-record.md](deliverables/20261124-admin-mantine/05-record.md) |
-| 20261124-admin-router | 已归档（阶段 4 未独立执行） | 2026-11-26 | [05-record.md](deliverables/20261124-admin-router/05-record.md) |
-| 20261124-db-migration | 已归档（阶段 4 未独立执行） | 2026-11-26 | [05-record.md](deliverables/20261124-db-migration/05-record.md) |
-| 20261124-mantine-ui-mcp | 已归档（阶段 4 未独立执行） | 2026-11-26 | [05-record.md](deliverables/20261124-mantine-ui-mcp/05-record.md) |
-| 20261124-prisma7-upgrade | 已归档（阶段 4 未独立执行） | 2026-11-26 | [05-record.md](deliverables/20261124-prisma7-upgrade/05-record.md) |
+| 20261126-admin-table | 已交付 | 2026-11-26 | [06-record.md](deliverables/20261126-admin-table/06-record.md) |
+| 20261124-admin-mantine | 已归档（阶段 5 通过） | 2026-11-26 | [06-record.md](deliverables/20261124-admin-mantine/06-record.md) |
+| 20261124-admin-router | 已归档（阶段 5 未独立执行） | 2026-11-26 | [06-record.md](deliverables/20261124-admin-router/06-record.md) |
+| 20261124-db-migration | 已归档（阶段 5 未独立执行） | 2026-11-26 | [06-record.md](deliverables/20261124-db-migration/06-record.md) |
+| 20261124-mantine-ui-mcp | 已归档（阶段 5 未独立执行） | 2026-11-26 | [06-record.md](deliverables/20261124-mantine-ui-mcp/06-record.md) |
+| 20261124-prisma7-upgrade | 已归档（阶段 5 未独立执行） | 2026-11-26 | [06-record.md](deliverables/20261124-prisma7-upgrade/06-record.md) |
 
 ### 说明
 
-- 5 个历史需求已于 2026-11-26 补归档；其中 4 个未做独立阶段 4，已在各自 `05-record.md` 的「验证结论」如实标注，不伪造 QA 结论。
+- 5 个历史需求已于 2026-11-26 补归档；其中 4 个未做独立阶段 5，已在各自 `06-record.md` 的「验证结论」如实标注，不伪造 QA 结论。
+- 代码审查阶段（阶段 4）是后加规则，历史需求都没有 `04-code-review.md`，不必回头补。
 - 历史目录里没有 `01-wireframe.md` / `01-interaction.md`——三件套是后来加入的规则（见 [CHANGELOG](CHANGELOG.md) 的 Unreleased），不必回头补。
 - 新需求按 [guides/agent-system.md](guides/agent-system.md) 的五阶段推进，slug 形如 `YYYYMMDD-kebab-case`。
-- 流水线阶段 5 更新本节的表格。
+- 流水线阶段 6 更新本节的表格。

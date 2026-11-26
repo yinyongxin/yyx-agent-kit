@@ -2,7 +2,7 @@
 
 ## 概览
 
-- 状态：已交付（阶段 4 未独立执行）
+- 状态：已交付（阶段 5 未独立执行）
 - 周期：2026-11-24 ~ 2026-11-26
 - 参与角色：chief（产品/技术）、coder（主会话）、archivist
 
@@ -48,7 +48,7 @@
 
 ## 验证结论
 
-`pnpm build` / `lint` / typecheck 通过；ego-browser 逐页验证 7 条路由、菜单高亮、折叠、错误态（详见 `03-dev-log.md`）。**未做独立阶段 4**。后续 pull 把路由改到 `/access/*`，本地 `routeTree.gen.ts` 为生成物需重新生成后才 typecheck 通过（已处理，见 `docs/guides/conventions.md` 第 7 节）。
+`pnpm build` / `lint` / typecheck 通过；ego-browser 逐页验证 7 条路由、菜单高亮、折叠、错误态（详见 `03-dev-log.md`）。**未做独立阶段 5**。后续 pull 把路由改到 `/access/*`，本地 `routeTree.gen.ts` 为生成物需重新生成后才 typecheck 通过（已处理，见 `docs/guides/conventions.md` 第 7 节）。
 
 ## 遗留与风险
 

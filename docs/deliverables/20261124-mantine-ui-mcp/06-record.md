@@ -2,7 +2,7 @@
 
 ## 概览
 
-- 状态：已交付（阶段 4 未独立执行）
+- 状态：已交付（阶段 5 未独立执行）
 - 周期：2026-11-24 ~ 2026-11-26
 - 参与角色：chief（产品/技术）、coder（主会话）、archivist
 
@@ -49,7 +49,7 @@
 
 ## 验证结论
 
-`typecheck` / `lint` 通过（typecheck 抓到并修复两处数组索引可能 undefined 的真实类型错误）；ego-browser 连续切换四次，snapshot 逐模式确认渲染正确。`pnpm build` 曾因本机内存不足在 Rolldown 阶段 OOM（同样代码之前能过，属环境限制）。**未做独立阶段 4**。
+`typecheck` / `lint` 通过（typecheck 抓到并修复两处数组索引可能 undefined 的真实类型错误）；ego-browser 连续切换四次，snapshot 逐模式确认渲染正确。`pnpm build` 曾因本机内存不足在 Rolldown 阶段 OOM（同样代码之前能过，属环境限制）。**未做独立阶段 5**。
 
 ## 遗留与风险
 

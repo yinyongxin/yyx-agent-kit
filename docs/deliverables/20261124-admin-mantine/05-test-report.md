@@ -1,4 +1,4 @@
-# 管理端引入 Mantine — 测试报告（阶段 4）
+# 管理端引入 Mantine — 测试报告（阶段 5）
 
 结论：**通过**
 
@@ -16,7 +16,7 @@
 | pnpm / Node | 11.9.0 / v24.22.3 |
 | 命令环境 | `$env:CI="true"; $env:npm_config_store_dir="D:\pnpm-store"; $env:npm_config_minimumReleaseAge="0"` |
 | 依赖版本 | `@mantine/core` 9.8.1、`@mantine/hooks` 9.8.2（core 传递解析）、`tailwind-preset-mantine` 4.1.0、Tailwind 4.3.5 |
-| 视觉验证证据 | `docs/deliverables/20261124-admin-mantine/04-visual-check.md`（主会话产出，ego-browser 0.6.3.17 / chromium 156） |
+| 视觉验证证据 | `docs/deliverables/20261124-admin-mantine/05-visual-check.md`（主会话产出，ego-browser 0.6.3.17 / chromium 156） |
 | 截图 | `D:/opencode-poc/ego-admin/admin.png`（临时目录，不入库） |
 
 ## 1. 用例执行表
@@ -38,7 +38,7 @@
 | TC-F5-01 | F5-AC1 | 通过 | `pnpm lint` 退出码 0（oxlint 无 error/warning） | 命令输出 `LINT_EXIT=0` |
 | TC-F5-02 | F5-AC1 | 通过 | `pnpm typecheck` 退出码 0，6 子项目 `tsc --noEmit` 全通过；`pnpm build` 内含 typecheck 亦通过 | 命令输出 `TYPECHECK_EXIT=0`、`BUILD_RERUN_EXIT=0` |
 | TC-F5-03 | F5-AC1 | 通过 | `App.tsx` 保留 health 状态、todos 列表、loading（Loader）、error（Alert）分支，数据流仍走 `api.health()` / `api.todos()` | `apps/admin/src/App.tsx:9-12,15,34-52` |
-| TC-F5-04 | F5-AC1 | 通过 | 静态分支检查通过：loading→Loader、error→Alert 且不再渲染 health Badge、成功空 todos→「暂无数据」、非空→Table、health 非 ok→红 Badge；浏览器视觉验证确认错误态 Alert、空态、加载态均有正确 UI 表达 | `apps/admin/src/App.tsx:34-52`；`04-visual-check.md:10-13` |
+| TC-F5-04 | F5-AC1 | 通过 | 静态分支检查通过：loading→Loader、error→Alert 且不再渲染 health Badge、成功空 todos→「暂无数据」、非空→Table、health 非 ok→红 Badge；浏览器视觉验证确认错误态 Alert、空态、加载态均有正确 UI 表达 | `apps/admin/src/App.tsx:34-52`；`05-visual-check.md:10-13` |
 | TC-REG-01 | 回归 | 通过 | `git diff --name-only` 仅 9 个预期文件；client/portal 的 package.json 与 CSS 无任何改动，CSS grep 中仅 admin/index.css 命中 mantine | `git diff --name-only` 输出；CSS grep 结果 |
 | TC-REG-02 | 回归 | 通过 | 依赖只含 `@mantine/core` + `@mantine/hooks` + `tailwind-preset-mantine`，lockfile 无 form/notification/chart/dates 包 | `apps/admin/package.json`；`pnpm-lock.yaml` grep 结果 |
 
@@ -66,4 +66,4 @@
 - **样板页**：App.tsx 功能（health/todos/loading/error）与写法（`export const`）保持；lint、全量 typecheck、6 项目 build 通过。
 - **未覆盖/残留风险**：深色模式按 PRD Q3 本期不启用；后端接口真实 200 路径因本机无 Docker 未验证（`GET /api/health` 的后端启动验证属 AGENTS.md 基线，本需求明确不涉及数据库，故不阻塞）。上述均为已声明的非目标或环境限制，不构成上线阻塞。
 
-**最终判定**：9 条验收标准全部满足，18 条用例全部通过，产品缺陷 0，无阻塞项。同意进入阶段 5（归档）。
+**最终判定**：9 条验收标准全部满足，18 条用例全部通过，产品缺陷 0，无阻塞项。同意进入阶段 6（归档）。

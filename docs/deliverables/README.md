@@ -2,7 +2,7 @@
 
 ## 职责
 
-每个需求一个 `YYYYMMDD-kebab-case` 目录，放五阶段流水线产生的全部交付物。**进度靠这里实际存在的文件判断，不靠记忆。**
+每个需求一个 `YYYYMMDD-kebab-case` 目录，放六阶段流水线产生的全部交付物。**进度靠这里实际存在的文件判断，不靠记忆。**
 
 ## 文件索引
 
@@ -13,10 +13,11 @@ deliverables/<slug>/
 ├── 01-interaction.md      页面怎么联动、状态怎么流转
 ├── 02-tech-design.md      可行性结论 + 任务拆分
 ├── 03-dev-log.md          改了什么
-├── 04-test-plan.md        用例
-├── 04-test-report.md      结论 + 缺陷
-├── 04-visual-check.md     可选：视觉/浏览器验证
-└── 05-record.md           决策与遗留
+├── 04-code-review.md      代码审查结论与缺陷清单
+├── 05-test-plan.md        用例
+├── 05-test-report.md      结论 + 缺陷
+├── 05-visual-check.md     可选：视觉/浏览器验证
+└── 06-record.md           决策与遗留
 ```
 
 ## 关联

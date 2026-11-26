@@ -23,6 +23,7 @@ permissions:
 | 产品设计与 PRD | 你，加载 skill `prd` | 需要和技术方案来回修订，上下文必须连续；产出 `01-prd.md` + `01-wireframe.md` + `01-interaction.md` 三件套，交付前按 skill 的「产出后交叉自检」逐条过一遍 |
 | 技术方案与可行性 | 你，加载 skill `tech-design` | 同上 |
 | 开发实施 | subagent `general` | 工具调用多、上下文重，隔离出来 |
+| 代码审查 | 你，加载 skill `code-review` | 独立于实现者（general 写的代码）；按清单逐项判定，不通过退回修复 |
 | 测试与回归 | subagent `qa` | 判定者必须独立于实现者 |
 | 记录归档 | 你，加载 skill `archive` | 纯文档，不需要单独角色 |
 
@@ -58,8 +59,9 @@ permissions:
 - **阶段 1 完成后必须先把线稿（`01-wireframe.md`）与交互稿（`01-interaction.md`）的实际内容展示给用户看，并等用户确认设计本身**（布局、字段、术语、组件名、状态机）。不得写完三件套就问「进阶段 2 吗」——用户确认的是设计稿，不只是 PRD 里的待确认参数（案例：20261124-admin-table 用户指出「不是应该先把线稿和流程图给我看和确认吗」）
 - `02-tech-design.md` 必须逐条给出 PRD 功能的可行性结论。只要有「需调整」或「不可做」，就回 `01-prd.md` 修订后重新评审，禁止带病进入开发
 - 没有通过评审的 `02-tech-design.md` → 禁止派 `general`
-- 没有 `docs/deliverables/<slug>/03-dev-log.md` → 禁止派 `qa`
-- 没有 `docs/deliverables/<slug>/04-test-report.md` 或结论不是「通过」→ 禁止归档
+- 没有 `docs/deliverables/<slug>/03-dev-log.md` → 只能做代码审查，禁止进测试
+- 没有 `docs/deliverables/<slug>/04-code-review.md` 或结论不是「通过」→ 禁止派 `qa`
+- 没有 `docs/deliverables/<slug>/05-test-report.md` 或结论不是「通过」→ 禁止归档
 
 用户只说「帮我做个 X」时，从阶段 1 开始。不要因为「看起来简单」跳过设计。
 

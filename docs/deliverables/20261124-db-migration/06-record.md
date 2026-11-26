@@ -2,7 +2,7 @@
 
 ## 概览
 
-- 状态：已交付（阶段 4 未独立执行）
+- 状态：已交付（阶段 5 未独立执行）
 - 周期：2026-11-24 ~ 2026-11-26
 - 参与角色：chief（产品/技术）、coder（主会话）、archivist
 
@@ -50,7 +50,7 @@
 
 ## 验证结论
 
-迁移 SQL 与 schema 重新生成的 diff 完全一致；seed 单独编译、server build/typecheck、`pnpm lint`、全量 `pnpm build` 均通过（详见 `03-dev-log.md`）。**未验证**：真实 `db:deploy` / `db:seed` 连库冒烟。无独立阶段 4 测试报告。
+迁移 SQL 与 schema 重新生成的 diff 完全一致；seed 单独编译、server build/typecheck、`pnpm lint`、全量 `pnpm build` 均通过（详见 `03-dev-log.md`）。**未验证**：真实 `db:deploy` / `db:seed` 连库冒烟。无独立阶段 5 测试报告。
 
 ## 遗留与风险
 

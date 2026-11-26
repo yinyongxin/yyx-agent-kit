@@ -2,7 +2,7 @@
 
 ## 概览
 
-- 状态：已交付（阶段 4 未独立执行）
+- 状态：已交付（阶段 5 未独立执行）
 - 周期：2026-11-24 ~ 2026-11-26
 - 参与角色：chief（产品/技术）、coder（主会话）、archivist
 
@@ -41,7 +41,7 @@
 
 ## 验证结论
 
-`prisma generate`、PoC 运行时加载、多租户 `$extends` 注入、`pnpm build`、`pnpm lint` 全部通过（详见 `03-dev-log.md`）。**未验证**：真实 PG 连库与 `GET /api/health`（本机无 Docker/PostgreSQL）。无独立阶段 4 测试报告。
+`prisma generate`、PoC 运行时加载、多租户 `$extends` 注入、`pnpm build`、`pnpm lint` 全部通过（详见 `03-dev-log.md`）。**未验证**：真实 PG 连库与 `GET /api/health`（本机无 Docker/PostgreSQL）。无独立阶段 5 测试报告。
 
 ## 遗留与风险
 

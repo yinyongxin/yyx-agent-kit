@@ -1,0 +1,17 @@
+{
+  "skill_name": "code-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "开发完成了，dev-log 在 docs/deliverables/<slug>/03-dev-log.md。审查一下代码能不能进测试。",
+      "expected_output": "docs/deliverables/<slug>/04-code-review.md 含逐项判定表（正确性/质量/约定/证据）与缺陷清单（等级、文件:行号、修复要求），结论为通过/不通过/阻塞之一；不通过时不派 qa",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "通用组件里有个筛选字段类型声明了 segmented 但界面没实现，审查时要怎么处理？",
+      "expected_output": "按「接口兑现」判不通过，写入缺陷清单并要求删除未实现类型或补实现；不能靠「看起来没问题」放过",
+      "files": []
+    }
+  ]
+}
