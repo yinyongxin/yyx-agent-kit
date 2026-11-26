@@ -35,7 +35,8 @@ export const DataTableCardList = <TRow,>({ table: propTable }: DataTableCardList
                 <Text size="sm" c="dimmed">
                   {column.title}
                 </Text>
-                <Text size="sm">
+                {/* render 可能返回 Badge/Avatar 等 div，Text 默认渲染 p，会触发嵌套错误 */}
+                <Text size="sm" component="span">
                   {column.render ? column.render(row) : String(row[column.key] ?? "")}
                 </Text>
               </Group>

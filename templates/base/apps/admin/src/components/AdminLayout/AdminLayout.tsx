@@ -26,7 +26,8 @@ export const AdminLayout = () => {
       ) : (
         <div style={{ display: "flex", height: "100vh" }}>
           {/* 侧栏固定宽度，不折叠；背景为白色/深色，主内容区另有浅灰/更深背景以区分 */}
-          {/* 分隔线由两个导航组件自己的 .navbar 画（light-dark 自适应），这里不再重复 */}
+          {/* 宽度由各导航组件自己决定：单栏 260；双栏 = 图标栏 60 + 二级菜单 240 */}
+          {/* 分隔线也由组件的 .navbar 画（light-dark 自适应），这里不重复 */}
           <div style={{ flexShrink: 0 }}>
             <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
               <div style={{ flex: 1, minHeight: 0 }}>

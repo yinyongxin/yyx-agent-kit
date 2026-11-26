@@ -21,11 +21,27 @@
   border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-7));
 }
 
+/* 二级菜单显式定宽：图标栏 60 + 这里 240 = 双栏总宽 300，不依赖外层 */
 .main {
-  flex: 1;
+  flex: 0 0 240px;
+  width: 240px;
   display: flex;
   flex-direction: column;
   background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+/* 一级图标菜单占满中间高度并可滚动 */
+.mainLinks {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.mainLinksInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
 }
 
 .links {

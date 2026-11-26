@@ -9,7 +9,7 @@
 .icon {
   width: 44px;
   height: 44px;
-  margin-top: var(--mantine-spacing-sm);
+  margin-bottom: var(--mantine-spacing-sm);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -57,25 +57,29 @@ export const DoubleNavbar = () => {
       <div className={classes.wrapper}>
         <div className={classes.aside}>
           <div className={classes.logo}>S</div>
-          {GROUPS.map((item) => (
-            <Tooltip
-              label={item.label}
-              position="right"
-              withArrow
-              transitionProps={{ duration: 0 }}
-              key={item.label}
-            >
-              <UnstyledButton
-                onClick={() => navigate({ to: item.links[0]!.to })}
-                className={classes.mainLink}
-                data-active={item.label === group.label || undefined}
-                aria-label={item.label}
+          {/* 上：logo；中：一级图标菜单占满并可滚动；下：头像 */}
+          <AdminScrollArea className={classes.mainLinks}>
+            <div className={classes.mainLinksInner}>
+              {GROUPS.map((item) => (
+              <Tooltip
+                label={item.label}
+                position="right"
+                withArrow
+                transitionProps={{ duration: 0 }}
+                key={item.label}
               >
-                <item.icon size={22} stroke={1.5} />
-              </UnstyledButton>
-            </Tooltip>
-          ))}
-          {/* 双栏布局：用户信息只保留头像，放在一级图标菜单下方 */}
+                <UnstyledButton
+                  onClick={() => navigate({ to: item.links[0]!.to })}
+                  className={classes.mainLink}
+                  data-active={item.label === group.label || undefined}
+                  aria-label={item.label}
+                >
+                  <item.icon size={22} stroke={1.5} />
+                </UnstyledButton>
+              </Tooltip>
+              ))}
+            </div>
+          </AdminScrollArea>
           <UserMenu variant="icon" />
         </div>
         <div className={classes.main}>
