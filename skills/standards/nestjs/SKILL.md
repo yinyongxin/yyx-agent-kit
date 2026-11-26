@@ -42,6 +42,7 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 
 - **数据库迁移**：改 schema 后用 `db:migrate -- --name <语义名>` 生成 SQL 迁移文件，review 后入库；部署用 `db:deploy`（幂等）；生产禁止 `db push`。结构变更走 migrate、初始数据走 seed，边界见 `docs/guides/conventions.md` 第 5 节。
 
+- **中间件通配路由**：Nest 12 禁用裸 `*`；`forRoutes("*")` 叠加全局前缀会变成 `/api/*`，触发 `LegacyRouteConverter` 警告。用命名通配 `forRoutes("{*splat}")` 覆盖全部路径（官方 Middleware → Route wildcards，见踩坑记录 #25）。
 - 模块按 NestJS 规范分层：`module / controller / service / dto / entity`
 - 使用 Prisma Schema 定义数据模型，通过 `prisma generate` 同步类型（生成物在 `src/generated/prisma`，随应用编译）
 - **schema 多文件组织**：主文件 `prisma/schema.prisma` 只放 generator/datasource/enum；模型按领域拆到 `prisma/models/*.prisma`（tenant/user/rbac/billing）。**`prisma.config.ts` 的 `schema` 必须指向目录 `"prisma"`（不是文件）**，否则 models/ 下的模型被静默忽略（Prisma 7 官方坑，见踩坑记录 #21）。跨文件关系无需 import，Prisma 自动合并；换组织方式后跑 `prisma migrate status` 确认无新迁移

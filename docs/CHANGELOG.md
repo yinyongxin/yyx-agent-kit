@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **修复 Nest 12 路由警告**：模板 `app.module.ts` 的 `forRoutes("*")` 改为 `forRoutes("{*splat}")`（命名通配，官网 Middleware → Route wildcards），消除 `LegacyRouteConverter` 警告；重启后 health 探活返回 ok；踩坑 #25 与 nestjs skill 同步
 - **配置文件注释规范**：`conventions.md` 新增第 10 节——严格 JSON（尤其 package.json）不支持注释，硬规则写进约定/skill/agent、命令说明写进 README 表格、复杂逻辑抽到 `.ps1`/`.mjs` 并在头部注释，`"//"` 伪注释不作为规范，支持 JSONC 的配置可直接写注释
 - **目录导航优先落地**：`conventions.md` 新增第 9 节——目录 README 固定四段（职责/文件索引/关联/同步要求），agent 进目录先读 README 筛选文件再读具体内容，结论以具体文件为准；同步进 chief/qa agent（全局+模板副本）、`product-pipeline` 执行模板、`qa-regression` 回归核对、模板 `AGENTS.md` 与 docs 文档地图
 - **阶段性审查修复**：chief agent 不再引用不存在的 `vue`/`solidjs` skill（全局+模板副本）；`prd` skill 补齐 `01-wireframe.md` / `01-interaction.md` 固定结构模板；补齐 `docs/guides`/`reference`/`deliverables` 三个目录的 README.md；修模板内生成项目不存在的路径引用；根 README 结构树与标题更新；模板技术版本改为 Vite 8 + NestJS 12；踩坑 #14/#15 补当前基线说明；`ardot-remote` 更正为 `ardot`；OpenDesign MCP 连接失败时增加降级路径；qa/qa-regression 交付物路径补全；CLI 版本号改为从 package.json 读取

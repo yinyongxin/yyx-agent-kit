@@ -211,6 +211,14 @@
 - **解决**：阶段 1 完成后必须先展示线稿与交互稿并等确认（已写入 chief 门禁与 PRD skill 自检）；相近术语（筛选栏/工具栏）与借鉴对象先定义唯一；组件 props 查 `get_item_props` 或 llms.txt 确认；写完组件立即 typecheck。
 - **教训**：qa 首轮还抓到 P1——搜索无结果时显示空白表格而非 EmptyState，因为开发自测只测了「搜索命中」路径。异常 / 空结果路径必须对称覆盖（已写入 qa-regression skill）。
 
+### 25. Nest 12 中间件 `forRoutes("*")` 触发 LegacyRouteConverter 警告
+
+- **现象**：启动后端日志出现 `Unsupported route path: "/api/*"... Attempting to auto-convert to "/api/{*path}"`。
+- **原因**：Nest 12 使用新版 `path-to-regexp`，裸 `*` 已不是合法的通配语法；`forRoutes("*")` 叠加全局前缀 `api` 后变成 `/api/*`，被内部自动转换并打警告。官方文档「Route wildcards」用命名通配 `*splat`，并用 `{*splat}` 让通配可选，以覆盖没有后续段的路径。
+- **解决**：`apps/server/src/app.module.ts` 改为 `consumer.apply(TenantMiddleware).forRoutes("{*splat}")`。
+- **验证**：重启后日志中 `LegacyRouteConverter` 警告为 0；`/api/health`、`/api/todos` 仍正常映射，`GET /api/health` 返回 `ok`。
+- **参考**：Nest 官网 https://docs.nestjs.com/middleware#route-wildcards （一手来源，2026-11-26 查）
+
 ## 相关约定
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。
