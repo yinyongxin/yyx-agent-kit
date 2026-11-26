@@ -78,10 +78,10 @@ export const HeaderMegaMenu = () => {
   return (
     <Box>
       <header className={classes.header}>
-        <Group justify="space-between" h="100%">
+        <>
           <Text fw={700}>starter</Text>
 
-          <Group h="100%" gap={0} visibleFrom="sm">
+          <Group className={classes.nav} h="100%" gap={0} visibleFrom="sm">
             <Link to="/" className={classes.link}>首页</Link>
             <HoverCard width={520} position="bottom" radius="md" shadow="md" withinPortal>
               <HoverCard.Target>
@@ -131,11 +131,13 @@ export const HeaderMegaMenu = () => {
             <Link to="/settings" className={classes.link}>
               <Center inline><IconSettings size={16} /><Box component="span" ml={5}>设置</Box></Center>
             </Link>
-            <UserMenu variant="header" />
           </Group>
 
-          <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" aria-label="打开菜单" />
-        </Group>
+          <Group gap="xs">
+            <Box visibleFrom="sm"><UserMenu variant="header" /></Box>
+            <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" aria-label="打开菜单" />
+          </Group>
+        </>
       </header>
 
       <Drawer opened={drawerOpened} onClose={closeDrawer} size="100%" padding="md" title="Navigation" hiddenFrom="sm" zIndex={1000000}>
