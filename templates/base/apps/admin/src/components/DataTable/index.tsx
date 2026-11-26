@@ -11,5 +11,5 @@ export { useDataTable } from "./useDataTable";
 export type { UseDataTableOptions, UseDataTableResult } from "./useDataTable";
 export * from "./types";
 export * from "./functions";
-export { statusField, keywordField } from "./filter-fields";
+export { selectField } from "./filter-fields";
 export { dataTableLabels, paginationLabels } from "./labels";

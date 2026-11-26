@@ -18,8 +18,8 @@ export interface ColumnDef<TRow> {
   render?: (row: TRow) => ReactNode;
 }
 
-/** 筛选字段类型：本期用 select / text，其余为后续扩展预留 */
-export type FilterFieldType = "select" | "text" | "segmented" | "dateRange" | "preset";
+/** 筛选字段类型：筛选栏当前只实现 select；等真正实现其它类型再加，避免「配了没效果」 */
+export type FilterFieldType = "select";
 
 /** 单个筛选字段配置 */
 export interface FilterField {

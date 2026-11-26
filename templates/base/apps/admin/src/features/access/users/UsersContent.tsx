@@ -19,11 +19,12 @@ import {
   DataTablePagination,
   DataTableTable,
   DataTableToolbar,
-  dataTableLabels as labels,
+  dataTableLabels,
   paginationLabels as pageLabels,
-  statusField,
+  selectField,
   useDataTable,
   type ColumnDef,
+  type DataTableLabels,
 } from "@/components/DataTable";
 
 type UserRow = {
@@ -105,8 +106,28 @@ const columns: ColumnDef<UserRow>[] = [
 ];
 
 const filterFields = [
-  statusField({ label: "状态", allLabel: "全部", active: "正常", disabled: "禁用" }),
+  selectField({
+    key: "status",
+    label: "状态",
+    allLabel: "全部",
+    options: [
+      { label: "正常", value: "active" },
+      { label: "禁用", value: "disabled" },
+    ],
+  }),
 ];
+
+/** 业务页注入自己的文案：底座的 dataTableLabels 只提供中性默认值 */
+const labels: DataTableLabels = {
+  ...dataTableLabels,
+  searchPlaceholder: "搜索用户…",
+  emptyTitle: "暂无用户数据",
+  emptyDescription: "创建第一个用户后即可在此管理。",
+  create: "新建用户",
+  confirmDelete: (n) => `确定删除选中的 ${n} 个用户？此操作不可撤销。`,
+  confirmEnable: (n) => `确定启用选中的 ${n} 个用户？`,
+  confirmDisable: (n) => `确定停用选中的 ${n} 个用户？停用后无法登录。`,
+};
 
 /** 用户管理列表页内容：只给列定义 + 筛选配置 + 数据，四态由 DataTable 底座处理 */
 export const UsersContent = () => {
@@ -152,7 +173,6 @@ export const UsersContent = () => {
         labels={labels}
         paginationLabels={pageLabels}
         getRowKey={(row: UserRow) => row.id}
-        onEmptyAction={() => undefined}
       >
         <DataTableToolbar>
           <Button leftSection={<IconPlus size={16} />}>{labels.create}</Button>

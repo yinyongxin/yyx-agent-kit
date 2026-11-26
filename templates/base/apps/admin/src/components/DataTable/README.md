@@ -18,9 +18,9 @@
 | `DataTableToolbar.tsx` | 工具栏（新建 / 导入 / 导出等页面操作） |
 | `useDataTable.ts` | 状态 hook：四态 + 过滤排序分页 + 选中，泛型靠 `getRowKey` 推断 |
 | `functions.ts` | 纯逻辑：四态判定 / 过滤 / 排序 / 分页推导 / 选中切换 / 筛选芯片 |
-| `filter-fields.ts` | `FilterField` 配置构造 |
+| `filter-fields.ts` | 通用 `selectField()` 构造，不认识具体业务字段 |
 | `types.ts` | 列定义 / 筛选字段 / Context 类型 |
-| `labels.ts` | 文案常量（不 import i18n，由业务注入） |
+| `labels.ts` | 中性默认文案（不 import i18n；业务页应注入自己的 labels） |
 
 ## 关联
 
@@ -33,5 +33,7 @@
 
 - 新增 / 改名文件必须同步更新本 README 与 `index.tsx` barrel
 - 组件名遵循 PascalCase + 文件名 = 组件名；hooks 用 `use` 前缀小驼峰
-- 不 import 业务类型、不 import i18n；文案走 `labels` 注入
-- 页数只在 `functions.ts` 推导一处，分页组件与翻页边界共用，杜绝死按钮
+- 不 import 业务类型、不 import i18n；底座只给中性默认文案，业务页注入自己的 `labels`（见 `UsersContent.tsx`）
+- 筛选字段当前只实现 `select`；未实现的类型不要加进 `FilterFieldType`，避免「配了没效果」
+- 排序按列值类型处理：数字走数值比较，其余走中文字符串比较
+- 页数只在 `functions.ts` 推导一处，分页组件与翻页边界共用，杜绝死按钮；空态动作没接好时不要传 `onEmptyAction`

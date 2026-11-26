@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   derivePages,
   filterRows,
@@ -60,7 +60,7 @@ export interface UseDataTableResult<TRow> {
   somePageSelected: boolean;
 }
 
-/** 状态 hook：请求 + 四态 + 分页 + 选中，对外吐统一结果（借鉴 data-list 的分层） */
+/** 状态 hook：四态 + 过滤排序分页 + 选中；回调与返回值身份稳定，避免 Consumer 无谓重渲染 */
 export const useDataTable = <TRow>({
   data,
   getRowKey,
@@ -98,82 +98,120 @@ export const useDataTable = <TRow>({
     emptyWhen ? emptyWhen(allRows) : false,
   );
 
-  const pageKeys = rows.map(getRowKey);
+  const pageKeys = useMemo(() => rows.map(getRowKey), [rows, getRowKey]);
   const selectedCountOnPage = pageKeys.filter((key) => selected.has(key)).length;
   const allPageSelected = pageKeys.length > 0 && selectedCountOnPage === pageKeys.length;
   const somePageSelected = selectedCountOnPage > 0 && !allPageSelected;
 
-  const setFilter = (key: string, value: FilterValue) => {
+  const setFilter = useCallback((key: string, value: FilterValue) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
     setPageRaw(1);
-  };
+  }, []);
 
   // 搜索也回第一页，与 setFilter 一致（D-03）
-  const updateKeyword = (value: string) => {
+  const updateKeyword = useCallback((value: string) => {
     setKeyword(value);
     setPageRaw(1);
-  };
+  }, []);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setKeyword("");
     setFilters({});
     setPageRaw(1);
-  };
+  }, []);
 
-  const toggleSort = (key: keyof TRow & string) => {
-    if (sortKey !== key) {
-      setSortKey(key);
-      setSortDirection("asc");
-    } else if (sortDirection === "asc") {
-      setSortDirection("desc");
-    } else {
-      setSortKey(null);
-      setSortDirection(null);
-    }
-    setPageRaw(1);
-  };
+  const toggleSort = useCallback(
+    (key: keyof TRow & string) => {
+      if (sortKey !== key) {
+        setSortKey(key);
+        setSortDirection("asc");
+      } else if (sortDirection === "asc") {
+        setSortDirection("desc");
+      } else {
+        setSortKey(null);
+        setSortDirection(null);
+      }
+      setPageRaw(1);
+    },
+    [sortKey, sortDirection],
+  );
 
-  const setPage = (next: number) => setPageRaw(Math.min(Math.max(1, next), pages));
+  const setPage = useCallback(
+    (next: number) => setPageRaw(Math.min(Math.max(1, next), pages)),
+    [pages],
+  );
 
-  const setPageSize = (size: number) => {
+  const setPageSize = useCallback((size: number) => {
     setPageSizeRaw(size);
     setPageRaw(1);
-  };
+  }, []);
 
-  const toggleRow = (key: RowKey) =>
-    setSelected((prev) => toggleKey(prev, key));
+  const toggleRow = useCallback(
+    (key: RowKey) => setSelected((prev) => toggleKey(prev, key)),
+    [],
+  );
 
-  const toggleAll = (checked: boolean) =>
-    setSelected((prev) => togglePage(prev, pageKeys, checked));
+  const toggleAll = useCallback(
+    (checked: boolean) => setSelected((prev) => togglePage(prev, pageKeys, checked)),
+    [pageKeys],
+  );
 
-  const clearSelection = () => setSelected(new Set<RowKey>());
+  const clearSelection = useCallback(() => setSelected(new Set<RowKey>()), []);
 
-  const isSelected = (key: RowKey) => selected.has(key);
+  const isSelected = useCallback((key: RowKey) => selected.has(key), [selected]);
 
-  return {
-    state,
-    allRows,
-    rows,
-    total,
-    pages,
-    page: safePage,
-    pageSize,
-    keyword,
-    filters,
-    sortKey,
-    sortDirection,
-    selected,
-    setKeyword: updateKeyword,
-    setFilter,
-    resetFilters,
-    toggleSort,
-    setPage,
-    setPageSize,
-    toggleRow,
-    toggleAll,
-    clearSelection,
-    isSelected,
-    allPageSelected,
-    somePageSelected,
-  };
+  return useMemo(
+    () => ({
+      state,
+      allRows,
+      rows,
+      total,
+      pages,
+      page: safePage,
+      pageSize,
+      keyword,
+      filters,
+      sortKey,
+      sortDirection,
+      selected,
+      setKeyword: updateKeyword,
+      setFilter,
+      resetFilters,
+      toggleSort,
+      setPage,
+      setPageSize,
+      toggleRow,
+      toggleAll,
+      clearSelection,
+      isSelected,
+      allPageSelected,
+      somePageSelected,
+    }),
+    [
+      state,
+      allRows,
+      rows,
+      total,
+      pages,
+      safePage,
+      pageSize,
+      keyword,
+      filters,
+      sortKey,
+      sortDirection,
+      selected,
+      updateKeyword,
+      setFilter,
+      resetFilters,
+      toggleSort,
+      setPage,
+      setPageSize,
+      toggleRow,
+      toggleAll,
+      clearSelection,
+      isSelected,
+      allPageSelected,
+      somePageSelected,
+    ],
+  );
 };

@@ -46,7 +46,7 @@ export const filterRows = <TRow>(
   });
 };
 
-/** 排序：desc 时反向；asc 用稳定比较（转字符串比较，避免类型差异） */
+/** 排序：数字按数值比较，其余按中文字符串比较；desc 统一反向 */
 export const sortRows = <TRow>(
   rows: TRow[],
   key: keyof TRow & string,
@@ -55,9 +55,12 @@ export const sortRows = <TRow>(
   if (direction === null) return rows;
   const factor = direction === "asc" ? 1 : -1;
   return [...rows].sort((a, b) => {
-    const av = String(a[key] ?? "");
-    const bv = String(b[key] ?? "");
-    return av.localeCompare(bv, "zh-CN") * factor;
+    const av = a[key];
+    const bv = b[key];
+    if (typeof av === "number" && typeof bv === "number") {
+      return (av - bv) * factor;
+    }
+    return String(av ?? "").localeCompare(String(bv ?? ""), "zh-CN") * factor;
   });
 };
 

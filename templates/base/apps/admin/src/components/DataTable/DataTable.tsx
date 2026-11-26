@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import type { UseDataTableResult } from "./useDataTable";
 import type {
   ColumnDef,
@@ -90,10 +90,10 @@ export const DataTable = <TRow,>({
   onRetry,
   onEmptyAction,
   children,
-}: DataTableProps<TRow>) => (
-  <DataTableContext.Provider
-    value={
-      {
+}: DataTableProps<TRow>) => {
+  const value = useMemo(
+    () =>
+      ({
         ...list,
         columns,
         filterFields,
@@ -102,9 +102,13 @@ export const DataTable = <TRow,>({
         getRowKey,
         onRetry,
         onEmptyAction,
-      } as unknown as DataTableContextValue
-    }
-  >
-    <div>{children}</div>
-  </DataTableContext.Provider>
-);
+      }) as unknown as DataTableContextValue,
+    [list, columns, filterFields, labels, paginationLabels, getRowKey, onRetry, onEmptyAction],
+  );
+
+  return (
+    <DataTableContext.Provider value={value}>
+      <div>{children}</div>
+    </DataTableContext.Provider>
+  );
+};
