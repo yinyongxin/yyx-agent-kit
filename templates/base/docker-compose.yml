@@ -1,13 +1,30 @@
-# 项目自包含的本地依赖环境（PostgreSQL + pgvector + Redis）
+# 项目自包含的本地依赖环境（PostgreSQL + pgvector + Redis + Penpot 设计工具）
 # 不依赖全局 local-dev-docker-container，每个项目独立一套，多项目并存不冲突。
 # 认证状态（session / token / mfa / oidc）由 NestJS 官方认证包存进 PostgreSQL，
 # 不需要外部 IdP 容器；多平台共用一个 server 服务，天然共享登录态。
+# Penpot 用于 PM 线稿/设计稿转代码，官方 MCP 本地模式免 key（见 tools/penpot/README.md）。
 # 用法：
 #   cp .env.example .env       # 生产务必改各密码与 JWT_SECRET
 #   docker compose up -d
 #   docker compose down          # 停止但保留数据
 #   docker compose down -v       # 停止并删除数据卷（危险）
 name: starter
+
+# Penpot 官方配置片段（https://github.com/penpot/penpot/docker/images/docker-compose.yaml）
+# 仅把内部服务名换成带 starter- 前缀的容器名，避免与其它项目冲突。
+x-penpot-flags: &penpot-flags
+  PENPOT_FLAGS: disable-email-verification enable-smtp enable-prepl-server disable-secure-session-cookies enable-mcp
+x-penpot-uri: &penpot-public-uri
+  PENPOT_PUBLIC_URI: http://localhost:${PENPOT_PORT:-9001}
+x-penpot-body: &penpot-http-body-size
+  PENPOT_HTTP_SERVER_MAX_BODY_SIZE: 367001600
+  PENPOT_HTTP_SERVER_MAX_MULTIPART_BODY_SIZE: 367001600
+x-penpot-secret: &penpot-secret-key
+  PENPOT_SECRET_KEY: ${PENPOT_SECRET_KEY:-change-this-insecure-key}
+x-penpot-db: &penpot-database
+  PENPOT_DATABASE_URI: postgresql://starter-penpot-postgres/penpot
+  PENPOT_DATABASE_USERNAME: penpot
+  PENPOT_DATABASE_PASSWORD: ${PENPOT_DB_PASSWORD:-penpot}
 
 services:
   postgres:
@@ -50,11 +67,150 @@ services:
     networks:
       - starter-net
 
+  # ===== Penpot（设计工具，与本地依赖一起启动）=====
+  penpot-frontend:
+    image: "penpotapp/frontend:${PENPOT_VERSION:-2.18}"
+    container_name: starter-penpot-frontend
+    restart: unless-stopped
+    ports:
+      - "${PENPOT_PORT:-9001}:8080"
+    volumes:
+      - penpot-assets:/opt/data/assets
+    depends_on:
+      penpot-backend:
+        condition: service_started
+      penpot-admin-console:
+        condition: service_started
+      penpot-mcp:
+        condition: service_started
+      penpot-exporter:
+        condition: service_started
+    networks:
+      - starter-net
+    environment:
+      <<: [*penpot-flags, *penpot-http-body-size, *penpot-public-uri]
+      PENPOT_ADMIN_CONSOLE_URI: http://starter-penpot-admin-console:3000
+
+  penpot-backend:
+    image: "penpotapp/backend:${PENPOT_VERSION:-2.18}"
+    container_name: starter-penpot-backend
+    restart: unless-stopped
+    volumes:
+      - penpot-assets:/opt/data/assets
+    depends_on:
+      penpot-postgres:
+        condition: service_healthy
+      penpot-valkey:
+        condition: service_healthy
+    networks:
+      - starter-net
+    environment:
+      <<: [*penpot-flags, *penpot-public-uri, *penpot-http-body-size, *penpot-secret-key, *penpot-database]
+      PENPOT_ADMIN_CONSOLE_URI: http://starter-penpot-admin-console:3000
+      PENPOT_REDIS_URI: redis://starter-penpot-valkey/0
+      PENPOT_OBJECTS_STORAGE_BACKEND: fs
+      PENPOT_OBJECTS_STORAGE_FS_DIRECTORY: /opt/data/assets
+      PENPOT_TELEMETRY_ENABLED: "true"
+      PENPOT_TELEMETRY_REFERER: compose
+      PENPOT_SMTP_DEFAULT_FROM: no-reply@example.com
+      PENPOT_SMTP_DEFAULT_REPLY_TO: no-reply@example.com
+      PENPOT_SMTP_HOST: starter-penpot-mailpit
+      PENPOT_SMTP_PORT: 1025
+      PENPOT_SMTP_USERNAME:
+      PENPOT_SMTP_PASSWORD:
+      PENPOT_SMTP_TLS: "false"
+      PENPOT_SMTP_SSL: "false"
+
+  penpot-admin-console:
+    image: "penpotapp/admin-console:${PENPOT_VERSION:-2.18}"
+    container_name: starter-penpot-admin-console
+    restart: unless-stopped
+    depends_on:
+      penpot-postgres:
+        condition: service_healthy
+    networks:
+      - starter-net
+    environment:
+      <<: [*penpot-public-uri, *penpot-secret-key, *penpot-database]
+      PENPOT_INTERNAL_URI: http://starter-penpot-frontend:8080
+
+  penpot-mcp:
+    image: "penpotapp/mcp:${PENPOT_VERSION:-2.18}"
+    container_name: starter-penpot-mcp
+    restart: unless-stopped
+    networks:
+      - starter-net
+
+  penpot-exporter:
+    image: "penpotapp/exporter:${PENPOT_VERSION:-2.18}"
+    container_name: starter-penpot-exporter
+    restart: unless-stopped
+    depends_on:
+      penpot-valkey:
+        condition: service_healthy
+    networks:
+      - starter-net
+    environment:
+      <<: [*penpot-flags, *penpot-secret-key, *penpot-public-uri]
+      PENPOT_INTERNAL_URI: http://starter-penpot-frontend:8080
+      PENPOT_REDIS_URI: redis://starter-penpot-valkey/0
+
+  penpot-postgres:
+    image: "postgres:15"
+    container_name: starter-penpot-postgres
+    restart: unless-stopped
+    stop_signal: SIGINT
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U penpot"]
+      interval: 2s
+      timeout: 10s
+      retries: 5
+      start_period: 2s
+    volumes:
+      - penpot-postgres-data:/var/lib/postgresql/data
+    networks:
+      - starter-net
+    environment:
+      - POSTGRES_INITDB_ARGS=--data-checksums
+      - POSTGRES_DB=penpot
+      - POSTGRES_USER=penpot
+      - POSTGRES_PASSWORD=${PENPOT_DB_PASSWORD:-penpot}
+
+  penpot-valkey:
+    image: valkey/valkey:8.1
+    container_name: starter-penpot-valkey
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+    networks:
+      - starter-net
+    environment:
+      - VALKEY_EXTRA_FLAGS=--maxmemory 128mb --maxmemory-policy volatile-lfu
+
+  penpot-mailpit:
+    image: axllent/mailpit:v1
+    container_name: starter-penpot-mailpit
+    restart: unless-stopped
+    expose:
+      - "1025"
+    ports:
+      - "${PENPOT_MAILPIT_PORT:-8025}:8025"
+    networks:
+      - starter-net
+
 volumes:
   postgres-data:
     name: starter-postgres-data
   redis-data:
     name: starter-redis-data
+  penpot-postgres-data:
+    name: starter-penpot-postgres-data
+  penpot-assets:
+    name: starter-penpot-assets
 
 networks:
   starter-net:
