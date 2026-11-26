@@ -2,7 +2,7 @@
 
 ## 职责
 
-admin 内**所有可滚动区域**统一用它，不用浏览器原生滚动条。Mantine 自定义滚动条是覆盖层、不占布局宽度，因此不会像原生滚动条那样在出现/消失时把页面顶得跳动；`offsetScrollbars` 给内容留出被滚动条覆盖的空间。
+admin 内**所有可滚动区域**统一用它，不用浏览器原生滚动条。Mantine 自定义滚动条是覆盖层、不占布局宽度，因此不会像原生滚动条那样在出现/消失时把页面顶得跳动。不需要 `offsetScrollbars`——它只是给内容加 padding 防止被滚动条盖住，我们的内容槽本身有内边距，滚动条又是 hover 时才出现。
 
 ## 文件索引
 
@@ -13,7 +13,7 @@ admin 内**所有可滚动区域**统一用它，不用浏览器原生滚动条�
 
 ## 关联
 
-- 基于 Mantine `ScrollArea`（https://mantine.dev/core/scroll-area/）：自定义滚动条为覆盖层、不占布局宽度；`offsetScrollbars` 给内容让位。
+- 基于 Mantine `ScrollArea`（https://mantine.dev/core/scroll-area/）：自定义滚动条为覆盖层、不占布局宽度；用默认配置即可。
 - 使用处：`AdminLayout` 主内容区、`NavbarNested` / `DoubleNavbar` 侧栏链接、`HeaderMenu` / `HeaderMegaMenu` 移动菜单、`DataTableTable` 横向表格。
 - 约定见 `docs/guides/conventions.md` 第 6 节「前端样式与组件库」。
 

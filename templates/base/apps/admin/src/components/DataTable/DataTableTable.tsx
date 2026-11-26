@@ -24,11 +24,7 @@ export const DataTableTable = <TRow,>({ table: propTable }: DataTableTableProps<
   } = useDataTableApi<TRow>(propTable);
 
   return (
-    <Table.ScrollContainer
-      minWidth={980}
-      maxHeight={520}
-      scrollAreaProps={{ offsetScrollbars: true }}
-    >
+    <Table.ScrollContainer minWidth={980} maxHeight={520}>
       <Table stickyHeader highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
