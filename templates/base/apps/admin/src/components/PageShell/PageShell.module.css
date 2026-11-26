@@ -1,3 +1,5 @@
+/* 壳只提供内容位置：内边距与最小高度，不提供任何视觉表面（边框、背景、阴影） */
 .content {
   min-height: 240px;
+  padding: var(--mantine-spacing-md);
 }

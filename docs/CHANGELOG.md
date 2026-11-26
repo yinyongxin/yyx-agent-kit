@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **PageShell 去掉 Paper**：壳只提供位置（内容槽的 padding 与 min-height 留在 CSS），边框/背景/阴影等视觉表面交由页面内容自己决定；占位内容 `PlaceholderContent` 自带 Paper 面板
 - **DataTable 改为 Headless 设计**：`useDataTable` 接收完整配置并返回 `DataTableApi<TRow>`，视图组件显式收 `table` prop、类型从实例推断；`DataTable` 换成纯 `DataTableProvider`（不渲染 DOM），`useDataTableApi` 兼容显式 props 与 Provider 两种用法，消除「必须在内部使用」的硬约束与 `unknown` 类型强转
 - **DataTable 封装批量操作条**：新增 `DataTableBatchBar`（ActionBar + 确认弹窗 + 清空选中），业务只给 `DataTableBatchAction[]`；`UsersContent` 移除内联的 ActionBar/Modal/批量 state，改用动作清单；`labels` 补 batchTitle/cancel/confirm
 - **新增阶段 4「代码审查」**：流水线从五阶段扩为六阶段—— chief 用新增 `code-review` skill 独立审查 general 写的代码，产出 `04-code-review.md`，结论「通过」才准派 qa；原测试回归/归档顺延为阶段 5/6，文件名同步改为 `05-test-*`/`06-record.md`（6 个历史 slug 的文件一并重命名）。同步更新 product-pipeline / chief / qa（含模板副本）、qa-regression / archive / tooling skill、agent-system 说明、docs 地图与交付物 README、模板 README；历史需求不补造审查记录

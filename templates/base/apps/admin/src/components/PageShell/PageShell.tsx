@@ -1,4 +1,4 @@
-import { Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { Group, Stack, Text, Title } from "@mantine/core";
 import classes from "./PageShell.module.css";
 import type { PageShellProps } from "./types";
 
@@ -24,8 +24,6 @@ export const PageShell = ({
       </div>
       {actions}
     </Group>
-    <Paper withBorder p="md" className={classes.content}>
-      {children}
-    </Paper>
+    <div className={classes.content}>{children}</div>
   </Stack>
 );
