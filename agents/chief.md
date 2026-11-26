@@ -55,6 +55,7 @@ permissions:
 ## 门禁（硬规则）
 
 - `docs/deliverables/<slug>/` 下缺 `01-prd.md` / `01-wireframe.md` / `01-interaction.md` 任一 → 只能做产品设计；三件套齐备且交叉自检通过才算完成阶段 1
+- **阶段 1 完成后必须先把线稿（`01-wireframe.md`）与交互稿（`01-interaction.md`）的实际内容展示给用户看，并等用户确认设计本身**（布局、字段、术语、组件名、状态机）。不得写完三件套就问「进阶段 2 吗」——用户确认的是设计稿，不只是 PRD 里的待确认参数（案例：20261124-admin-table 用户指出「不是应该先把线稿和流程图给我看和确认吗」）
 - `02-tech-design.md` 必须逐条给出 PRD 功能的可行性结论。只要有「需调整」或「不可做」，就回 `01-prd.md` 修订后重新评审，禁止带病进入开发
 - 没有通过评审的 `02-tech-design.md` → 禁止派 `general`
 - 没有 `docs/deliverables/<slug>/03-dev-log.md` → 禁止派 `qa`

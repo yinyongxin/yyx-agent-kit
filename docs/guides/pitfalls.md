@@ -204,6 +204,13 @@
 - **备注**：官方指令说"不要用 write_file 替代生成流水线（会丢设计质量）"，但那是针对"流水线可用"的前提；当流水线因额度/模型卡死不可用时，自己写是唯一可行路径，且质量可控。以后遇到 OpenDesign：`start_run` 失败一次就直接切文件工具，不要反复重试 burn 时间。
 - **补充**：第一次直接写时没读 OpenDesign 的设计规范/技能参考，纯按自己审美写了双字体 + 冷色 + 卡片阴影版本，被用户指出"没用上 OpenDesign 的设计规范"才发现漏了。正确做法见 conventions 1.4：先用 `list_mcp_resources` / `read_mcp_resource` 读 `od://design-systems/<id>/DESIGN.md` 与 `od://skills/<id>/SKILL.md`。本项目按 `opencode-ai` 规范（单一等宽字体、暖调 #201d1d、蓝色 #007aff、4px 圆角、零阴影、860px 窄容器）重做后才真正用上 OpenDesign 的设计资产。
 
+### 25. 阶段 1 跳过设计稿确认 + 术语/借鉴对象混淆 + 组件 API 凭经验写错
+
+- **现象**：20261126-admin-table 需求出现三类过程问题：① 三件套写完直接问「进阶段 2 吗」，用户指出「不是应该先把线稿和流程图给我看和确认吗」；② 把搜索那一行叫「工具栏」，用户纠正工具栏是放「新建」等按钮的地方、应叫「筛选栏」；借鉴对象在 Mantine `DataList` / ui.mantine.dev 表格 / clinic-desk `data-list` 之间反复混淆三轮才对齐；③ `ActionBar` 写了 `visible`（实际是 `opened`）、Button 写了 `compact`（实际是 `size="compact-sm"`），typecheck 才抓到。
+- **原因**：① 把「产出文档」等同于「用户确认设计」，漏了展示与确认环节；② 相近术语与相似来源没先定义清楚就动手；③ 组件 props 凭经验写，没查官网 llms.txt / MCP 的字段表。
+- **解决**：阶段 1 完成后必须先展示线稿与交互稿并等确认（已写入 chief 门禁与 PRD skill 自检）；相近术语（筛选栏/工具栏）与借鉴对象先定义唯一；组件 props 查 `get_item_props` 或 llms.txt 确认；写完组件立即 typecheck。
+- **教训**：qa 首轮还抓到 P1——搜索无结果时显示空白表格而非 EmptyState，因为开发自测只测了「搜索命中」路径。异常 / 空结果路径必须对称覆盖（已写入 qa-regression skill）。
+
 ## 相关约定
 
 跨需求复用的工作规则已按类别整理到 [智能体工作约定](conventions.md)，本文只记录实际踩过的环境问题。

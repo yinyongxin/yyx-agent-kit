@@ -43,6 +43,7 @@ docs/
 
 | 需求 | 状态 | 更新日期 | 入口 |
 | --- | --- | --- | --- |
+| 20261126-admin-table | 已交付 | 2026-11-26 | [05-record.md](deliverables/20261126-admin-table/05-record.md) |
 | 20261124-admin-mantine | 已归档（阶段 4 通过） | 2026-11-26 | [05-record.md](deliverables/20261124-admin-mantine/05-record.md) |
 | 20261124-admin-router | 已归档（阶段 4 未独立执行） | 2026-11-26 | [05-record.md](deliverables/20261124-admin-router/05-record.md) |
 | 20261124-db-migration | 已归档（阶段 4 未独立执行） | 2026-11-26 | [05-record.md](deliverables/20261124-db-migration/05-record.md) |

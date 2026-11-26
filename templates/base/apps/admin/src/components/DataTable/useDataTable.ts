@@ -1,0 +1,179 @@
+import { useMemo, useState } from "react";
+import {
+  derivePages,
+  filterRows,
+  paginateRows,
+  resolveState,
+  sortRows,
+  toggleKey,
+  togglePage,
+} from "./functions";
+import type {
+  DataState,
+  FilterValue,
+  FilterValues,
+  RowKey,
+  SortDirection,
+} from "./types";
+
+export interface UseDataTableOptions<TRow> {
+  /** 本期静态数据；后续接 API 时由 queryOptions 提供 */
+  data: TRow[];
+  /** 标注行类型靠它推断，调用处不显式写泛型 */
+  getRowKey: (row: TRow) => RowKey;
+  /** 关键词匹配的字段 */
+  keywordFields: (keyof TRow & string)[];
+  initialPageSize?: number;
+  initialFilters?: FilterValues;
+  /** 可注入；本期静态数据默认 success */
+  state?: "loading" | "success" | "error";
+  /** 原始数据非空但业务派生后为空时覆盖空态判定 */
+  emptyWhen?: (rows: TRow[]) => boolean;
+}
+
+export interface UseDataTableResult<TRow> {
+  state: DataState;
+  /** 过滤排序后的全部行（未分页） */
+  allRows: TRow[];
+  /** 当前页行 */
+  rows: TRow[];
+  total: number;
+  pages: number;
+  page: number;
+  pageSize: number;
+  keyword: string;
+  filters: FilterValues;
+  sortKey: (keyof TRow & string) | null;
+  sortDirection: SortDirection;
+  selected: Set<RowKey>;
+  setKeyword: (value: string) => void;
+  setFilter: (key: string, value: FilterValue) => void;
+  resetFilters: () => void;
+  toggleSort: (key: keyof TRow & string) => void;
+  setPage: (page: number) => void;
+  setPageSize: (size: number) => void;
+  toggleRow: (key: RowKey) => void;
+  toggleAll: (checked: boolean) => void;
+  clearSelection: () => void;
+  isSelected: (key: RowKey) => boolean;
+  allPageSelected: boolean;
+  somePageSelected: boolean;
+}
+
+/** 状态 hook：请求 + 四态 + 分页 + 选中，对外吐统一结果（借鉴 data-list 的分层） */
+export const useDataTable = <TRow>({
+  data,
+  getRowKey,
+  keywordFields,
+  initialPageSize = 10,
+  initialFilters = {},
+  state: injectedState,
+  emptyWhen,
+}: UseDataTableOptions<TRow>): UseDataTableResult<TRow> => {
+  const [keyword, setKeyword] = useState("");
+  const [filters, setFilters] = useState<FilterValues>(initialFilters);
+  const [sortKey, setSortKey] = useState<(keyof TRow & string) | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [page, setPageRaw] = useState(1);
+  const [pageSize, setPageSizeRaw] = useState(initialPageSize);
+  const [selected, setSelected] = useState<Set<RowKey>>(() => new Set());
+
+  const allRows = useMemo(() => {
+    const filtered = filterRows(data, keyword, keywordFields, filters);
+    return sortKey ? sortRows(filtered, sortKey, sortDirection) : filtered;
+  }, [data, keyword, keywordFields, filters, sortKey, sortDirection]);
+
+  const total = allRows.length;
+  const pages = derivePages(total, pageSize);
+  const safePage = Math.min(page, pages);
+  const rows = useMemo(
+    () => paginateRows(allRows, safePage, pageSize),
+    [allRows, safePage, pageSize],
+  );
+
+  // 用过滤后的 allRows 判空：搜索/筛选无匹配时也进空态（D-01）
+  const state = resolveState(
+    injectedState ?? "success",
+    allRows,
+    emptyWhen ? emptyWhen(allRows) : false,
+  );
+
+  const pageKeys = rows.map(getRowKey);
+  const selectedCountOnPage = pageKeys.filter((key) => selected.has(key)).length;
+  const allPageSelected = pageKeys.length > 0 && selectedCountOnPage === pageKeys.length;
+  const somePageSelected = selectedCountOnPage > 0 && !allPageSelected;
+
+  const setFilter = (key: string, value: FilterValue) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setPageRaw(1);
+  };
+
+  // 搜索也回第一页，与 setFilter 一致（D-03）
+  const updateKeyword = (value: string) => {
+    setKeyword(value);
+    setPageRaw(1);
+  };
+
+  const resetFilters = () => {
+    setKeyword("");
+    setFilters({});
+    setPageRaw(1);
+  };
+
+  const toggleSort = (key: keyof TRow & string) => {
+    if (sortKey !== key) {
+      setSortKey(key);
+      setSortDirection("asc");
+    } else if (sortDirection === "asc") {
+      setSortDirection("desc");
+    } else {
+      setSortKey(null);
+      setSortDirection(null);
+    }
+    setPageRaw(1);
+  };
+
+  const setPage = (next: number) => setPageRaw(Math.min(Math.max(1, next), pages));
+
+  const setPageSize = (size: number) => {
+    setPageSizeRaw(size);
+    setPageRaw(1);
+  };
+
+  const toggleRow = (key: RowKey) =>
+    setSelected((prev) => toggleKey(prev, key));
+
+  const toggleAll = (checked: boolean) =>
+    setSelected((prev) => togglePage(prev, pageKeys, checked));
+
+  const clearSelection = () => setSelected(new Set<RowKey>());
+
+  const isSelected = (key: RowKey) => selected.has(key);
+
+  return {
+    state,
+    allRows,
+    rows,
+    total,
+    pages,
+    page: safePage,
+    pageSize,
+    keyword,
+    filters,
+    sortKey,
+    sortDirection,
+    selected,
+    setKeyword: updateKeyword,
+    setFilter,
+    resetFilters,
+    toggleSort,
+    setPage,
+    setPageSize,
+    toggleRow,
+    toggleAll,
+    clearSelection,
+    isSelected,
+    allPageSelected,
+    somePageSelected,
+  };
+};
