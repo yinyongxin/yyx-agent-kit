@@ -18,13 +18,13 @@ import {
   Drawer,
   Group,
   HoverCard,
-  ScrollArea,
   SimpleGrid,
   Text,
   ThemeIcon,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
+import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import classes from "./HeaderMegaMenu.module.css";
@@ -137,7 +137,7 @@ export const HeaderMegaMenu = () => {
       </header>
 
       <Drawer opened={drawerOpened} onClose={closeDrawer} size="100%" padding="md" title="Navigation" hiddenFrom="sm" zIndex={1000000}>
-        <ScrollArea h="calc(100vh - 80px)" mx="-md">
+        <AdminScrollArea h="calc(100vh - 80px)" mx="-md">
           <Divider my="sm" />
           <Link to="/" className={classes.link}>首页</Link>
           <UnstyledButton className={classes.link} onClick={toggleLinks}>
@@ -159,7 +159,7 @@ export const HeaderMegaMenu = () => {
             <MegaLinks items={PERMISSIONS} />
           </Collapse>
           <Link to="/settings" className={classes.link}>设置</Link>
-        </ScrollArea>
+        </AdminScrollArea>
       </Drawer>
     </Box>
   );

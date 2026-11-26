@@ -2,6 +2,7 @@ import { IconArrowsExchange } from "@tabler/icons-react";
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { Outlet } from "@tanstack/react-router";
 import { useState } from "react";
+import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
 import { HeaderMenu } from "@/components/header/HeaderMenu";
 import { DoubleNavbar } from "@/components/navbar/DoubleNavbar";
@@ -39,14 +40,16 @@ export const AdminLayout = () => {
       </Tooltip>
 
       {isHeader ? (
-        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
           {layout === "header-menu" ? <HeaderMenu /> : <HeaderMegaMenu />}
-          <div style={{ flex: 1, minHeight: 0, padding: "var(--mantine-spacing-md)" }}>
-            <Outlet />
-          </div>
+          <AdminScrollArea style={{ flex: 1, minHeight: 0 }}>
+            <div style={{ padding: "var(--mantine-spacing-md)" }}>
+              <Outlet />
+            </div>
+          </AdminScrollArea>
         </div>
       ) : (
-        <div style={{ display: "flex", minHeight: "100vh" }}>
+        <div style={{ display: "flex", height: "100vh" }}>
           {/* 侧栏固定宽度，不折叠 */}
           <div
             style={{
@@ -62,9 +65,11 @@ export const AdminLayout = () => {
             </div>
           </div>
 
-          <div style={{ flex: 1, minWidth: 0, padding: "var(--mantine-spacing-md)" }}>
-            <Outlet />
-          </div>
+          <AdminScrollArea h="100%" style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ padding: "var(--mantine-spacing-md)" }}>
+              <Outlet />
+            </div>
+          </AdminScrollArea>
         </div>
       )}
     </>

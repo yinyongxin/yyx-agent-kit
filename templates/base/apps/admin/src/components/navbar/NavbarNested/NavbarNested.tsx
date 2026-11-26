@@ -4,7 +4,8 @@ import {
   IconLock,
   type TablerIcon,
 } from "@tabler/icons-react";
-import { Group, ScrollArea, Text } from "@mantine/core";
+import { Group, Text } from "@mantine/core";
+import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { LinksGroup } from "@/components/navbar/NavbarLinksGroup";
 import classes from "./NavbarNested.module.css";
 
@@ -50,13 +51,13 @@ export const NavbarNested = () => (
         <Text fw={700}>管理菜单</Text>
       </Group>
     </div>
-    <ScrollArea className={classes.links}>
+    <AdminScrollArea className={classes.links}>
       <div className={classes.linksInner}>
         {MENU.map((item) => (
           <LinksGroup {...item} key={item.label} />
         ))}
       </div>
-    </ScrollArea>
+    </AdminScrollArea>
   </nav>
 );
 

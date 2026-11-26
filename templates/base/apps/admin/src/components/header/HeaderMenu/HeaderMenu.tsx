@@ -8,10 +8,10 @@ import {
   Drawer,
   Group,
   Menu,
-  ScrollArea,
   Text,
   UnstyledButton,
 } from "@mantine/core";
+import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import classes from "./HeaderMenu.module.css";
@@ -91,7 +91,7 @@ export const HeaderMenu = () => {
       </Container>
 
       <Drawer opened={opened} onClose={close} size="100%" padding="md" title="Navigation" hiddenFrom="sm" zIndex={1000000}>
-        <ScrollArea h="calc(100vh - 80px)" mx="-md">
+        <AdminScrollArea h="calc(100vh - 80px)" mx="-md">
           <Divider my="sm" />
           {LINKS.map((link) =>
             link.links ? (
@@ -102,7 +102,7 @@ export const HeaderMenu = () => {
               </Link>
             ),
           )}
-        </ScrollArea>
+        </AdminScrollArea>
       </Drawer>
     </header>
   );

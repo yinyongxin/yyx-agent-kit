@@ -5,6 +5,7 @@ import {
   type TablerIcon,
 } from "@tabler/icons-react";
 import { Title, Tooltip, UnstyledButton } from "@mantine/core";
+import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import classes from "./DoubleNavbar.module.css";
@@ -72,16 +73,18 @@ export const DoubleNavbar = () => {
           <Title order={4} className={classes.title}>
             {active}
           </Title>
-          {group.links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={classes.link}
-              activeProps={{ className: classes.linkActive }}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <AdminScrollArea h="calc(100% - 60px)">
+            {group.links.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={classes.link}
+                activeProps={{ className: classes.linkActive }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </AdminScrollArea>
         </div>
       </div>
     </nav>
