@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-/** 三种形态覆盖四种菜单：sidebar 用于两种侧栏，header 用于两种顶栏，drawer 用于移动端抽屉 */
-export type UserMenuVariant = "sidebar" | "header" | "drawer";
+/** 四种形态覆盖四种菜单：sidebar 嵌套侧栏、icon 双栏侧栏头像、header 两种顶栏、drawer 移动端抽屉 */
+export type UserMenuVariant = "sidebar" | "icon" | "header" | "drawer";
 
 export interface UserInfo {
   name: string;

@@ -47,27 +47,32 @@ export const UserMenu = ({
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const layoutMode = useOptionalLayoutMode();
   const compact = variant === "header";
+  const iconOnly = variant === "icon";
   const initial = user.name.slice(0, 1);
 
   return (
     <Menu width={240} position="bottom-end" shadow="md" withinPortal>
       <Menu.Target>
         <UnstyledButton className={classes[variant]} aria-label={`用户菜单：${user.name}`}>
-          <Group gap="sm" wrap="nowrap">
-            <Avatar size={compact ? "sm" : "md"} radius="xl" color="blue">
+          <Group gap="sm" wrap="nowrap" justify={iconOnly ? "center" : undefined}>
+            <Avatar size={compact || iconOnly ? "sm" : "md"} radius="xl" color="blue">
               {initial}
             </Avatar>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <Text size="sm" fw={500} truncate>
-                {user.name}
-              </Text>
-              {!compact && (
-                <Text size="xs" c="dimmed" truncate>
-                  {user.email}
-                </Text>
-              )}
-            </div>
-            <IconChevronDown size={14} />
+            {!iconOnly && (
+              <>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Text size="sm" fw={500} truncate>
+                    {user.name}
+                  </Text>
+                  {!compact && (
+                    <Text size="xs" c="dimmed" truncate>
+                      {user.email}
+                    </Text>
+                  )}
+                </div>
+                <IconChevronDown size={14} />
+              </>
+            )}
           </Group>
         </UnstyledButton>
       </Menu.Target>

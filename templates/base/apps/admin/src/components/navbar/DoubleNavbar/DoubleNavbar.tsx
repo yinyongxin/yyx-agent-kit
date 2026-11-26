@@ -75,6 +75,8 @@ export const DoubleNavbar = () => {
               </UnstyledButton>
             </Tooltip>
           ))}
+          {/* 双栏布局：用户信息只保留头像，放在一级图标菜单下方 */}
+          <UserMenu variant="icon" />
         </div>
         <div className={classes.main}>
           <Title order={4} className={classes.title}>
@@ -92,7 +94,6 @@ export const DoubleNavbar = () => {
               </Link>
             ))}
           </AdminScrollArea>
-          <UserMenu variant="sidebar" />
         </div>
       </div>
     </nav>

@@ -6,6 +6,17 @@
   border-radius: 0;
 }
 
+.icon {
+  width: 44px;
+  height: 44px;
+  margin-top: var(--mantine-spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mantine-color-text);
+  border-radius: var(--mantine-radius-md);
+}
+
 .header {
   padding: 6px 10px;
   color: var(--mantine-color-text);
