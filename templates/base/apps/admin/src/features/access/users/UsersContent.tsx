@@ -1,18 +1,17 @@
 import { IconBan, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
 import {
-  ActionBar,
   Avatar,
   Badge,
   Box,
   Button,
   Group,
-  Modal,
   Stack,
   Text,
 } from "@mantine/core";
 import { useState } from "react";
 import {
   DataTable,
+  DataTableBatchBar,
   DataTableCardList,
   DataTableContent,
   DataTableFilterBar,
@@ -24,6 +23,7 @@ import {
   selectField,
   useDataTable,
   type ColumnDef,
+  type DataTableBatchAction,
   type DataTableLabels,
 } from "@/components/DataTable";
 
@@ -35,8 +35,6 @@ type UserRow = {
   status: "active" | "disabled";
   createdAt: string;
 };
-
-type BatchAction = "delete" | "enable" | "disable";
 
 /** 静态示例数据；接入后端后改为 api 层提供 */
 const makeUsers = (): UserRow[] =>
@@ -132,7 +130,6 @@ const labels: DataTableLabels = {
 /** 用户管理列表页内容：只给列定义 + 筛选配置 + 数据，四态由 DataTable 底座处理 */
 export const UsersContent = () => {
   const [users, setUsers] = useState<UserRow[]>(makeUsers);
-  const [action, setAction] = useState<BatchAction | null>(null);
 
   const list = useDataTable({
     data: users,
@@ -141,28 +138,37 @@ export const UsersContent = () => {
     initialFilters: { status: null },
   });
 
-  const confirmMessage =
-    action === "delete"
-      ? labels.confirmDelete(list.selected.size)
-      : action === "enable"
-        ? labels.confirmEnable(list.selected.size)
-        : action === "disable"
-          ? labels.confirmDisable(list.selected.size)
-          : "";
-
-  const applyBatch = () => {
-    const chosen = new Set(list.selected);
-    if (action === "delete") {
-      setUsers((prev) => prev.filter((row) => !chosen.has(row.id)));
-    } else if (action === "enable" || action === "disable") {
-      const status = action === "enable" ? "active" : "disabled";
-      setUsers((prev) =>
-        prev.map((row) => (chosen.has(row.id) ? { ...row, status } : row)),
-      );
-    }
-    list.clearSelection();
-    setAction(null);
-  };
+  /** 批量动作：选中态、确认弹窗与清空由底座处理，这里只写真正的数据变更 */
+  const batchActions: DataTableBatchAction[] = [
+    {
+      key: "delete",
+      label: labels.batchDelete,
+      icon: <IconTrash size={14} />,
+      color: "red",
+      confirm: labels.confirmDelete,
+      run: (keys) => setUsers((prev) => prev.filter((row) => !keys.includes(row.id))),
+    },
+    {
+      key: "enable",
+      label: labels.batchEnable,
+      icon: <IconCheck size={14} />,
+      confirm: labels.confirmEnable,
+      run: (keys) =>
+        setUsers((prev) =>
+          prev.map((row) => (keys.includes(row.id) ? { ...row, status: "active" } : row)),
+        ),
+    },
+    {
+      key: "disable",
+      label: labels.batchDisable,
+      icon: <IconBan size={14} />,
+      confirm: labels.confirmDisable,
+      run: (keys) =>
+        setUsers((prev) =>
+          prev.map((row) => (keys.includes(row.id) ? { ...row, status: "disabled" } : row)),
+        ),
+    },
+  ];
 
   return (
     <Stack gap="md" pb={list.selected.size > 0 ? 80 : 0}>
@@ -187,56 +193,7 @@ export const UsersContent = () => {
         <DataTablePagination />
       </DataTable>
 
-      <ActionBar
-        opened={list.selected.size > 0}
-        onClose={list.clearSelection}
-        aria-label="批量操作"
-      >
-        <Group gap="xs">
-          <Text size="sm">{labels.selectedCount(list.selected.size)}</Text>
-          <Button
-            size="xs"
-            color="red"
-            leftSection={<IconTrash size={14} />}
-            onClick={() => setAction("delete")}
-          >
-            {labels.batchDelete}
-          </Button>
-          <Button
-            size="xs"
-            variant="light"
-            leftSection={<IconCheck size={14} />}
-            onClick={() => setAction("enable")}
-          >
-            {labels.batchEnable}
-          </Button>
-          <Button
-            size="xs"
-            variant="light"
-            leftSection={<IconBan size={14} />}
-            onClick={() => setAction("disable")}
-          >
-            {labels.batchDisable}
-          </Button>
-        </Group>
-      </ActionBar>
-
-      <Modal
-        opened={action !== null}
-        onClose={() => setAction(null)}
-        title="确认操作"
-        centered
-      >
-        <Text size="sm">{confirmMessage}</Text>
-        <Group justify="flex-end" mt="lg">
-          <Button variant="subtle" onClick={() => setAction(null)}>
-            取消
-          </Button>
-          <Button color={action === "delete" ? "red" : "blue"} onClick={applyBatch}>
-            确认
-          </Button>
-        </Group>
-      </Modal>
+      <DataTableBatchBar actions={batchActions} />
     </Stack>
   );
 };

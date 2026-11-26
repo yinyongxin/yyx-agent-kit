@@ -35,6 +35,7 @@ interface DataTableContextValue {
   selected: Set<RowKey>;
   toggleRow: (key: RowKey) => void;
   toggleAll: (checked: boolean) => void;
+  clearSelection: () => void;
   isSelected: (key: RowKey) => boolean;
   allPageSelected: boolean;
   somePageSelected: boolean;

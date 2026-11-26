@@ -51,9 +51,24 @@ export interface DataTableLabels {
   batchDelete: string;
   batchEnable: string;
   batchDisable: string;
+  batchTitle: string;
+  cancel: string;
+  confirm: string;
   confirmDelete: (n: number) => string;
   confirmEnable: (n: number) => string;
   confirmDisable: (n: number) => string;
+}
+
+/** 批量操作：底座只管选中态、确认与回调，业务负责真正改数据 */
+export interface DataTableBatchAction {
+  key: string;
+  label: string;
+  icon?: ReactNode;
+  color?: string;
+  variant?: "light" | "subtle" | "filled" | "outline";
+  /** 传了就先弹确认框，参数为选中条数 */
+  confirm?: (n: number) => string;
+  run: (keys: RowKey[]) => void;
 }
 
 /** 分页文案 */

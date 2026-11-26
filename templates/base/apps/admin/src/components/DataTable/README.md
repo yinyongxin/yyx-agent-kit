@@ -16,6 +16,7 @@
 | `DataTableCardList.tsx` | 移动卡片视图（一份配置两套 DOM） |
 | `DataTablePagination.tsx` | 分页 + 每页条数，页数读 Context 单一来源 |
 | `DataTableToolbar.tsx` | 工具栏（新建 / 导入 / 导出等页面操作） |
+| `DataTableBatchBar.tsx` | 批量操作条（ActionBar + 确认弹窗），业务只给动作清单 |
 | `useDataTable.ts` | 状态 hook：四态 + 过滤排序分页 + 选中，泛型靠 `getRowKey` 推断 |
 | `functions.ts` | 纯逻辑：四态判定 / 过滤 / 排序 / 分页推导 / 选中切换 / 筛选芯片 |
 | `filter-fields.ts` | 通用 `selectField()` 构造，不认识具体业务字段 |
@@ -37,3 +38,4 @@
 - 筛选字段当前只实现 `select`；未实现的类型不要加进 `FilterFieldType`，避免「配了没效果」
 - 排序按列值类型处理：数字走数值比较，其余走中文字符串比较
 - 页数只在 `functions.ts` 推导一处，分页组件与翻页边界共用，杜绝死按钮；空态动作没接好时不要传 `onEmptyAction`
+- 批量操作统一走 `DataTableBatchBar`：业务只提供 `DataTableBatchAction[]`（含真正改数据的 `run`），不在页面里自己拼 ActionBar + Modal；`confirm` 传了才弹确认框

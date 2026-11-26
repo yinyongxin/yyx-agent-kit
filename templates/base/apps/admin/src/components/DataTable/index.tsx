@@ -7,6 +7,8 @@ export { DataTableTable } from "./DataTableTable";
 export { DataTableCardList } from "./DataTableCardList";
 export { DataTablePagination } from "./DataTablePagination";
 export { DataTableToolbar } from "./DataTableToolbar";
+export { DataTableBatchBar } from "./DataTableBatchBar";
+export type { DataTableBatchBarProps } from "./DataTableBatchBar";
 export { useDataTable } from "./useDataTable";
 export type { UseDataTableOptions, UseDataTableResult } from "./useDataTable";
 export * from "./types";
