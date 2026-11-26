@@ -1,17 +1,14 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { TodosController } from "./todos.controller";
-import { TodosService } from "./todos.service";
-import { TodoPolicy } from "./todo.policy";
 import { PrismaModule } from "./prisma/prisma.module";
 import { AuthModule } from "./auth/auth.module";
 import { TenantMiddleware } from "./auth/tenant.middleware";
 
 @Module({
   imports: [PrismaModule, AuthModule],
-  controllers: [AppController, TodosController],
-  providers: [AppService, TodosService, TodoPolicy],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

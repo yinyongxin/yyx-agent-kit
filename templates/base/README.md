@@ -65,7 +65,7 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | `pnpm dev:portal` | 启动门户（47175） |
 | `pnpm dev:server` | 启动后端（47100） |
 
-接口：`GET /api/health`（运维探活）、`GET /api/todos`（业务示例）。
+接口：`GET /api/health`（公开探活，工作台与客户端都用这个）。
 
 ## 端口
 
@@ -81,7 +81,7 @@ const api = configureApiClient({
   onUnauthorized: () => authStore.clear(),
 });
 
-const todos = await api.todos();
+const health = await api.health();
 ```
 
 路由常量在 `packages/shared` 的 `API_ROUTES`，前后端共用，不各写一份。

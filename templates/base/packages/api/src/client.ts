@@ -1,4 +1,4 @@
-import { API_ROUTES, type Todo } from "@starter/shared";
+import { API_ROUTES } from "@starter/shared";
 import type { HealthResponse } from "./types";
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
@@ -16,7 +16,6 @@ export interface ApiClientOptions {
 
 export interface ApiClient {
   health: () => Promise<HealthResponse>;
-  todos: () => Promise<Todo[]>;
 }
 
 export const createApiClient = (options: ApiClientOptions = {}): ApiClient => {
@@ -46,6 +45,5 @@ export const createApiClient = (options: ApiClientOptions = {}): ApiClient => {
 
   return {
     health: () => request<HealthResponse>(API_ROUTES.health),
-    todos: () => request<Todo[]>(API_ROUTES.todos),
   };
 };

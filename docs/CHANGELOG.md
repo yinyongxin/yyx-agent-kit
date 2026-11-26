@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **移除 todos 示例模块**：工作台与客户端只显示公开的 `/api/health`；删除后端 `todos.controller.ts` / `todos.service.ts` / `todo.policy.ts` 与 `app.module.ts` 注册，删除 shared 的 `Todo`/`TODO_STATUS`/路由常量和 api client 的 `todos()`；README、AGENTS、workspace skill、conventions 的示例同步；历史需求文档保留原样
 - **去掉独立首页，工作台即默认页**：`routes/index.tsx` 改为渲染 `DashboardPage`，删除 `routes/dashboard.tsx` 与 `features/home/`；三种导航的「首页」项移除，「工作台」指向 `/`；Brand 点击回工作台；现行目录约定同步
 - **新增统一 Brand 组件**：三种导航都有 Logo——嵌套侧栏头部与顶栏左侧用完整形态（`S starter`），双栏图标栏用 compact 形态（仅图标）；点击回首页，纯 CSS 渐变方块不依赖图片；顶栏菜单仍绝对居中
 - **顶部大菜单居中**：品牌左、菜单绝对居中（`left:50%` + `translateX`）、用户区右，不受两侧宽度影响；用户入口只在桌面显示，移动端由抽屉提供，避免重复

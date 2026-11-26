@@ -10,7 +10,7 @@
 - 端口统一使用 **47xxx 段**，禁止用 `3000` / `5173` / `8080` 等框架默认端口，避免与本机其他项目冲突。Vite 必须开 `strictPort`，端口被占时直接失败而不是静默换端口。
 - 接口调用统一走 `@starter/api`，业务代码不自己写 `fetch`、不自己拼 URL。
 - 开发期接口统一用 `/api` 相对路径，由 Vite 代理到后端，**不写死后端域名**。
-- 业务接口按领域命名（`/todos`、`/orders`、`/patients`），`health` 只做运维探活，不承载业务逻辑。
+- 业务接口按领域命名（如 `/orders`、`/patients`），`health` 只做运维探活，不承载业务逻辑。
 - 跨端共用的常量必须放 `packages/shared`：`API_PREFIX`、`API_ROUTES`、业务枚举、类型。新增接口先加常量，再由 controller 与 api 层引用，不要前后端各写一份字符串。
 - 前端 HTTP 使用原生 `fetch`，不引入 axios。
 - 前端样式与组件库：**管理端（`apps/admin`）允许使用 Mantine 组件库**；`apps/client`、`apps/portal` 不引入第三方 UI 组件库，样式用 Tailwind 原子类。分工见 `.opencode/skills/standards/react/SKILL.md` 的「技术栈」一节。

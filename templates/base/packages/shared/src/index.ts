@@ -11,16 +11,7 @@ export const API_PREFIX = "/api";
  */
 export const API_ROUTES = {
   health: "/health",
-  todos: "/todos",
 } as const;
-
-/** 业务状态枚举，前后端共用 */
-export const TODO_STATUS = {
-  pending: "pending",
-  done: "done",
-} as const;
-
-export type TodoStatus = (typeof TODO_STATUS)[keyof typeof TODO_STATUS];
 
 /** 内置角色 code（与后端 seed 一致） */
 export const ROLES = {
@@ -44,13 +35,6 @@ export const PERMISSIONS = {
   billingManage: "billing:manage",
 } as const;
 export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
-
-export interface Todo {
-  id: string;
-  title: string;
-  status: TodoStatus;
-  createdAt: string;
-}
 
 /** 统一日期展示格式，避免各端各自拼字符串 */
 export const formatDateTime = (input: Date | string | number): string => {

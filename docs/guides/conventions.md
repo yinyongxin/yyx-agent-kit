@@ -92,7 +92,7 @@
 
 | 场景 | 规则 | 示例 |
 | --- | --- | --- |
-| NestJS 后端文件 | 小写连字符 + 点分隔角色后缀 | `app.module.ts`、`jwt-auth.provider.ts`、`users.repository.ts`、`tenant-context.util.ts`、`todo.policy.ts` |
+| NestJS 后端文件 | 小写连字符 + 点分隔角色后缀 | `app.module.ts`、`jwt-auth.provider.ts`、`users.repository.ts`、`tenant-context.util.ts`、`order.policy.ts` |
 | 纯类型定义 | `<name>.types.ts` | `user.types.ts` |
 | React 组件 | PascalCase，文件名 = 组件名 | `AdminLayout.tsx`、`DashboardPage.tsx` |
 | CSS Modules | 与组件同名 + `.module.css` | `HeaderMegaMenu.module.css` |

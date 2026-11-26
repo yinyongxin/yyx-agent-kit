@@ -1,30 +1,30 @@
-import { Alert, Loader, Table, Title } from "@mantine/core";
+import { Alert, Badge, Loader, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { createApiClient } from "@starter/api";
-import type { Todo } from "@starter/shared";
 
 const api = createApiClient();
 
-/** 工作台内容：待办列表（可复用于其它页面/弹窗）。 */
+/** 工作台内容：后端运行状态（公开接口）。后续基础服务接入后在这里扩展功能卡片。 */
 export const DashboardContent = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [health, setHealth] = useState<{ status: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.todos()
-      .then((t) => {
-        setTodos(t);
+    api
+      .health()
+      .then((result) => {
+        setHealth(result);
         setError(null);
       })
-      .catch((err: unknown) => setError(String(err)))
+      .catch((reason: unknown) => setError(String(reason)))
       .finally(() => setLoading(false));
   }, []);
 
   return (
     <>
       <Title order={3} size="h5">
-        待办列表
+        运行状态
       </Title>
       {loading && <Loader size="sm" mt="sm" />}
       {error && (
@@ -32,26 +32,10 @@ export const DashboardContent = () => {
           {error}
         </Alert>
       )}
-      {!loading && !error && todos.length === 0 && (
-        <p className="mt-2 text-slate-500">暂无数据</p>
-      )}
-      {todos.length > 0 && (
-        <Table mt="md">
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>标题</Table.Th>
-              <Table.Th>状态</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {todos.map((todo) => (
-              <Table.Tr key={todo.id}>
-                <Table.Td>{todo.title}</Table.Td>
-                <Table.Td>{todo.status}</Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+      {!loading && !error && health && (
+        <Badge color={health.status === "ok" ? "green" : "red"} mt="sm">
+          {health.status === "ok" ? "服务正常" : health.status}
+        </Badge>
       )}
     </>
   );

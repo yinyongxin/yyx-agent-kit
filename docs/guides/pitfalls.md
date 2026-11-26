@@ -216,7 +216,7 @@
 - **现象**：启动后端日志出现 `Unsupported route path: "/api/*"... Attempting to auto-convert to "/api/{*path}"`。
 - **原因**：Nest 12 使用新版 `path-to-regexp`，裸 `*` 已不是合法的通配语法；`forRoutes("*")` 叠加全局前缀 `api` 后变成 `/api/*`，被内部自动转换并打警告。官方文档「Route wildcards」用命名通配 `*splat`，并用 `{*splat}` 让通配可选，以覆盖没有后续段的路径。
 - **解决**：`apps/server/src/app.module.ts` 改为 `consumer.apply(TenantMiddleware).forRoutes("{*splat}")`。
-- **验证**：重启后日志中 `LegacyRouteConverter` 警告为 0；`/api/health`、`/api/todos` 仍正常映射，`GET /api/health` 返回 `ok`。
+- **验证**：重启后日志中 `LegacyRouteConverter` 警告为 0；`/api/health` 仍正常映射并返回 `ok`。
 - **参考**：Nest 官网 https://docs.nestjs.com/middleware#route-wildcards （一手来源，2026-11-26 查）
 
 ### 26. Mantine 9 按钮悬停不是小手（cursorType 默认值）
