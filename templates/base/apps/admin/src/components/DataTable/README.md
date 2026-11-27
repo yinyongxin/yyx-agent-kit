@@ -51,14 +51,16 @@ const table = useDataTable({
 
 `useDataTableApi(tableProp?)` 先取显式 prop，没传才读 Provider；所以「必须在 Provider 内部」不是硬约束。**但放在 Provider 外面的组件必须显式传 `table`**——因为 prop 是可选的，typecheck 抓不到漏传，运行时才会报错。
 
-### 两种数据模式
+### 两种数据模式（默认服务端）
 
-| 模式 | 触发 | 数据 | 过滤/排序/分页 |
+| 模式 | 触发 | 使用场景 | 数据 / 过滤 |
 | --- | --- | --- | --- |
-| 客户端（默认） | 不传 `queryOptions` | `data` prop（hook 内部同步） | `functions.ts` 前端处理 |
-| 服务端 | 传 `queryOptions(ctx)` | 业务调 `setData` 喂回 | 后端处理，前端不二次过滤 |
+| **服务端（默认）** | 传 `queryOptions(ctx)` | 生产页面 | 业务发请求后 `setData` + `setTotal` 喂回；搜索/筛选/排序/分页走后端 |
+| 客户端（仅演示） | 不传 `queryOptions` | mock / 小数据一次性加载 | `data` prop；`functions.ts` 前端处理 |
 
-服务端模式下，hook 在页码/搜索/筛选/排序变化时调用 `queryOptions({page, pageSize, keyword, filters, sortKey, sortDirection})`；业务在其中发请求，并用 `setLoading` / `setError` / `setData` 驱动四态。`reload()` 可用当前条件手动重拉。客户端模式这些动作是兼容 no-op，现有页面不受影响。
+服务端模式下，hook 在页码/搜索/筛选/排序变化时调用 `queryOptions({page, pageSize, keyword, filters, sortKey, sortDirection})`；业务在其中发请求，并用 `setLoading` / `setError` / `setData` / `setTotal` 驱动四态与分页。`queryOptions` **必须用 `useCallback` 稳定引用**，否则 `reload` 每次渲染变化会触发 effect 无限请求。`reload()` 可用当前条件手动重拉。
+
+搜索为**提交式**：输入只改草稿，点「搜索」/回车才提交并请求；客户端模式下则是提交后前端过滤。
 
 ### 抽屉变更后的列表更新
 

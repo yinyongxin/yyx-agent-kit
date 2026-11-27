@@ -77,6 +77,8 @@
 - 组件写法统一 `export const Comp = () => {}`，不受组件库影响
 - 不启用深色模式（Mantine 开箱支持，按需再开）
 - 查 Mantine 最新用法优先用 `mantine` MCP（`npx -y @mantine/mcp-server`）或 `https://mantine.dev/llms.txt`——官方随版本更新，不靠记忆；管理端菜单等布局优先复用 ui.mantine.dev 的现成组件（MIT），不重复手写
+- **先检索再开发**：新增页面前先看 `apps/admin/src/components`（DataTable / PageShell / UserMenu / Brand / AdminScrollArea 等）与现有 feature；能复用就复用，不重复造轮子。
+- **数据表格统一用 `components/DataTable`，默认服务端模式**：用 `queryOptions` 让搜索/筛选/排序/分页走后端，业务用 `setData` + `setTotal` 回填；`data` 客户端模式仅用于 mock / 小数据。不要手写 Mantine `Table` + `Pagination`。`queryOptions` 必须用 `useCallback` 稳定引用，否则会无限请求。
 - **背景色**：admin 页面级背景在 `src/index.css` 的 `body` 上统一设为 `gray-0` / `dark-8`；侧栏组件自己用白色 / `dark-6`，与页面背景区分。不要只在内容区局部设背景。
 - **布局模式切换**：状态由 `AdminLayout` 持有，经纯 `components/LayoutMode` Provider 暴露；用户面板用 `useOptionalLayoutMode()` 切换，不再保留调试用的浮动按钮。
 - **设计工具 Penpot**：服务合并进 `templates/base/docker-compose.yml`（官方配置），当前用远程 MCP（`localhost:9001/mcp/stream?userToken=<KEY>`）；MCP key 只放全局 `opencode.json`，**绝不进仓库**；作用于当前焦点页、写操作先确认（详见 `skills/tools/penpot/SKILL.md`）。

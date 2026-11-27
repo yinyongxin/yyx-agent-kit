@@ -220,7 +220,6 @@ export const TenantsContent = () => {
   }, []);
 
   const table = useDataTable<TenantRow>({
-    data: [],
     getRowKey: (row) => row.id,
     keywordFields: ["name", "slug"],
     columns,

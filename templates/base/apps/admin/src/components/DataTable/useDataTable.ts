@@ -26,8 +26,8 @@ import type {
 } from "./types";
 
 export interface UseDataTableOptions<TRow> {
-  /** 客户端模式的数据源；服务端模式下由业务 setData 提供 */
-  data: TRow[];
+  /** 客户端模式的数据源；服务端模式可省略（默认空数组） */
+  data?: TRow[];
   /** 标注行类型靠它推断，调用处不显式写泛型 */
   getRowKey: (row: TRow) => RowKey;
   /** 关键词匹配的字段（客户端模式） */
@@ -115,7 +115,7 @@ export interface DataTableApi<TRow> extends UseDataTableResult<TRow> {
 
 /** Headless 控制器：持有状态与配置，返回带类型的实例；不渲染任何 DOM */
 export const useDataTable = <TRow>({
-  data: propData,
+  data: propData = [],
   getRowKey,
   keywordFields,
   columns,
