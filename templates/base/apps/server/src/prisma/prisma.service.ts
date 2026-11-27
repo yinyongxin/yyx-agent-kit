@@ -36,6 +36,22 @@ const WHERE_OPERATIONS = new Set([
   "deleteMany",
 ]);
 
+/**
+ * 无法注入 tenantId 的操作：它们用唯一键定位，Prisma 不允许在 where 里加非唯一字段。
+ * 在 scoped client 上直接禁用，强制改用支持 where 注入的替代方法——
+ * 靠注释提醒不够，漏写一个跨租户 update 就是数据泄露。
+ */
+const DENIED_OPERATIONS = new Set([
+  "findUnique",
+  "findUniqueOrThrow",
+  "update",
+  "delete",
+  "upsert",
+]);
+
+/** raw SQL 完全绕过 extension 的模型层拦截，必须禁用（用 includes 兼容各版本命名） */
+const isRawOperation = (operation: string) => operation.toLowerCase().includes("raw");
+
 @Injectable()
 export class PrismaService
   extends PrismaClient
@@ -61,8 +77,10 @@ export class PrismaService
    * tenantId 来自请求上下文（TenantContext，由 TenantMiddleware 从路由 /t/:tenantId 写入）。
    * UNSCOPED_MODELS 不注入（含全局表、授权关系表、无 tenantId 列的关联表），见上方注释。
    *
-   * 注意：findUnique / update / delete 用唯一字段定位，Prisma 不允许在 where 加非唯一字段，
-   * 这些操作请改用 findFirst / updateMany / deleteMany 走 extension，或业务代码显式带 tenantId。
+   * 强制约束（fail-closed）：
+   * - findUnique / update / delete / upsert 在 scoped 上直接抛错，改用 findFirst / updateMany / deleteMany
+   * - raw SQL（$queryRaw / $executeRaw 等）在 scoped 上直接抛错
+   * 全局表 / 授权关系表用裸 PrismaClient（非 scoped）不受这些限制。
    */
   readonly scoped = this.$extends({
     query: {
@@ -73,7 +91,21 @@ export class PrismaService
           args: Record<string, unknown>;
           query: (args: Record<string, unknown>) => Promise<unknown>;
         }) {
+          // raw 查询没有 model，必须最先拦；否则会绕过下面的模型级检查
+          if (isRawOperation(operation)) {
+            throw new Error(
+              "scoped client 禁止 raw SQL：会绕过租户隔离。请改用 Prisma API，或用裸 PrismaClient 查全局表",
+            );
+          }
+
+          // 授权关系表 / 全局表不注入，也不受 DENIED 限制（guard 需要 userTenant.findUnique）
           if (UNSCOPED_MODELS.has(model)) return query(args);
+
+          if (DENIED_OPERATIONS.has(operation)) {
+            throw new Error(
+              `scoped client 禁止 ${operation}（无法注入 tenantId）：请改用 findFirst / updateMany / deleteMany`,
+            );
+          }
 
           const tenantId = TenantContext.getTenantId();
 

@@ -17,8 +17,8 @@
 
 | 编号 | 严重度 | 发现 |
 | --- | --- | --- |
-| A1 | **高** | `prisma.service.ts` 的 `WHERE_OPERATIONS` **不含 `update` / `delete` / `findUnique` / `upsert`**。这些操作完全不注入 tenantId，业务写 `prisma.scoped.role.update({ where: { id } })` 就能跨租户改数据。目前只靠注释提醒，没有机制强制。对比 NestJS 官方教程——它是每个查询显式带 orgId，不会漏 |
-| A2 | **高** | `$queryRaw` / `$executeRaw` 完全绕过 extension，没有禁用或强制约定 |
+| A1 | **高 → 已修** | `prisma.service.ts` 的 `WHERE_OPERATIONS` 原本不含 `update` / `delete` / `findUnique` / `upsert`，这些操作完全不注入 tenantId。现改为在 `scoped` 上 fail-closed 直接抛错，强制改用 `findFirst` / `updateMany` / `deleteMany` |
+| A2 | **高 → 已修** | `$queryRaw` / `$executeRaw` 原本完全绕过 extension；现通过 `operation.toLowerCase().includes("raw")` 在 `scoped` 上直接抛错 |
 | A3 | 中 | 嵌套 `create`（如 `create: { roles: { create: [...] } }`）的关联写入不会被 extension 拦截，子表 tenantId 不会自动注入 |
 | A4 | 中 | `TenantMiddleware` 用正则从 `req.path` 提取 tenantId，guard 用 `req.params.tenantId`；异常 URL 下两者可能不一致（正常路径一致） |
 | A5 | 中 | 认证仍是最小闭环：无登录端点、无 password store，seed 用户没有密码哈希，无法登录——这意味着 guard 的 404/403 与租户切换**无法端到端验证** |
@@ -35,7 +35,7 @@
 
 | 优先级 | 动作 | 理由 |
 | --- | --- | --- |
-| P0 | 修 A1/A2：`update` / `delete` / `findUnique` / `upsert` 纳入注入或禁用；显式禁用 raw 查询 | 当前隔离可被绕过，是多租户的地基裂缝 |
+| ~~P0~~ | ~~修 A1/A2~~ **已完成**（scoped fail-closed 禁用，见 `src/prisma/README.md`） | 从「靠注释提醒」改为「运行时强制抛错」 |
 | P0 | 前端接口层加 tenantId 机制：`API_ROUTES` 提供 `tenantPath(tenantId, path)`，`createApiClient` 支持当前租户 | 前后端契约断裂，业务无法按约定接入 |
 | P1 | 租户生命周期 + 平台管理端点（创建租户、成员邀请/移除、角色分配、PlatformAdmin guard） | 多租户从「能隔离」到「能运营」 |
 | P1 | 登录闭环（password store + sign-in 端点），补 e2e 覆盖 AC1~AC4 | 否则所有 guard 行为都只是代码层推断 |
