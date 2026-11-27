@@ -1,4 +1,4 @@
-import { IconEdit, IconPlus, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { ActionIcon, Alert, Badge, Button, Group, Modal, Select, Stack, TextInput, Tooltip } from "@mantine/core";
 import { useCallback, useRef, useState } from "react";
 import {
@@ -240,18 +240,9 @@ export const TenantsContent = () => {
       <DataTableProvider table={table}>
         <DataTableFilterBar />
         <DataTableToolbar>
-          <Group gap="xs">
-            <Button
-              variant="light"
-              leftSection={<IconRefresh size={16} />}
-              onClick={() => table.reload()}
-            >
-              刷新
-            </Button>
-            <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
-              {labels.create}
-            </Button>
-          </Group>
+          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+            {labels.create}
+          </Button>
         </DataTableToolbar>
         <DataTableContent>
           <DataTableTable />
