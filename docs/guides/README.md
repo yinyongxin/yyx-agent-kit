@@ -10,6 +10,7 @@
 | --- | --- |
 | `agent-system.md` | 角色、五阶段门禁、10 个 skill、文件流转、同步机制的总说明（建议先读） |
 | `conventions.md` | 工作约定：一手来源、脚手架、模板同步、数据库迁移、命名等硬规则 |
+| `server-module-architecture.md` | Server 目录模板、构件放置、接口设计、DTO 与 OpenAPI 契约规范 |
 | `pitfalls.md` | 踩坑记录，按「现象 / 原因 / 解决」记录本机与仓库的实际问题 |
 | `credentials.md` | 本地开发默认凭据与生产必改清单 |
 

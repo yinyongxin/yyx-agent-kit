@@ -14,6 +14,7 @@
 | `users.repository.ts` | 全局身份查询、租户列表、登录凭据读取（密码哈希不出本层） |
 | `jwt-auth.provider.ts` | Bearer JWT 凭证 provider，按 sub 加载用户 |
 | `me.controller.ts` | `GET /me/tenants`，返回当前用户所属租户 |
+| `dto/` | `SignInDto` / `SignInResponseDto` / `TenantSummaryDto` / `MembershipDto`，详见该目录 README |
 | `tenant.middleware.ts` | 从 `/t/:tenantId` 解析租户并写 `TenantContext`（不做校验） |
 | `tenant-membership.guard.ts` | 校验用户属于该租户（非成员 404 / 角色不足 403） |
 | `membership.ts` | `@CurrentMembership()` / `@MinRole()` 装饰器 |

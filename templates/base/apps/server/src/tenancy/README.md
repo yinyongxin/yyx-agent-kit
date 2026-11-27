@@ -11,6 +11,7 @@
 | `tenant.controller.ts` | 示例路由：`GET /t/:tenantId/membership`（成员信息）、`GET /t/:tenantId/roles`（租户表查询示例） |
 | `tenant-transaction.interceptor.ts` | 租户请求开事务并 `set_config('app.tenant_id', ..., true)`，把 tx 挂到 `req.tenantTx` |
 | `tenant-tx.decorator.ts` | `@TenantTx()` 参数装饰器，取当前请求的事务客户端 |
+| `dto/` | `RoleDto` 等租户路由出参，详见该目录 README |
 
 ## 关联
 

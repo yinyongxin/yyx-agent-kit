@@ -20,7 +20,9 @@ import "reflect-metadata";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { NestNodeApplication, NodeAdapter } from "@nestjs/platform-node";
+import { SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
+import { buildOpenApiDocument } from "./swagger";
 import { API_PREFIX } from "../../../packages/shared/src/index";
 
 // 本地固定 47100；部署环境可由 PORT 覆盖（生产前端同源部署，不走 Vite 代理）
@@ -33,6 +35,13 @@ const bootstrap = async () => {
   app.setGlobalPrefix(API_PREFIX.replace(/^\//, ""));
   // DTO 校验：白名单丢弃未声明字段，transform 把 body 转成 DTO 实例
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  // Swagger UI 与 OpenAPI JSON（生成前端客户端的契约源）
+  const document = buildOpenApiDocument(app);
+  SwaggerModule.setup("api/docs", app, document, {
+    jsonDocumentUrl: "api/docs-json",
+  });
+
   await app.listen(port);
 };
 

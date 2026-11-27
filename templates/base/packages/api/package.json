@@ -5,15 +5,19 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./config": "./config.ts"
+    "./config": "./config.ts",
+    "./generated": "./src/openapi-client.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "openapi-ts": "openapi-ts"
   },
   "dependencies": {
+    "@hey-api/client-fetch": "^0.13.1",
     "@starter/shared": "workspace:*"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "0.99.0",
     "typescript": "^6.0.3"
   }
 }

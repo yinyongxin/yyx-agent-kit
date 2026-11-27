@@ -7,6 +7,7 @@
 | 搞懂这套 agent / skill 系统 | [guides/agent-system.md](guides/agent-system.md) | **建议先读这份**：角色、五阶段门禁、10 个 skill、文件流转、同步机制 |
 | 写需求、推进交付、查进度 | [本文「需求索引」](#需求索引) | 各需求的实际进度与交付物入口；交付物在 `docs/deliverables/<slug>/` |
 | 查工作约定和硬规则 | [guides/conventions.md](guides/conventions.md) | 一手来源、脚手架、模板同步、迁移、命名等跨需求规则 |
+| 写后端模块、定目录与接口 | [guides/server-module-architecture.md](guides/server-module-architecture.md) | Server 目录模板、构件放置、接口设计、DTO 与 OpenAPI 契约规范 |
 | 查环境问题与解法 | [guides/pitfalls.md](guides/pitfalls.md) | 踩过的坑，按「现象 / 原因 / 解决」记录 |
 | 查本地默认凭据与生产必改项 | [guides/credentials.md](guides/credentials.md) | 仅 dev 默认账号密码，生产必改清单 |
 | 查版本变更 | [CHANGELOG.md](CHANGELOG.md) | 按 Unreleased / 版本号记录 |
@@ -21,6 +22,7 @@ docs/
 ├── guides/                常设制度与说明（人读的）
 │   ├── agent-system.md
 │   ├── conventions.md
+│   ├── server-module-architecture.md
 │   ├── pitfalls.md
 │   └── credentials.md
 ├── reference/             查资料用的一手基线
@@ -43,7 +45,8 @@ docs/
 
 | 需求 | 状态 | 更新日期 | 入口 |
 | --- | --- | --- | --- |
-| 20261127-base-infra-rls | 方案设计完成（待数据库环境实施） | 2026-11-27 | [02-tech-design.md](deliverables/20261127-base-infra-rls/02-tech-design.md) |
+| 20261127-api-openapi | 开发完成（未归档） | 2026-11-27 | [01-prd.md](deliverables/20261127-api-openapi/01-prd.md) |
+| 20261127-base-infra-rls | 已实施并验证（未归档） | 2026-11-27 | [02-tech-design.md](deliverables/20261127-base-infra-rls/02-tech-design.md) |
 | 20261127-base-infra-tenancy | 开发中（未归档） | 2026-11-27 | [02-tech-design.md](deliverables/20261127-base-infra-tenancy/02-tech-design.md) |
 | 20261126-admin-table | 已交付 | 2026-11-26 | [06-record.md](deliverables/20261126-admin-table/06-record.md) |
 | 20261124-admin-mantine | 已归档（阶段 5 通过） | 2026-11-26 | [06-record.md](deliverables/20261124-admin-mantine/06-record.md) |

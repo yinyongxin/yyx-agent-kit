@@ -43,13 +43,16 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 - **数据库迁移**：改 schema 后用 `db:migrate -- --name <语义名>` 生成 SQL 迁移文件，review 后入库；部署用 `db:deploy`（幂等）；生产禁止 `db push`。结构变更走 migrate、初始数据走 seed，边界见 `docs/guides/conventions.md` 第 5 节。
 
 - **中间件通配路由**：Nest 12 禁用裸 `*`；`forRoutes("*")` 叠加全局前缀会变成 `/api/*`，触发 `LegacyRouteConverter` 警告。用命名通配 `forRoutes("{*splat}")` 覆盖全部路径（官方 Middleware → Route wildcards，见踩坑记录 #25）。
-- 模块按 NestJS 规范分层：`module / controller / service / dto / entity`
+- 模块按领域拆分：`<feature>/<feature>.module.ts | .controller.ts | .service.ts | dto/ | repositories/`，每个目录有 README；完整目录模板与构件放置见 `docs/guides/server-module-architecture.md`
+- **构件放置**：Controller/Service/Repository 放模块内；Middleware/Filter/Pipe/Guard/Interceptor/自定义装饰器能局部就放模块内，跨模块复用的才放 `src/common/`；DTO 放 `<feature>/dto/`，跨模块复用放 `src/dto/`
 - 使用 Prisma Schema 定义数据模型，通过 `prisma generate` 同步类型（生成物在 `src/generated/prisma`，随应用编译）
 - **schema 多文件组织**：主文件 `prisma/schema.prisma` 只放 generator/datasource/enum；模型按领域拆到 `prisma/models/*.prisma`（tenant/user/rbac/billing）。**`prisma.config.ts` 的 `schema` 必须指向目录 `"prisma"`（不是文件）**，否则 models/ 下的模型被静默忽略（Prisma 7 官方坑，见踩坑记录 #21）。跨文件关系无需 import，Prisma 自动合并；换组织方式后跑 `prisma migrate status` 确认无新迁移
 - 服务内从 `../generated/prisma/client` 导入 `PrismaClient`，构造时传 driver adapter；不要再写 `@prisma/client` 导入或 schema 里的 `url = env(...)`
-- Controller 只做参数校验和路由转发，业务逻辑放在 Service 层
-- 使用 `class-validator` + `class-transformer` 做 DTO 校验
-- 全局异常过滤器统一处理错误响应格式
+- Controller 只做参数校验和路由转发，业务逻辑放在 Service 层；Controller 返回 response DTO，不直接返回 Prisma 实体
+- 使用 `class-validator` + `class-transformer` 做 DTO 校验；入参 DTO 与出参 DTO 分开，字段加 `@ApiProperty`
+- **Swagger 契约**：每个方法 `@ApiOperation` + 成功响应 `@ApiOkResponse`/`@ApiCreatedResponse`（必须带 `type`），错误响应用共享 `ErrorResponseDto`；改完接口运行 `pnpm api:generate`
+- **租户路由**：`/api/t/:tenantId/...` 必须挂 `TenantMembershipGuard` + `TenantTransactionInterceptor`；控制器用 `@TenantTx()` 取事务客户端并传给 Service/Repository，参数名必须是 `tenantId`
+- 全局异常过滤器统一处理错误响应格式（引入后放 `src/common/filters/`）
 
 ## 错误处理
 

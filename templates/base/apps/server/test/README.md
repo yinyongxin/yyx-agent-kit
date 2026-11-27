@@ -10,6 +10,7 @@
 | --- | --- |
 | `tenancy-e2e.mjs` | 登录闭环 + 租户端点（AC5 / E1~E3 / RLS 应用层），12 项断言 |
 | `rls-concurrency.mjs` | RLS S4：真实双租户 30 并发 + 未设置变量负向用例，断言 0 串数据 |
+| `generated-client.ts` | 用 OpenAPI 生成的客户端实际调用 sign-in / me / membership（需先 `pnpm api:generate`） |
 
 ## 运行前提
 

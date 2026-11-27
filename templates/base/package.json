@@ -7,9 +7,10 @@
     "dev:admin": "pnpm --filter @starter/admin dev",
     "dev:portal": "pnpm --filter @starter/portal dev",
     "dev:server": "pnpm --filter @starter/server dev",
+    "api:generate": "pnpm --filter @starter/server build && pnpm --filter @starter/server swagger:export && pnpm --filter @starter/api openapi-ts",
     "build": "pnpm -r --workspace-concurrency=1 build && pnpm typecheck",
     "typecheck": "pnpm -r --workspace-concurrency=1 typecheck",
-    "lint": "oxlint apps packages --ignore-pattern \"**/next-env.d.ts\""
+    "lint": "oxlint apps packages --ignore-pattern \"**/next-env.d.ts\" --ignore-pattern \"**/generated/**\""
   },
   "devDependencies": {
     "dotenv": "^18.0.10",
