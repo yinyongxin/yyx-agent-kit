@@ -12,8 +12,7 @@ Next.js 16（App Router）+ React 19 + Tailwind 4，端口 **47175**。
 
 | 文件 | 作用 |
 | --- | --- |
-| `next.config.ts` | 转译 workspace 包、`/api` 反向代理 |
-| `postcss.config.mjs` | Tailwind 4 的 PostCSS 插件 |
+| `next.config.ts` | 转译 workspace 包、`/api` 反向代理、Tailwind Turbopack loader 与构建缓存配置 |
 | `src/app/layout.tsx` | 根布局与 metadata |
 | `src/app/page.tsx` | 首页 |
 | `src/app/globals.css` | Tailwind 入口 |

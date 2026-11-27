@@ -9,8 +9,9 @@ Next.js App Router 目录，文件系统即路由。
 | 文件 | 作用 |
 | --- | --- |
 | `layout.tsx` | 根布局，挂全局样式与 metadata |
-| `page.tsx` | 首页（`/`） |
-| `globals.css` | Tailwind 入口 |
+| `page.tsx` | 首页（`/`），组装各区块组件 |
+| `globals.css` | Tailwind 入口 + 门户设计系统 token（`:root` 变量） |
+| `components/` | 门户展示组件，按区块拆分，详见该目录 README |
 
 ## 注意事项
 

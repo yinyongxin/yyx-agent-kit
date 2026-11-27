@@ -1,1 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
+
+/* 设计系统：与 Penpot 画板「门户首页 · Aigocy 风格 1440」一一对应 */
+:root {
+  --font-sans: "Urbanist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-ink: #09090b;
+  --color-ink-soft: #27272a;
+  --color-muted: #71717a;
+  --color-muted-light: #a1a1aa;
+  --color-surface: #f4f4f5;
+  --color-line: #e4e4e7;
+  --color-brand: #fd3a25;
+  --color-brand-warm: #f5772e;
+  --color-brand-gold: #fbbf24;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: var(--color-brand);
+  color: #fff;
+}
