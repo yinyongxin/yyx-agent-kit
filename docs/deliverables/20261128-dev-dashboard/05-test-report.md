@@ -40,3 +40,16 @@
 ## 结论
 
 验收标准全部通过，可以交付。
+
+## 2026-11-28 深色玻璃版落地验证
+
+`dev.page.ts` 按 Penpot `Dark Glass 1440` 画板重写后，用 ego-browser 在真实环境回归：
+
+| 项 | 结果 |
+| --- | --- |
+| 全在线场景 | KPI `4/4 · 1/1 · 4/4 · 100% · 47–58ms`，仪表盘 `9/9`，表格 9 行 |
+| 离线场景（手动停止 client） | KPI `3/4` + `1 离线`，在线率 `88.9%`，仪表盘 `8/9`，事件新增 `client 探测失败`（橙色点），表格该行 `离线` 且入口显示 `—` |
+| 事件流 | 首次加载记录 `开始监控 · 9 个服务`；状态变化自动追加，最多保留 6 条 |
+| 数据真实性 | 无演示数据：KPI/仪表盘/表格由探测结果计算，探测耗时为 fetch 往返时间 |
+| 响应式 | 1180px / 760px 断点与 `backdrop-filter` 回退规则已加（CSS 层） |
+| 截图 | `C:/Users/Administrator/AppData/Local/Temp/opencode/ego-devpage/dashboard-2.png`（全在线）、`dashboard-offline.png`（离线） |
