@@ -13,7 +13,7 @@ name: starter
 # Penpot 官方配置片段（https://github.com/penpot/penpot/docker/images/docker-compose.yaml）
 # 仅把内部服务名换成带 starter- 前缀的容器名，避免与其它项目冲突。
 x-penpot-flags: &penpot-flags
-  PENPOT_FLAGS: disable-email-verification enable-smtp enable-prepl-server disable-secure-session-cookies enable-mcp
+  PENPOT_FLAGS: disable-email-verification enable-smtp enable-prepl-server disable-secure-session-cookies
 x-penpot-uri: &penpot-public-uri
   PENPOT_PUBLIC_URI: http://localhost:${PENPOT_PORT:-9001}
 x-penpot-body: &penpot-http-body-size
@@ -81,8 +81,6 @@ services:
         condition: service_started
       penpot-admin-console:
         condition: service_started
-      penpot-mcp:
-        condition: service_started
       penpot-exporter:
         condition: service_started
     networks:
@@ -133,13 +131,6 @@ services:
     environment:
       <<: [*penpot-public-uri, *penpot-secret-key, *penpot-database]
       PENPOT_INTERNAL_URI: http://starter-penpot-frontend:8080
-
-  penpot-mcp:
-    image: "penpotapp/mcp:${PENPOT_VERSION:-2.18}"
-    container_name: starter-penpot-mcp
-    restart: unless-stopped
-    networks:
-      - starter-net
 
   penpot-exporter:
     image: "penpotapp/exporter:${PENPOT_VERSION:-2.18}"

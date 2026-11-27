@@ -82,7 +82,7 @@
 - **数据表格统一用 `components/DataTable`，默认服务端模式**：用 `queryOptions` 让搜索/筛选/排序/分页走后端，业务用 `setData` + `setTotal` 回填；`data` 客户端模式仅用于 mock / 小数据。不要手写 Mantine `Table` + `Pagination`。`queryOptions` 必须用 `useCallback` 稳定引用，否则会无限请求。
 - **背景色**：admin 页面级背景在 `src/index.css` 的 `body` 上统一设为 `gray-0` / `dark-8`；侧栏组件自己用白色 / `dark-6`，与页面背景区分。不要只在内容区局部设背景。
 - **布局模式切换**：状态由 `AdminLayout` 持有，经纯 `components/LayoutMode` Provider 暴露；用户面板用 `useOptionalLayoutMode()` 切换，不再保留调试用的浮动按钮。
-- **设计工具 Penpot**：服务合并进 `templates/base/docker-compose.yml`（官方配置），当前用远程 MCP（`localhost:9001/mcp/stream?userToken=<KEY>`）；MCP key 只放全局 `opencode.json`，**绝不进仓库**；作用于当前焦点页、写操作先确认（详见 `skills/tools/penpot/SKILL.md`）。
+- **设计工具 Penpot**：服务合并进 `templates/base/docker-compose.yml`（官方配置），MCP 统一用**本地模式**：`pnpm penpot:mcp`（`@penpot/mcp@2.17.0`，监听 4400/4401/4402），全局 `opencode.json` 指向 `http://localhost:4401/mcp`，浏览器用 **Plugins → Load from URL → `http://localhost:4400/manifest.json`** 加载插件。**不需要 key、不写 token 进仓库**；作用于当前焦点页、写操作先确认（详见 `skills/tools/penpot/SKILL.md` 与 `tools/penpot/README.md`）。
 - **交互光标**：admin 入口用 `createTheme({ cursorType: "pointer" })` 传给 `MantineProvider`——Mantine 9 默认 `cursorType: "default"`，不设置的话 Button / Checkbox / Pagination 等交互元素鼠标悬停都不是小手（见踩坑 #26）。
 - **滚动容器**：admin 内所有可滚动区域统一用 `components/AdminScrollArea`（封装 Mantine `ScrollArea`，保持默认配置），不要用原生 `overflow: auto` 或 `type="native"`；Mantine 自定义滚动条是覆盖层、不占布局宽度，不会出现原生滚动条出现/消失时的页面跳动。也不需要 `offsetScrollbars`——它只用于内容会被滚动条盖住的场景。
 - 模板项目已在 `.opencode/opencode.json` 配好 `mantine` MCP，生成的新项目自动带

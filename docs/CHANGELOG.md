@@ -4,7 +4,8 @@
 
 ## [Unreleased]
 
-- **MCP 配置调整**：移除 `open-design`（生成流水线不可靠，规则改为通用设计原则）；接入 `MCP_DOCKER`（`docker mcp gateway run`，已 connected）；Penpot 从本地 npx 模式切到远程 MCP（`localhost:9001/mcp/stream?userToken=<KEY>`，key 只放全局配置不进仓库）；conventions / agent-system / penpot skill 与 README 同步
+- **Penpot 统一为本地 MCP**：移除 compose 的 `penpot-mcp` 容器与 `enable-mcp` flag（远程模式弃用，不再维护 key）；新增 `pnpm penpot:mcp`（`npx -y @penpot/mcp@2.17.0`）起 4400 插件/4401 MCP/4402 WS，全局 `opencode.json` 指向 `http://localhost:4401/mcp`；插件用 **Plugins → Load from URL** 加载；`tools/penpot/README.md`、penpot skill、conventions 同步
+- **MCP 配置调整**：移除 `open-design`（生成流水线不可靠，规则改为通用设计原则）；接入 `MCP_DOCKER`（`docker mcp gateway run`，已 connected）；conventions / agent-system / penpot skill 与 README 同步
 - **Penpot 本地开发账号**：用官方 CLI 创建 `dev@penpot.local` / `penpot_dev_pwd_2026`（`--skip-tutorial --skip-walkthrough`，本地免邮件验证），凭据记入 `docs/guides/credentials.md`；生产必改清单同步
 - **接入 Penpot 设计工具**：Penpot 服务合并进 `templates/base/docker-compose.yml`（独立 PG15/Valkey/容器名与卷前缀，端口 9001/8025，随本地依赖一起 up）；新增 `skills/tools/penpot/SKILL.md` 与工具索引条目；本地免 key MCP（npx + 浏览器插件）配置写入全局 opencode.json，token 不进仓库；conventions 与 agent-system 同步
 - **移除 todos 示例模块**：工作台与客户端只显示公开的 `/api/health`；删除后端 `todos.controller.ts` / `todos.service.ts` / `todo.policy.ts` 与 `app.module.ts` 注册，删除 shared 的 `Todo`/`TODO_STATUS`/路由常量和 api client 的 `todos()`；README、AGENTS、workspace skill、conventions 的示例同步；历史需求文档保留原样

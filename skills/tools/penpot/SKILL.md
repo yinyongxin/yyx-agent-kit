@@ -5,21 +5,24 @@ description: 通过 Penpot 官方 MCP 读写当前焦点设计页，做线稿审
 
 # Penpot 设计工具
 
-目标：通过 Penpot 官方 MCP（本地免 key 模式）或 `.penpot` 文件（ZIP+JSON）读写设计，把设计阶段的产出接到前端开发。
+目标：通过 Penpot 官方 MCP（本地模式，免 key）或 `.penpot` 文件（ZIP+JSON）读写设计，把设计阶段的产出接到前端开发。
 
 ## 前置条件（缺一不可）
 
 - Penpot 已自托管并打开：`templates/base/docker-compose.yml` 启动，访问 `http://localhost:9001`
-- Penpot 里打开一个设计文件并 **File → MCP Server → Connect**（MCP 作用于当前焦点页）
-- 全局 `opencode.json` 配了 `penpot` 远程 MCP（`http://localhost:9001/mcp/stream?userToken=<KEY>`，key 只放全局配置、**不进仓库**）
+- 本机已启动本地 MCP：`pnpm penpot:mcp`（监听 4400/4401/4402，模板不含容器版 MCP）
+- 全局 `opencode.json` 配了 `penpot` 远程 MCP：`http://localhost:4401/mcp`（无 key，仅本机；启动顺序：先 MCP 后 OpenCode）
+- Penpot 里加载插件（**Plugins → Load from URL → `http://localhost:4400/manifest.json`**）并 **Connect**（MCP 作用于当前焦点页）
+
+> 远程模式（`http://localhost:9001/mcp/stream?userToken=<KEY>`）已弃用，模板不再启用 `enable-mcp`。
 
 ## 工具能力（官方 MCP）
 
 - `high_level_overview` — 页面/结构概览
 - `penpot_api_info` — API 能力说明
 - `execute_code` — 在 Penpot 内执行读写脚本（建 token、改组件、重命名图层等）
-- `export_shape` — 导出图形（远程模式不写本地路径）
-- `import_image` — **仅本地模式可用**（见 tools/penpot/README.md）
+- `export_shape` — 导出图形（本地模式可写本地路径）
+- `import_image` — 从本地路径导入图片（本地模式可用）
 
 ## 工作流
 
@@ -33,7 +36,7 @@ description: 通过 Penpot 官方 MCP 读写当前焦点设计页，做线稿审
 
 - MCP 只作用于**当前焦点页**，且同一时间只能一个标签页激活；标签页休眠会断连，需保持活跃
 - agent 有写权限，能真改设计文件——不确认就执行是高风险
-- 本地模式靠活动会话、**不需要 MCP key**；远程模式需要一次性 key（只存全局配置，不进仓库）
+- 本地模式靠活动插件会话、**不需要 MCP key**；MCP 进程要一直开着，断了就重连插件
 - 图片理解需 VLM
 
 ## 与流水线其他工具的分工
