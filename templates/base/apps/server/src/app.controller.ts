@@ -17,7 +17,7 @@ export class AppController {
   @ApiOkResponse({ type: HealthDto })
   @Public()
   @Get(HEALTH_PATH)
-  getHealth() {
+  getHealth(): HealthDto {
     return this.appService.getHealth();
   }
 }

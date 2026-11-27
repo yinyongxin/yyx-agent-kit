@@ -21,7 +21,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @Public()
   @Post("sign-in")
-  signIn(@Body() dto: SignInDto) {
+  signIn(@Body() dto: SignInDto): Promise<SignInResponseDto> {
     return this.credentials.signIn(dto.email, dto.password);
   }
 }

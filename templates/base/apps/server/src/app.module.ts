@@ -5,13 +5,12 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { AuthModule } from "./auth/auth.module";
 import { TenantMiddleware } from "./auth/tenant.middleware";
 import { MeController } from "./auth/me.controller";
-import { TenantController } from "./tenancy/tenant.controller";
-import { TenantTransactionInterceptor } from "./tenancy/tenant-transaction.interceptor";
+import { TenancyModule } from "./tenancy/tenancy.module";
 
 @Module({
-  imports: [PrismaModule, AuthModule],
-  controllers: [AppController, MeController, TenantController],
-  providers: [AppService, TenantTransactionInterceptor],
+  imports: [PrismaModule, AuthModule, TenancyModule],
+  controllers: [AppController, MeController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -15,12 +15,13 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
-import { ErrorResponseDto } from "../dto/error-response.dto";
 import type { Prisma } from "../generated/prisma/client";
 import { CurrentMembership, type Membership } from "../auth/membership";
 import { TenantMembershipGuard } from "../auth/tenant-membership.guard";
 import { MembershipDto } from "../auth/dto/membership.dto";
+import { ErrorResponseDto } from "../dto/error-response.dto";
 import { RoleDto } from "./dto/role.dto";
+import { TenancyService } from "./tenancy.service";
 import { TenantTransactionInterceptor } from "./tenant-transaction.interceptor";
 import { TenantTx } from "./tenant-tx.decorator";
 
@@ -38,6 +39,8 @@ import { TenantTx } from "./tenant-tx.decorator";
 @UseInterceptors(TenantTransactionInterceptor)
 @Controller("t/:tenantId")
 export class TenantController {
+  constructor(private readonly tenancy: TenancyService) {}
+
   /** 读当前用户在当前租户下的成员信息，也可作为前端判断角色的接口 */
   @ApiOperation({ summary: "当前用户在该租户下的成员信息" })
   @ApiOkResponse({ type: MembershipDto })
@@ -46,13 +49,13 @@ export class TenantController {
   membership(
     @CurrentMembership() membership: Membership,
     @Param("tenantId") _tenantId: string,
-  ) {
+  ): MembershipDto {
     return membership;
   }
 
   /**
-   * 租户表查询示例：用 `@TenantTx()` 取请求事务客户端，RLS 自动只返回当前租户的行。
-   * 不要用 prisma.scoped（连接池另一条连接，没有 app.tenant_id，查不到）。
+   * 租户表查询示例：Controller 用 `@TenantTx()` 取事务客户端并传给 Service，
+   * RLS 自动只返回当前租户的行。不要用 prisma.scoped（连接池另一条连接，查不到）。
    */
   @ApiOperation({ summary: "当前租户的角色列表（租户表查询示例）" })
   @ApiOkResponse({ type: [RoleDto] })
@@ -61,10 +64,7 @@ export class TenantController {
   roles(
     @TenantTx() tx: Prisma.TransactionClient,
     @Param("tenantId") _tenantId: string,
-  ) {
-    return tx.role.findMany({
-      select: { id: true, code: true, name: true },
-      orderBy: { code: "asc" },
-    });
+  ): Promise<RoleDto[]> {
+    return this.tenancy.listRoles(tx);
   }
 }
