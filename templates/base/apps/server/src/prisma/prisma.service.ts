@@ -1,57 +1,38 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
-import { TenantContext } from "../auth/tenant-context.util";
 
 /**
- * 不注入 tenantId 过滤的表。分三类：
- * 1. 全局表：自身没有 tenantId 列（Tenant / User / Permission / Plan / PlatformAdmin）
- * 2. 授权关系表：UserTenant 是 guard 查询「当前租户」的入口，不能被隐式过滤（否则鸡生蛋）
- * 3. 关联表：UserRole / RolePermission / OAuthConnection 没有 tenantId 列，靠父表间接隔离
- *
- * 注意：关联表不注入过滤，业务禁止直接裸查（如 prisma.scoped.userRole.findMany()），
- * 应从已过滤的父表走 relation（如 role.users），否则会读到其它租户的关联数据。
+ * 全局表：自身没有 tenantId 列，scoped 允许直接查询。
+ * UserTenant 是授权关系表——guard 查「当前租户」的入口，不能被 RLS/extension 隐式过滤（鸡生蛋）。
  */
-const UNSCOPED_MODELS = new Set([
+const GLOBAL_MODELS = new Set([
   "Tenant",
   "User",
   "UserTenant",
-  "OAuthConnection",
   "Permission",
-  "UserRole",
-  "RolePermission",
   "PlatformAdmin",
   "Plan",
 ]);
 
-/** 支持 where 注入的操作 */
-const WHERE_OPERATIONS = new Set([
-  "findMany",
-  "findFirst",
-  "findFirstOrThrow",
-  "count",
-  "aggregate",
-  "groupBy",
-  "updateMany",
-  "updateManyAndReturn",
-  "deleteMany",
+/**
+ * 无 tenantId 列的关联表：RLS 不保护直接对子表的查询，
+ * 直接 findMany 会跨租户泄露。必须从已过滤的父表走 relation。
+ */
+const RELATION_MODELS = new Set([
+  "UserRole",
+  "RolePermission",
+  "OAuthConnection",
 ]);
 
 /**
- * 无法注入 tenantId 的操作：它们用唯一键定位，Prisma 不允许在 where 里加非唯一字段。
- * 在 scoped client 上直接禁用，强制改用支持 where 注入的替代方法——
- * 靠注释提醒不够，漏写一个跨租户 update 就是数据泄露。
+ * 带 tenantId 的业务表（Role / Subscription 及后续业务表）**不属于**以上两类：
+ * 必须通过 `@TenantTx()` 事务客户端访问，由数据库层 RLS 过滤。
  */
-const DENIED_OPERATIONS = new Set([
-  "findUnique",
-  "findUniqueOrThrow",
-  "update",
-  "delete",
-  "upsert",
-]);
 
-/** raw SQL 完全绕过 extension 的模型层拦截，必须禁用（用 includes 兼容各版本命名） */
-const isRawOperation = (operation: string) => operation.toLowerCase().includes("raw");
+/** raw SQL 完全绕过模型层拦截，必须禁用（用 includes 兼容各版本命名） */
+const isRawOperation = (operation: string) =>
+  operation.toLowerCase().includes("raw");
 
 @Injectable()
 export class PrismaService
@@ -74,20 +55,14 @@ export class PrismaService
   }
 
   /**
-   * 租户隔离：业务表自动注入 where.tenantId / create.data.tenantId。
-   * tenantId 来自请求上下文（TenantContext，由 TenantMiddleware 从路由 /t/:tenantId 写入）。
-   * UNSCOPED_MODELS 不注入（含全局表、授权关系表、无 tenantId 列的关联表），见上方注释。
+   * 全局表 / 授权关系表 / 关联表的查询入口。
    *
-   * 强制约束（fail-closed）：
-   * - findUnique / update / delete / upsert 在 scoped 上直接抛错，改用 findFirst / updateMany / deleteMany
-   * - raw SQL（$queryRaw / $executeRaw 等）在 scoped 上直接抛错
-   * 全局表 / 授权关系表用裸 PrismaClient（非 scoped）不受这些限制。
+   * 为什么租户表不能走这里：scoped 从 PrismaClient 派生，查询走连接池里的**另一条连接**，
+   * 没有事务级 app.tenant_id；RLS ENABLE+FORCE 后租户表会被过滤成 0 行。
+   * 因此对租户表 fail-closed，强制在控制器用 `@TenantTx()` 取事务客户端查询。
    */
   readonly scoped = this.$extends({
     query: {
-      // 必须用顶层 $allOperations：Prisma 官方明确说明 $allModels 下的版本
-      // 只拦截模型操作，raw query（model === undefined）根本不会触发——
-      // 放在 $allModels 里会让 raw SQL 禁用形同虚设。
       async $allOperations({ model, operation, args, query }: {
         model?: string;
         operation: string;
@@ -104,37 +79,19 @@ export class PrismaService
           return query(args);
         }
 
-        // 授权关系表 / 全局表不注入，也不受 DENIED 限制（guard 需要 userTenant.findUnique）
-        if (UNSCOPED_MODELS.has(model)) return query(args);
+        if (GLOBAL_MODELS.has(model)) return query(args);
 
-        if (DENIED_OPERATIONS.has(operation)) {
+        if (RELATION_MODELS.has(model)) {
           throw new Error(
-            `scoped client 禁止 ${operation}（无法注入 tenantId）：请改用 findFirst / updateMany / deleteMany`,
+            `关联表 ${model} 禁止直接查询：请从已过滤的父表走 relation，避免跨租户泄露`,
           );
         }
 
-        const tenantId = TenantContext.getTenantId();
-
-        if (
-          operation === "create" ||
-          operation === "createMany" ||
-          operation === "createManyAndReturn"
-        ) {
-          const data = (args as { data?: Record<string, unknown> | Record<string, unknown>[] }).data;
-          // 注入值必须后置：业务 data 若带 tenantId 不能覆盖请求上下文，否则可跨租户写入
-          const inject = (d: Record<string, unknown>) => ({ ...d, tenantId });
-          const newData = Array.isArray(data) ? data.map(inject) : inject(data ?? {});
-          return query({ ...args, data: newData });
-        }
-
-        if (WHERE_OPERATIONS.has(operation)) {
-          const where = (args as { where?: Record<string, unknown> }).where ?? {};
-          return query({ ...args, where: { ...where, tenantId } });
-        }
-
-        return query(args);
+        throw new Error(
+          `租户表 ${model} 必须通过 @TenantTx() 事务客户端查询（事务内设置 app.tenant_id，由 RLS 过滤）；` +
+            "scoped 只用于全局表",
+        );
       },
     },
   });
 }
-

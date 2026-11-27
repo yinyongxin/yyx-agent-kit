@@ -22,7 +22,7 @@
 
 ## 关联
 
-- `src/prisma/prisma.service.ts`：`scoped` extension 读 `TenantContext` 注入 `where.tenantId`
+- `src/prisma/prisma.service.ts`：`scoped` 只用于全局表；租户表用 `@TenantTx()` 事务客户端 + 数据库 RLS
 - `src/tenancy/tenant.controller.ts`：`/t/:tenantId/...` 示例路由
 - `test/tenancy-e2e.mjs`：登录与租户边界接口验收
 - `docs/guides/credentials.md`：本地开发账号与生产必改清单

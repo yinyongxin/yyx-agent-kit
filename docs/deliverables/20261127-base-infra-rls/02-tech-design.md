@@ -1,6 +1,6 @@
 # 多租户兜底：PostgreSQL RLS — 技术方案
 
-> 状态：**方案设计完成，尚未实施**。原因：本机无 PostgreSQL 环境，且 RLS 启用顺序错误会导致全库查询返回空，必须有数据库环境做分阶段验证。
+> 状态：**S1~S4 已实施并验证**（2026-11-27）。原阻塞理由（本机无 PostgreSQL）已解除；按分阶段顺序落地，实施偏差见文末「实施记录」。
 > 依据：`20261127-base-infra-tenancy/04-architecture-audit.md` 第二轮审查 B2/B3 的根本性结论。
 
 ## 1. 为什么需要 RLS
@@ -42,7 +42,7 @@ CREATE POLICY tenant_isolation ON "roles"
   WITH CHECK ("tenantId" = current_setting('app.tenant_id', true)::uuid);
 ```
 
-`current_setting(..., true)` 在未设置时返回 NULL，`NULL = uuid` 结果为 NULL（非真）→ **未设置变量时拒绝所有行**（fail-closed）。
+`current_setting(..., true)` 在未设置时返回 NULL，`NULL = uuid` 结果为 NULL（非真）→ **未设置变量时拒绝所有行**（fail-closed）。注意 `RESET` 后返回的是空字符串而非 NULL，实际 policy 用 `NULLIF(..., '')` 兜底（见实施记录）。
 
 ### 3.3 索引
 
@@ -58,16 +58,16 @@ CREATE POLICY tenant_isolation ON "roles"
 TenantMembershipGuard 校验成员身份（此时查 UserTenant，无 RLS）
   → Interceptor 开启交互式事务
   → tx.$executeRaw`SELECT set_config('app.tenant_id', ${tenantId}, true)`
-  → TenantContext 写入 { tenantId, tx }
-  → Controller / Service 通过 TenantContext.getTx() 拿 tx 查询
+  → req.tenantTx = tx（不用 AsyncLocalStorage：Prisma 事务回调与 Nest 调度会丢上下文）
+  → Controller 用 @TenantTx() 参数装饰器取 tx 查询
   → 事务提交，LOCAL 变量自动失效
 ```
 
 ### 4.2 与 Prisma extension 的关系
 
-- extension 继续注入 `where.tenantId`（应用层第一道）
-- `tx` 不继承 extension，但 RLS 兜底（数据库层第二道）
-- 业务 repository 统一从 TenantContext 取 `tx`，不再直接用 `prisma.scoped`
+- 租户表：控制器用 `@TenantTx()` 事务客户端，数据库 RLS 过滤；`tx` 不继承 extension，不依赖自动 where 注入
+- 全局表用 `prisma.scoped`；关联表禁止直接查询，从父表走 relation
+- 应用层入口收口（`scoped` 对租户表 fail-closed）+ 数据库层 RLS，两层互补
 
 ### 4.3 seed 适配
 
@@ -75,7 +75,7 @@ seed 用裸 `PrismaClient`（可能是表 owner，但 FORCE 后 owner 也受约�
 ```ts
 await prisma.$executeRaw`SELECT set_config('app.tenant_id', ${DEFAULT_TENANT_ID}, false)`;
 ```
-`false` = session 级，seed 是短连接、无并发复用，可接受。
+> 实施时已改为整个 seed 在 `$transaction` 内用 `set_config(..., true)`：Prisma 连接池不保证 session 变量与后续查询在同一条连接上。
 
 ## 5. 分阶段上线（顺序不可颠倒）
 
@@ -92,7 +92,7 @@ await prisma.$executeRaw`SELECT set_config('app.tenant_id', ${DEFAULT_TENANT_ID}
 
 - **交互式事务持有连接**：默认 5s 超时、maxWait 2s；高并发下连接池可能耗尽。需要按官方建议调 timeout 并限制事务内不做慢 IO。
 - **改造面大**：所有 repository 要从 `prisma.scoped` 改为 `TenantContext.getTx()`；这是 P0 级重构，不能草率。
-- **本机无法验证**：无 `.env` / docker / PostgreSQL。S2~S4 必须在有数据库的环境执行，否则只是纸面设计。
+- **环境验证**：S1~S4 已在本地 PostgreSQL（Docker）完成，见第 8 节实施记录。
 - **RLS 不是银弹**：它保护的是「设置了变量后」的查询；若应用忘记开启事务，policy 会拒绝一切（fail-closed，不会泄露，但会 500）。这是可接受的安全侧失败。
 
 ## 7. 结论与建议
@@ -103,4 +103,32 @@ RLS 是「可复用基建」真正可放心交付的最后一道地基。但它�
 2. 一次覆盖所有 repository 的重构（S1）
 3. 严格按 S1→S4 顺序上线
 
-建议：**先交付本方案，待具备 PostgreSQL 环境后按阶段实施**；在此之前不要启用任何 RLS policy。当前应用层 extension + guard 仍是有效的第一道防线，只是不能宣称「架构层已闭环」。
+实施结论：已按 S1→S4 完成并验证（S1 必须先于 policy 启用）。运行前提是应用连接使用非 superuser 的 `app_rw`；租户表查询统一在 `@TenantTx()` 事务客户端上执行。
+
+---
+
+## 8. 实施记录（2026-11-27）
+
+| 阶段 | 落地 | 验证 |
+| --- | --- | --- |
+| S1 | `TenantTransactionInterceptor` 在 `/t/:tenantId/...` 开交互式事务并 `set_config(..., true)`；tx 经 `req.tenantTx` + `@TenantTx()` 传给控制器；seed 整体在事务内。不启用 policy | `pnpm --filter @starter/server test:e2e` 12 项全通过（含应用层 roles=2） |
+| S2+S3 | 迁移 `20261127220000_rls_tenant_isolation` 对 `roles` / `subscriptions` 加 policy + ENABLE + FORCE | policy 对正确租户返回 2 行、错误租户返回 0 行 |
+| S4 | `test/rls-concurrency.mjs`：脚本创建真实租户 B + 2 角色，30 并发交替 A/B | 15/15 分配，A 每次 2 行、B 每次 2 行、互不可见，**0 次串数据**；另验证「未设置变量 → 0 行」 |
+
+### 与原方案的偏差（均为实测后的必要修正）
+
+1. **S2/S3 合并**：模板应用连接用户就是表 owner，只 `ENABLE` 不 `FORCE` 时 owner 会绕过 policy，等于没启用；原方案「非 owner 应用用户」在本模板的部署模型下不成立，故同一迁移里直接 ENABLE + FORCE。
+2. **必须换非 superuser 账号**：bootstrap superuser（`app`）带 `BYPASSRLS`，superuser 永远绕过 RLS 且 PostgreSQL 禁止 bootstrap superuser 放弃 SUPERUSER。新增 `app_rw`（`docker/init-db.sql` 创建并授权，非 superuser），`DATABASE_URL` 改用它；`MIGRATE_DATABASE_URL` 保留 bootstrap 账号做迁移。已有库执行 `docker/upgrade-rls.sql`：把表 owner 交回 bootstrap、收回 `app_rw` 的 DDL/多余权限。
+3. **`NULLIF` 修正**：`RESET app.tenant_id` 后 `current_setting(..., true)` 返回空字符串而非 NULL，直接 `::uuid` 会抛 `invalid input syntax`。新迁移 `20261127223000_rls_nullif_fix` 用 `NULLIF(..., '')` 保证 fail-closed 且不报错。已应用迁移不手改，走新迁移。
+4. **guard 的角色查询必须包事务**：`TenantMembershipGuard` 在 Interceptor 之前运行，关联到已启用 RLS 的 `role` 表时没有事务变量，导致角色被过滤成 `member`。已改为在 guard 内开短事务设置 `app.tenant_id`；e2e 增加 `role === "admin"` 断言防回归。
+
+### 复现命令
+
+```bash
+# 已有数据库：先执行一次 docker/upgrade-rls.sql（新建库由 docker/init-db.sql 自动完成）
+pnpm --filter @starter/server db:deploy     # 应用全部迁移（MIGRATE_DATABASE_URL）
+pnpm --filter @starter/server db:seed       # seed 在事务内设置 app.tenant_id
+pnpm --filter @starter/server start
+pnpm --filter @starter/server test:e2e      # 12 项
+pnpm --filter @starter/server test:rls      # 真实双租户 30 并发 0 串数据
+```

@@ -22,6 +22,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // 迁移/建库用 bootstrap superuser（migrate dev 需要 CREATEDB 影子库、DDL 权限）；
+    // 应用运行时用 DATABASE_URL（app_rw，非 superuser，RLS 生效）
+    url: process.env["MIGRATE_DATABASE_URL"] ?? process.env["DATABASE_URL"],
   },
 });

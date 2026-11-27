@@ -2,32 +2,41 @@
 
 ## 职责
 
-`PrismaService` 继承 `PrismaClient`，提供 `scoped` 客户端：自动注入 `tenantId`，让业务代码不必每条查询手写租户条件。
+`PrismaService` 继承 `PrismaClient`，按「全局表 / 关联表 / 租户表」三类提供不同入口：
+
+- **全局表**：用 `prisma.scoped`
+- **关联表**：禁止直接查询，从已过滤的父表走 relation
+- **租户表**：用 `@TenantTx()` 取请求事务客户端，由数据库 RLS 过滤
 
 ## 文件索引
 
 | 文件 | 职责 |
 | --- | --- |
-| `prisma.service.ts` | `scoped` extension：写入/查询注入 tenantId，并 fail-closed 禁用危险操作 |
+| `prisma.service.ts` | `scoped` 守卫（全局表放行、关联表/租户表 fail-closed、禁 raw SQL） |
 | `prisma.module.ts` | `@Global()` 模块，导出 `PrismaService` |
 
-## 隔离规则（务必遵守）
+## 隔离规则
 
-`scoped` 上的行为按模型分三类：
-
-| 分类 | 模型 | 行为 |
+| 分类 | 模型 | 入口 / 行为 |
 | --- | --- | --- |
-| 业务表 | 带 `tenantId` 列（如 Role / Subscription 及后续业务表） | `where` 与 `create` 自动注入当前租户 |
-| 全局/授权关系表 | Tenant / User / UserTenant / PlatformAdmin / Permission / Plan | 不注入——UserTenant 是 guard 查「当前租户」的入口，不能隐式过滤 |
-| 无 tenantId 列的关联表 | UserRole / RolePermission / OAuthConnection | 不注入，**禁止裸查**，必须从已过滤的父表走 relation，并显式带 `role.tenantId` |
+| 全局表 | Tenant / User / UserTenant / Permission / PlatformAdmin / Plan | `prisma.scoped` 直接查询；UserTenant 是 guard 查「当前租户」的入口，不能被隐式过滤 |
+| 关联表 | UserRole / RolePermission / OAuthConnection | 无 tenantId 列，RLS 不保护；**禁止** `scoped` 直接查询，从父表走 relation |
+| 租户表 | Role / Subscription 及后续带 `tenantId` 的业务表 | **必须**用控制器里的 `@TenantTx()` 事务客户端；`scoped` 会抛错 |
+
+### 为什么租户表不能用 scoped
+
+`scoped` 从 `PrismaClient` 派生，查询走连接池里的**另一条连接**，没有事务级 `app.tenant_id`；
+RLS `ENABLE + FORCE` 后会被过滤成 0 行。因此它对租户表 fail-closed，强制走事务客户端。
 
 ### 被禁止的操作（会直接抛错）
 
-- `findUnique` / `findUniqueOrThrow` / `update` / `delete` / `upsert`：唯一键定位，无法注入 tenantId → 改用 `findFirst` / `updateMany` / `deleteMany`
-- raw SQL（`$queryRaw` / `$executeRaw` 及 Unsafe 版本）：完全绕过 extension → 改用 Prisma API
-
-例外：全局表与授权关系表（UNSCOPED 列表）不受上述限制，guard 用 `userTenant.findUnique` 属于正常用法。seed 使用裸 `PrismaClient` 而非 `scoped`，也不受限。
+- `scoped` 上访问租户表 / 关联表
+- `scoped` 上的 raw SQL（`$queryRaw` / `$executeRaw` 及 Unsafe 版本）
 
 ## 同步要求
 
-新增带 `tenantId` 的业务表时：索引以 `tenantId` 开头；禁止把表加进 `UNSCOPED_MODELS`（除非它确实没有该列或是授权关系表）；写仓储时只能用 `scoped`，不要直接用 `this.prisma.<model>`。
+新增带 `tenantId` 的业务表时：
+
+1. 写 RLS 迁移：`ENABLE` + `FORCE` + `policy`（`NULLIF(current_setting('app.tenant_id', true), '')::uuid`）
+2. 控制器用 `@TenantTx()` 查询，不要用 `scoped`
+3. 若迁移/模型漏了 RLS，`@TenantTx()` 上会返回**全表**（tx 不继承 extension），这是新表最大的坑

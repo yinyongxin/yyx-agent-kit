@@ -96,8 +96,18 @@ if (token) {
     );
     check(
       "E3 成员可读自己在该租户的成员信息",
-      membership.status === 200 && membership.json?.tenantId === tenantId,
+      membership.status === 200 &&
+        membership.json?.tenantId === tenantId &&
+        membership.json?.role === "admin",
       `HTTP ${membership.status}`,
+    );
+
+    // S1 应用层接线：租户表必须走 prisma.tenant（事务内 RLS），seed 默认租户有 2 个角色
+    const roles = await request("GET", `/t/${tenantId}/roles`, null, token);
+    check(
+      "RLS 应用层：租户表只返回当前租户数据",
+      roles.status === 200 && Array.isArray(roles.json) && roles.json.length === 2,
+      `HTTP ${roles.status}, rows=${roles.json?.length}`,
     );
   }
 

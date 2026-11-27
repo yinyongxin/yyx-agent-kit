@@ -53,12 +53,17 @@ export class TenantMembershipGuard implements CanActivate {
       throw new NotFoundException("Tenant not found");
     }
 
-    // UserRole 也是 UNSCOPED，必须显式带 role.tenantId，否则会混进用户在其它租户的角色
-    const userRoles = await this.prisma.scoped.userRole.findMany({
-      where: { userId, role: { tenantId } },
-      select: { role: { select: { code: true } } },
+    // UserRole 也是 UNSCOPED，必须显式带 role.tenantId，否则会混进用户在其它租户的角色。
+    // 关联到 role 表时 role 已启用 RLS：guard 在 Interceptor 之前运行，没有事务变量，
+    // 所以这里自己开一个短事务设置 app.tenant_id，避免 role 被 policy 过滤成「无角色」。
+    const codes = await this.prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.tenant_id', ${tenantId}, true)`;
+      const userRoles = await tx.userRole.findMany({
+        where: { userId, role: { tenantId } },
+        select: { role: { select: { code: true } } },
+      });
+      return userRoles.map((item) => item.role.code);
     });
-    const codes = userRoles.map((item) => item.role.code);
     const role = codes.includes("owner") ? "owner" : codes.includes("admin") ? "admin" : "member";
 
     const required =
