@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "scripts": {
-    "dev": "concurrently --kill-others-on-fail -n server,client,admin,portal -c blue,green,magenta,cyan \"pnpm dev:server\" \"pnpm dev:client\" \"pnpm dev:admin\" \"pnpm dev:portal\" \"node scripts/open-dev.mjs\"",
+    "dev": "concurrently -n server,client,admin,portal,dashboard -c blue,green,magenta,cyan,gray \"pnpm dev:server\" \"pnpm dev:client\" \"pnpm dev:admin\" \"pnpm dev:portal\" \"node scripts/open-dev.mjs\"",
     "dev:client": "pnpm --filter @starter/client dev",
     "dev:admin": "pnpm --filter @starter/admin dev",
     "dev:portal": "pnpm --filter @starter/portal dev",

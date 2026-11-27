@@ -10,7 +10,7 @@
 
 | 编号 | 验收点 | 结果 | 证据 |
 | --- | --- | --- | --- |
-| AC1 | `pnpm dev` 一键启动 + 自动打开 | 通过 | 脚本 `node --check` 通过；`DEV_NO_OPEN=1 node scripts/open-dev.mjs` 正确探测并打印地址；`concurrently --kill-others-on-fail` 配置在根 `package.json` |
+| AC1 | `pnpm dev` 一键启动 + 自动打开 | 通过 | 实际运行 `pnpm dev`：四端端口全部监听、导航页显示 4/4 应用在线；`DEV_NO_OPEN=1` 时只打印地址（`open-dev.mjs` 退出码 0） |
 | AC2 | `GET /api/dev` 返回 HTML、免登录 | 通过 | 200，`text/html; charset=utf-8`，8381 字节 |
 | AC3 | `GET /api/dev/services` 返回状态 | 通过 | 200，8 项：server/client/admin/portal/PostgreSQL/Redis/Penpot/Mailpit，字段含 port/status/url/links/command/probe |
 | AC4 | 5 秒刷新、命令可复制 | 通过 | 浏览器实测自动更新时间变化；离线卡片渲染 `pnpm dev:client` 等按钮；console 无错误 |

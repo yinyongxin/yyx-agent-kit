@@ -4,7 +4,7 @@
 
 1. 根目录安装 `concurrently`（`pnpm add -Dw`），新增 `pnpm dev`：
    - 并发启动 server / client / admin / portal
-   - `--kill-others-on-fail`：某个应用启动失败时整体退出，避免半启动状态
+   - 不用 `--kill-others-on-fail`：某个应用启动失败（如端口被占）只退出它自己，其余继续跑，导航页会显示离线；否则一个端口冲突会把全部进程杀掉，表现为「client/admin 没起来」
 2. 新增 `scripts/open-dev.mjs`：轮询 `/api/dev` 直到 200（最长 90s），再用平台命令打开默认浏览器；`DEV_NO_OPEN=1` 只打印不打开。
 3. `packages/shared`：`API_ROUTES` 增加 `dev` / `devServices`。
 4. `apps/server/src/config`：
@@ -27,6 +27,7 @@
 | 后台启动 server 时退出码 1、无输出 | 用 `Start-Process` 重定向 stdout/stderr 定位；`main.ts` 的 `bootstrap().catch` 已保证启动异常会打印 |
 | 离线卡片仍显示橙色「打开」按钮，容易误点 | 只在 `status === "online"` 时渲染入口链接 |
 | `dotenv` v18 默认打印注入日志，干扰 `pnpm dev` 输出 | `config({ quiet: true })` |
+| 首次使用反馈「client 和 admin 没启动」：残留的 `next start` 占着 47175，portal dev 失败，`--kill-others-on-fail` 把 server/client/admin 一起杀掉 | 移除该参数，单个应用失败只退出自己；导航页会显示哪个服务离线，便于定位 |
 
 ## 验证记录
 
