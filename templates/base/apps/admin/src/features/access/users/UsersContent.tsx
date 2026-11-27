@@ -131,6 +131,8 @@ const labels: DataTableLabels = {
   searchPlaceholder: "搜索用户…",
   search: "搜索",
   moreFilters: "更多筛选",
+  applyFilters: "应用筛选",
+  cancelFilters: "取消",
   clearFilter: (label) => `清除${label}筛选`,
   emptyTitle: "暂无用户数据",
   emptyDescription: "创建第一个用户后即可在此管理。",

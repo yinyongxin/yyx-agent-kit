@@ -43,6 +43,8 @@ export interface DataTableLabels {
   search: string;
   reset: string;
   moreFilters: string;
+  applyFilters: string;
+  cancelFilters: string;
   clearFilter: (label: string) => string;
   statusAll: string;
   loadingHint: string;

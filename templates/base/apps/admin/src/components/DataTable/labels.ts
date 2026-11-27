@@ -9,6 +9,8 @@ export const dataTableLabels: DataTableLabels = {
   search: "搜索",
   reset: "重置",
   moreFilters: "更多筛选",
+  applyFilters: "应用筛选",
+  cancelFilters: "取消",
   clearFilter: (label) => `清除${label}筛选`,
   statusAll: "全部",
   loadingHint: "加载中…",

@@ -74,6 +74,8 @@ export interface UseDataTableResult<TRow> {
   serverMode: boolean;
   setKeyword: (value: string) => void;
   setFilter: (key: string, value: FilterValue) => void;
+  /** 一次性合并多个筛选值（草稿应用用），服务端模式只触发一次拉取 */
+  applyFilters: (partial: FilterValues) => void;
   /** 搜索按钮：回第一页并触发拉取 */
   submitSearch: () => void;
   resetFilters: () => void;
@@ -267,6 +269,12 @@ export const useDataTable = <TRow>({
     setPageRaw(1);
   }, []);
 
+  const applyFilters = useCallback((partial: FilterValues) => {
+    setFilters((prev) => ({ ...prev, ...partial }));
+    setPageRaw(1);
+    // 服务端模式：filters 变化会让 queryCtx 变化，effect 自动拉一次，不手动 requestReload 避免重复
+  }, []);
+
   const updateKeyword = useCallback((value: string) => {
     setKeyword(value);
     setPageRaw(1);
@@ -343,6 +351,7 @@ export const useDataTable = <TRow>({
       serverMode,
       setKeyword: updateKeyword,
       setFilter,
+      applyFilters,
       submitSearch,
       resetFilters,
       toggleSort,
@@ -370,7 +379,7 @@ export const useDataTable = <TRow>({
     }),
     [
       state, allRows, rows, total, pages, safePage, pageSize, keyword, filters,
-      sortKey, sortDirection, selected, serverMode, updateKeyword, setFilter,
+      sortKey, sortDirection, selected, serverMode, updateKeyword, setFilter, applyFilters,
       submitSearch, resetFilters, toggleSort, setPage, setPageSize, toggleRow,
       toggleAll, clearSelection, isSelected, allPageSelected, somePageSelected,
       setLoading, setError, reload, applyMutation, errorMessage, columns, filterFields, labels,

@@ -71,6 +71,10 @@ const table = useDataTable({
 
 策略可通过 `mutationConfig.strategy`（值或函数）覆盖；`mutationConfig.onMutated(result, strategy)` 用于业务提示。客户端模式 precise 用内部覆盖层（不破坏父组件传 data），refresh 清覆盖回到数据源；服务端模式 precise 改 `serverData`，refresh 走 nonce 触发 effect 拉取（避免与页码变化重复请求）。
 
+### 更多筛选的草稿态
+
+more 字段收进「更多筛选」浮层，采用草稿态：打开时快照当前已提交的 more 值，浮层内改动只影响草稿（列表/芯片/角标不变），点「应用筛选」才通过 `applyFilters(draft)` 一次性提交（服务端模式只拉一次），点「取消」丢弃草稿。inline 条件与关键词仍即时生效，草稿只管 more 字段。
+
 ## 关联
 
 - 设计依据：`docs/deliverables/20261126-admin-table/` 的 PRD 三件套 + 技术方案
