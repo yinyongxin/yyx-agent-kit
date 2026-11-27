@@ -27,7 +27,8 @@ apps/server/
 │   │   └── README.md
 │   ├── auth/                   # 领域模块：认证与授权
 │   │   ├── auth.module.ts
-│   │   ├── auth.controller.ts
+│   │   ├── auth.controller.ts  # /api/auth/*
+│   │   ├── me.controller.ts    # /api/me/*（当前用户资源）
 │   │   ├── credentials.service.ts
 │   │   ├── dto/
 │   │   ├── guards/
@@ -55,6 +56,8 @@ apps/server/
 规则：
 
 - **一个业务领域一个模块目录**，目录名用复数 kebab-case（`users/`、`audit-logs/`）。存量 `auth/`、`tenancy/` 为单数，保留不改。
+- **一个模块可以有多个 controller**，按路由前缀/资源划分（Nest 一个 controller 只能绑一个 `@Controller()` 前缀）。例如 `auth/` 下：`auth.controller.ts` 管 `/auth/*`（登录动作），`me.controller.ts` 管 `/me/*`（当前用户资源）。不要为了「一模块一 controller」把不同前缀硬塞进同一个类。
+- `/me/*` 属于「当前用户」资源：暂放 `auth/`（与身份强相关）；出现独立 `users/` 模块后，迁到 `users/me.controller.ts`。
 - **每个目录必须有 `README.md`**（职责 / 文件索引 / 关联 / 同步要求）。
 - `src/generated/`（Prisma Client）是生成物，禁止手改、不提交。
 - `dist/` 是构建产物，不提交。
