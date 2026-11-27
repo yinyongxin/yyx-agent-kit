@@ -38,7 +38,10 @@ const MENU: {
     label: "系统",
     icon: IconAdjustments,
     initiallyOpened: true,
-    links: [{ label: "设置", link: "/settings" }],
+    links: [
+      { label: "设置", link: "/settings" },
+      { label: "接口联调", link: "/integration" },
+    ],
   },
 ];
 

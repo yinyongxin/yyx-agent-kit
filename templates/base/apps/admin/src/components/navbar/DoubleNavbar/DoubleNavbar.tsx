@@ -34,7 +34,10 @@ const GROUPS: {
   {
     label: "系统",
     icon: IconSettings,
-    links: [{ label: "设置", to: "/settings" }],
+    links: [
+      { label: "设置", to: "/settings" },
+      { label: "接口联调", to: "/integration" },
+    ],
   },
 ];
 
