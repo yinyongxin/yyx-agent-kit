@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
-import { NextFunction, Request, Response } from "express";
+import type { NodeRequest, NodeResponse } from "@nestjs/platform-node";
 import { TenantContext } from "./tenant-context.util";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -16,7 +16,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
  */
 @Injectable()
 export class TenantMiddleware implements NestMiddleware {
-  use(req: Request, _res: Response, next: NextFunction) {
+  use(req: NodeRequest, _res: NodeResponse, next: () => void) {
     const tenantId = this.resolveTenantId(req);
     if (!tenantId) return next(); // health / auth / me 等非租户路由不带上下文
 
@@ -24,7 +24,7 @@ export class TenantMiddleware implements NestMiddleware {
   }
 
   /** 优先取 Express 路由参数，兼容全局前缀场景再从 path 正则提取 */
-  private resolveTenantId(req: Request): string | null {
+  private resolveTenantId(req: NodeRequest): string | null {
     // Express 5 的 params 值类型为 string | string[]，统一取第一个
     const raw = req.params?.tenantId;
     const fromParams = Array.isArray(raw) ? raw[0] : raw;

@@ -18,6 +18,7 @@ if (envPath) config({ path: envPath });
 
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
+import { NestNodeApplication, NodeAdapter } from "@nestjs/platform-node";
 import { AppModule } from "./app.module";
 import { API_PREFIX } from "../../../packages/shared/src/index";
 
@@ -25,7 +26,9 @@ import { API_PREFIX } from "../../../packages/shared/src/index";
 const port = Number(process.env.PORT ?? 47100);
 
 const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule);
+  // NestJS 12.3+ 推荐 NodeAdapter（v13 起为默认）：直接跑在 node:http 上，
+  // req/res 带 Express 风格 helpers，现有 middleware 写法不变
+  const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
   app.setGlobalPrefix(API_PREFIX.replace(/^\//, ""));
   await app.listen(port);
 };
