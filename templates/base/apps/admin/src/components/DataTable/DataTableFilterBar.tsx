@@ -22,7 +22,7 @@ export const DataTableFilterBar = <TRow,>({ table: propTable }: DataTableFilterB
   const selects = filterFields.filter((field) => field.type === "select");
 
   return (
-    <Group gap="xs" wrap="wrap" mb="md">
+    <Group gap="xs" wrap="wrap">
       <TextInput
         placeholder={labels.searchPlaceholder}
         leftSection={<IconSearch size={16} />}

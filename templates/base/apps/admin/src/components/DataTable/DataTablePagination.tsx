@@ -19,7 +19,7 @@ export const DataTablePagination = <TRow,>({ table: propTable }: DataTablePagina
   } = useDataTableApi<TRow>(propTable);
 
   return (
-    <Group justify="space-between" mt="md" wrap="wrap">
+    <Group justify="space-between" wrap="wrap">
       <Group gap="xs">
         <Text size="sm" c="dimmed">
           {paginationLabels.total(total)}
