@@ -1,5 +1,6 @@
 import { Controller, Get } from "@nestjs/common";
 import { CurrentUser } from "@nestjs/authentication";
+import { Can } from "@nestjs/authorization";
 import { PrismaService } from "../prisma/prisma.service";
 
 /** 当前登录用户自身的信息（不需要租户上下文，因此不挂 TenantMembershipGuard） */
@@ -12,6 +13,7 @@ export class MeController {
    * UserTenant 是授权关系表（UNSCOPED），这里显式按 userId + active 过滤，不依赖请求上下文。
    */
   @Get("tenants")
+  @Can.Anyone()
   async tenants(@CurrentUser("id") userId: string) {
     const rows = await this.prisma.scoped.userTenant.findMany({
       where: { userId, status: "active", tenant: { status: "active" } },
