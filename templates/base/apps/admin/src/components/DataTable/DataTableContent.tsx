@@ -12,7 +12,7 @@ export interface DataTableContentProps<TRow> {
 /** 四态切换：loading / success / empty / error，同一时刻只显示一种 */
 export const DataTableContent = <TRow,>({ table: propTable, children }: DataTableContentProps<TRow>) => {
   const table = useDataTableApi<TRow>(propTable);
-  const { state, labels, onRetry, onEmptyAction } = table;
+  const { state, labels, onRetry, onEmptyAction, errorMessage } = table;
 
   if (state === "loading") {
     return (
@@ -28,7 +28,7 @@ export const DataTableContent = <TRow,>({ table: propTable, children }: DataTabl
     return (
       <Alert color="red" title={labels.errorTitle}>
         <Stack gap="xs" align="flex-start">
-          <span>{labels.errorDescription}</span>
+          <span>{errorMessage ?? labels.errorDescription}</span>
           {onRetry && (
             <Button size="xs" variant="light" onClick={onRetry}>
               {labels.retry}

@@ -6,10 +6,12 @@ export const selectField = (config: {
   label: string;
   allLabel?: string;
   options: { label: string; value: string }[];
+  placement?: "inline" | "more";
 }): FilterField => ({
   type: "select",
   key: config.key,
   label: config.label,
   allLabel: config.allLabel,
   options: config.options,
+  placement: config.placement ?? "inline",
 });

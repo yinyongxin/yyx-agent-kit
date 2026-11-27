@@ -113,12 +113,25 @@ const filterFields = [
       { label: "禁用", value: "disabled" },
     ],
   }),
+  selectField({
+    key: "role",
+    label: "角色",
+    allLabel: "全部",
+    placement: "more",
+    options: [
+      { label: "管理员", value: "admin" },
+      { label: "普通成员", value: "member" },
+    ],
+  }),
 ];
 
 /** 业务页注入自己的文案：底座的 dataTableLabels 只提供中性默认值 */
 const labels: DataTableLabels = {
   ...dataTableLabels,
   searchPlaceholder: "搜索用户…",
+  search: "搜索",
+  moreFilters: "更多筛选",
+  clearFilter: (label) => `清除${label}筛选`,
   emptyTitle: "暂无用户数据",
   emptyDescription: "创建第一个用户后即可在此管理。",
   create: "新建用户",

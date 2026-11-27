@@ -6,7 +6,10 @@ import type { DataTableLabels, PaginationLabels } from "./types";
  */
 export const dataTableLabels: DataTableLabels = {
   searchPlaceholder: "搜索…",
+  search: "搜索",
   reset: "重置",
+  moreFilters: "更多筛选",
+  clearFilter: (label) => `清除${label}筛选`,
   statusAll: "全部",
   loadingHint: "加载中…",
   emptyTitle: "暂无数据",
