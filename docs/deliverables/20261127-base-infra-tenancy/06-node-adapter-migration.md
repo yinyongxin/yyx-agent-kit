@@ -37,8 +37,9 @@
 - `pnpm lint`：无 error（仅既有 Fast refresh 警告）
 - grep 确认 `src/` 下无 `from "express"` 残留
 
-## 遗留（本机无数据库/运行环境，无法验证）
+## 遗留（部分已验证）
 
-- `forRoutes("{*splat}")` 在 NodeAdapter 下的通配匹配行为、`req.params` 在 middleware 阶段是否填充，需运行时确认（有 `req.path` 正则兜底，最坏情况路径解析仍工作）
-- health 端点与 guard 行为需在有数据库的环境补测
+- ~~health 端点与 guard 行为需在有数据库的环境补测~~ **已验证**：health 200、启动无授权告警、e2e 覆盖 401 / 登录 / 租户端点，见 `07-auth-login.md`
+- `req.params.tenantId` 在 middleware 阶段是否填充仍未单独断言：membership 成功说明解析链路可用，但无法区分走 params 还是 `req.path` 正则兜底
+- `forRoutes("{*splat}")` 在 NodeAdapter 下的通配匹配行为仍待覆盖（现有 e2e 只走具体路径）
 - 未来加 e2e 测试时，`createNestApplication(new NodeAdapter())`，否则测试会用 Express adapter

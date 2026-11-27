@@ -9,6 +9,7 @@
 | PostgreSQL（业务库 `app`，含认证状态表） | `localhost:54732` | `app` | `app_dev_pwd` |
 | Redis（限流共享存储） | `localhost:46379` | - | `app_redis_pwd` |
 | Penpot（设计工具） | `http://localhost:9001` | `dev@penpot.local` | `penpot_dev_pwd_2026` |
+| 应用登录（seed 用户） | `POST http://localhost:47100/api/auth/sign-in` | `admin@example.com` | `seed_pwd_2026` |
 
 > Penpot 账号由官方 CLI 创建：`docker exec starter-penpot-backend python3 manage.py create-profile -n "Dev User" -e dev@penpot.local -p penpot_dev_pwd_2026 --skip-tutorial --skip-walkthrough`。本地 compose 带 `disable-email-verification`，不需要验证邮件。
 
@@ -20,6 +21,7 @@
 2. `docker compose up -d`（PostgreSQL + pgvector + Redis + Penpot 全套）
 3. `pnpm --filter @starter/server prisma:generate`、`db:deploy`（按迁移文件建表）、`db:seed`（默认租户/角色/权限/套餐）
 4. `pnpm dev:server` / `pnpm dev:admin` 启动
+5. `pnpm --filter @starter/server test:e2e`（服务在跑时验证登录与租户边界；seed 密码可用 `SEED_USER_PASSWORD` 覆盖）
 
 > **改了 `.env`（尤其 JWT_SECRET）必须重启服务**——env 在进程启动时读取，nest watch 只监听 TS 文件变化，不会因 .env 改动重启。
 

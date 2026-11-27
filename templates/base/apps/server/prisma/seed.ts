@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { PasswordHasher } from "@nestjs/authentication";
 import { resolve } from "node:path";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { DEFAULT_TENANT_ID } from "../../../packages/shared/src/index";
@@ -113,10 +114,21 @@ async function main() {
   }
 
   // 示例用户（全局身份）+ 默认租户成员关系 + admin 角色 + 平台管理员
+  // 密码可用 SEED_USER_PASSWORD 覆盖；开发环境默认值记入 docs/guides/credentials.md。
+  // 已有用户不覆盖凭据（seed 幂等 ≠ 回滚密码），也不重复跑昂贵的 scrypt。
+  const existing = await prisma.user.findUnique({
+    where: { email: SEED_USER.email },
+    select: { passwordHash: true },
+  });
+  const passwordHash =
+    existing?.passwordHash ??
+    (await new PasswordHasher().hash(
+      process.env.SEED_USER_PASSWORD ?? "seed_pwd_2026",
+    ));
   const user = await prisma.user.upsert({
     where: { email: SEED_USER.email },
     update: { displayName: SEED_USER.displayName },
-    create: SEED_USER,
+    create: { ...SEED_USER, passwordHash },
   });
 
   await prisma.userTenant.upsert({

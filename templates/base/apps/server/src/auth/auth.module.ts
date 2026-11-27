@@ -1,20 +1,29 @@
 import { Module } from "@nestjs/common";
-import {
-  AuthenticationModule,
-} from "@nestjs/authentication";
+import { AuthenticationModule } from "@nestjs/authentication";
 import { AuthorizationModule } from "@nestjs/authorization";
 import { JwtAuth } from "./jwt-auth.provider";
 import { UsersRepository } from "./users.repository";
 import { TenantMembershipGuard } from "./tenant-membership.guard";
+import { AuthController } from "./auth.controller";
+import { CredentialsService } from "./credentials.service";
+
+// 生产漏配密钥不能静默使用公开默认值（否则任何人都能自行签发 token）
+const jwtSecret = process.env.JWT_SECRET;
+if (process.env.NODE_ENV === "production" && !jwtSecret) {
+  throw new Error("JWT_SECRET is required in production");
+}
 
 /**
  * 认证（@nestjs/authentication）+ 授权（@nestjs/authorization）官方模块。
  *
- * 当前是最小闭环：Bearer JWT 凭证 provider + 全局 guard（除 @Public() 路由）。
- * health 用 @Public() 豁免；其余路由需要登录。
+ * Bearer JWT 凭证 provider + 全局 guard（除 @Public() 路由）。
+ * health 与 sign-in 用 @Public() 豁免；其余路由需要登录。
+ *
+ * refreshToken: false —— 只签短期 access token，不写 refreshTokens store。
+ * 客户端是 CLI / 前端 Bearer token，不需要 refresh token；生产也不必为此注册 store。
  *
  * 生产上线前按官网文档补齐（见 docs/guides/pitfalls.md #16 与 README TODO）：
- *   1. 注册 6 个 store（sessions / refreshTokens / mfa / magicLinks / oidcStates / emailTokens）
+ *   1. 注册实际用到的 store（sessions / mfa / magicLinks / oidcStates / emailTokens）
  *      到同一个 PostgreSQL（写 Prisma store，跑官方 contract tests）
  *   2. Google OIDC：oidc.providers 加 google() + 环境变量 GOOGLE_CLIENT_ID/SECRET
  *   3. TOTP 2FA / magic link / 密码重置：按官网对应章节配置
@@ -25,16 +34,24 @@ import { TenantMembershipGuard } from "./tenant-membership.guard";
   imports: [
     AuthenticationModule.forRoot({
       accessToken: {
-        key: process.env.JWT_SECRET ?? "dev_jwt_secret_change_me_at_least_32_bytes",
+        key: jwtSecret ?? "dev_jwt_secret_change_me_at_least_32_bytes",
         issuer: "starter-api",
         audience: "starter-web",
         ttl: "15m",
       },
-      allowInMemoryStorage: true, // 仅开发；生产注册 store 后去掉
+      refreshToken: false,
+      allowInMemoryStorage: true, // 仅开发；生产注册实际用到的 store 后去掉
     }),
     AuthorizationModule.forRoot(),
   ],
-  providers: [UsersRepository, JwtAuth, TenantMembershipGuard],
-  exports: [UsersRepository, TenantMembershipGuard],
+  controllers: [AuthController],
+  // PasswordHasher 由 AuthenticationModule 导出，复用它的实例（不要在此重复注册）
+  providers: [
+    UsersRepository,
+    JwtAuth,
+    TenantMembershipGuard,
+    CredentialsService,
+  ],
+  exports: [UsersRepository, TenantMembershipGuard, CredentialsService],
 })
 export class AuthModule {}

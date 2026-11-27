@@ -17,6 +17,7 @@ const envPath = findEnv();
 if (envPath) config({ path: envPath });
 
 import "reflect-metadata";
+import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { NestNodeApplication, NodeAdapter } from "@nestjs/platform-node";
 import { AppModule } from "./app.module";
@@ -30,6 +31,8 @@ const bootstrap = async () => {
   // req/res 带 Express 风格 helpers，现有 middleware 写法不变
   const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
   app.setGlobalPrefix(API_PREFIX.replace(/^\//, ""));
+  // DTO 校验：白名单丢弃未声明字段，transform 把 body 转成 DTO 实例
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.listen(port);
 };
 

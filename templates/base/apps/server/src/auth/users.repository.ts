@@ -36,4 +36,50 @@ export class UsersRepository {
       },
     }) as Promise<User | null>;
   }
+
+  /** 当前用户所属的活跃租户，供租户切换器使用。UserTenant 是 UNSCOPED 授权关系表。 */
+  async findTenants(userId: string) {
+    const rows = await this.prisma.scoped.userTenant.findMany({
+      where: { userId, status: "active", tenant: { status: "active" } },
+      select: {
+        joinedAt: true,
+        tenant: { select: { id: true, name: true, slug: true } },
+      },
+      orderBy: { joinedAt: "asc" },
+    });
+
+    return rows.map((row) => ({
+      id: row.tenant.id,
+      name: row.tenant.name,
+      slug: row.tenant.slug,
+      joinedAt: row.joinedAt,
+    }));
+  }
+
+  /** 登录专用：取密码哈希。User 是 UNSCOPED 全局表，无租户上下文也能查。 */
+  async findCredentials(
+    email: string,
+  ): Promise<{ user: User; passwordHash: string | null } | null> {
+    const row = await this.prisma.scoped.user.findFirst({
+      where: { email, status: "active" },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        status: true,
+        passwordHash: true,
+      },
+    });
+    if (!row) return null;
+
+    return {
+      user: {
+        id: row.id,
+        email: row.email,
+        displayName: row.displayName,
+        status: row.status,
+      } as User,
+      passwordHash: row.passwordHash,
+    };
+  }
 }

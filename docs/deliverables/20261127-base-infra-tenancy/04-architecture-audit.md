@@ -21,7 +21,7 @@
 | A2 | **高 → 已修** | `$queryRaw` / `$executeRaw` 原本完全绕过 extension；现通过 `operation.toLowerCase().includes("raw")` 在 `scoped` 上直接抛错 |
 | A3 | 中 | 嵌套 `create`（如 `create: { roles: { create: [...] } }`）的关联写入不会被 extension 拦截，子表 tenantId 不会自动注入 |
 | A4 | 中 | `TenantMiddleware` 用正则从 `req.path` 提取 tenantId，guard 用 `req.params.tenantId`；异常 URL 下两者可能不一致（正常路径一致） |
-| A5 | 中 | 认证仍是最小闭环：无登录端点、无 password store，seed 用户没有密码哈希，无法登录——这意味着 guard 的 404/403 与租户切换**无法端到端验证** |
+| A5 | 中 → 已修 | 登录闭环已落地：`POST /api/auth/sign-in`（PasswordHasher + TokenService），seed 用户有 scrypt 哈希；e2e 验证 AC5/E1~E3 通过（见 `07-auth-login.md`）。AC1~AC4 仍需多租户测试数据 |
 | A6 | 低 | 无上下文时访问非 `/t/:tenantId` 的业务路由会抛 500（fail-closed 但报错不友好），应引导到 404 或明确提示 |
 
 ## 第三轮：可复用性 / 接入契约审查
@@ -38,7 +38,7 @@
 | ~~P0~~ | ~~修 A1/A2~~ **已完成**（scoped fail-closed 禁用，见 `src/prisma/README.md`） | 从「靠注释提醒」改为「运行时强制抛错」 |
 | P0 | 前端接口层加 tenantId 机制：`API_ROUTES` 提供 `tenantPath(tenantId, path)`，`createApiClient` 支持当前租户 | 前后端契约断裂，业务无法按约定接入 |
 | P1 | 租户生命周期 + 平台管理端点（创建租户、成员邀请/移除、角色分配、PlatformAdmin guard） | 多租户从「能隔离」到「能运营」 |
-| P1 | 登录闭环（password store + sign-in 端点），补 e2e 覆盖 AC1~AC4 | 否则所有 guard 行为都只是代码层推断 |
+| ~~P1~~ | ~~登录闭环（password store + sign-in 端点）~~ **已完成**（`07-auth-login.md`）；补 e2e 覆盖 AC1~AC4 仍待做 | 部分完成 |
 | P2 | 基建表与 feature 开关：AuditLog / Setting / Customer / Notification + CLI `--features` | 兑现「可复用基建」承诺 |
 | P2 | TenantPermission（module 分组）+ Role 继承 + ABAC scope 助手 | 兑现「租户内定义权限 + 数据级权限」决策 |
 
