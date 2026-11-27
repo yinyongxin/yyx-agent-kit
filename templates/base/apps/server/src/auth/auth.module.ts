@@ -3,7 +3,7 @@ import { AuthenticationModule } from "@nestjs/authentication";
 import { AuthorizationModule } from "@nestjs/authorization";
 import { JwtAuth } from "./jwt-auth.provider";
 import { UsersRepository } from "./users.repository";
-import { TenantMembershipGuard } from "./tenant-membership.guard";
+import { TenantMembershipGuard } from "./guards/tenant-membership.guard";
 import { AuthController } from "./auth.controller";
 import { CredentialsService } from "./credentials.service";
 

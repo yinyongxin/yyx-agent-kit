@@ -27,7 +27,17 @@ export const tenantPath = (tenantId: string, path: string): string =>
  */
 export const API_ROUTES = {
   health: "/health",
+  auth: "/auth",
+  authSignIn: "/sign-in",
+  me: "/me",
+  meTenants: "/tenants",
+  tenant: "/t/:tenantId",
+  tenantMembership: "/membership",
+  tenantRoles: "/roles",
 } as const;
+
+/** Nest 的 @Controller / @Get 路径不带前导斜杠，用它在 controller 里引用 API_ROUTES */
+export const asRoute = (path: string) => path.replace(/^\/+/, "");
 
 /** 内置角色 code（与后端 seed 一致） */
 export const ROLES = {

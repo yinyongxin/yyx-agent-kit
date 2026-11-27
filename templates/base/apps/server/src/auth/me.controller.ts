@@ -8,6 +8,7 @@ import {
 } from "@nestjs/swagger";
 import { CurrentUser } from "@nestjs/authentication";
 import { Can } from "@nestjs/authorization";
+import { API_ROUTES, asRoute } from "../../../../packages/shared/src/index";
 import { ErrorResponseDto } from "../dto/error-response.dto";
 import { TenantSummaryDto } from "./dto/tenant-summary.dto";
 import { UsersRepository } from "./users.repository";
@@ -15,7 +16,7 @@ import { UsersRepository } from "./users.repository";
 /** 当前登录用户自身的信息（不需要租户上下文，因此不挂 TenantMembershipGuard） */
 @ApiTags("me")
 @ApiBearerAuth()
-@Controller("me")
+@Controller(asRoute(API_ROUTES.me))
 export class MeController {
   constructor(private readonly users: UsersRepository) {}
 
@@ -23,7 +24,7 @@ export class MeController {
   @ApiOperation({ summary: "当前用户所属的租户列表" })
   @ApiOkResponse({ type: [TenantSummaryDto] })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
-  @Get("tenants")
+  @Get(asRoute(API_ROUTES.meTenants))
   @Can.Anyone()
   tenants(@CurrentUser("id") userId: string): Promise<TenantSummaryDto[]> {
     return this.users.findTenants(userId);

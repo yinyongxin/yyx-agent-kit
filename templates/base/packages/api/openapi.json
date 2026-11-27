@@ -63,6 +63,48 @@
         ]
       }
     },
+    "/api/auth/sign-in": {
+      "post": {
+        "operationId": "AuthController_signIn",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignInDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "邮箱密码登录，返回 Bearer access token（公开）",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/api/t/{tenantId}/membership": {
       "get": {
         "operationId": "TenantController_membership",
@@ -197,48 +239,6 @@
           "tenancy"
         ]
       }
-    },
-    "/api/auth/sign-in": {
-      "post": {
-        "operationId": "AuthController_signIn",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SignInDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SignInResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "邮箱密码登录，返回 Bearer access token（公开）",
-        "tags": [
-          "auth"
-        ]
-      }
     }
   },
   "info": {
@@ -316,6 +316,42 @@
           "message"
         ]
       },
+      "SignInDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@example.com",
+            "description": "登录邮箱"
+          },
+          "password": {
+            "type": "string",
+            "example": "********",
+            "description": "登录密码"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "SignInResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "Bearer access token"
+          },
+          "tokenType": {
+            "type": "string",
+            "example": "Bearer"
+          }
+        },
+        "required": [
+          "accessToken",
+          "tokenType"
+        ]
+      },
       "MembershipDto": {
         "type": "object",
         "properties": {
@@ -367,42 +403,6 @@
           "id",
           "code",
           "name"
-        ]
-      },
-      "SignInDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "admin@example.com",
-            "description": "登录邮箱"
-          },
-          "password": {
-            "type": "string",
-            "example": "********",
-            "description": "登录密码"
-          }
-        },
-        "required": [
-          "email",
-          "password"
-        ]
-      },
-      "SignInResponseDto": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "Bearer access token"
-          },
-          "tokenType": {
-            "type": "string",
-            "example": "Bearer"
-          }
-        },
-        "required": [
-          "accessToken",
-          "tokenType"
         ]
       }
     }

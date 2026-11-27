@@ -5,8 +5,8 @@ import {
   NestInterceptor,
 } from "@nestjs/common";
 import { lastValueFrom, of, type Observable } from "rxjs";
-import type { Prisma } from "../generated/prisma/client";
-import { PrismaService } from "../prisma/prisma.service";
+import type { Prisma } from "../../generated/prisma/client";
+import { PrismaService } from "../../prisma/prisma.service";
 
 /**
  * RLS S1：为 /t/:tenantId/... 请求开启交互式事务并设置 app.tenant_id。

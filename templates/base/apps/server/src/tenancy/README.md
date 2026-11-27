@@ -8,18 +8,20 @@
 
 | 文件 | 职责 |
 | --- | --- |
+| `tenancy.module.ts` | 模块装配：controller + service + interceptor |
 | `tenant.controller.ts` | 示例路由：`GET /t/:tenantId/membership`（成员信息）、`GET /t/:tenantId/roles`（租户表查询示例） |
-| `tenant-transaction.interceptor.ts` | 租户请求开事务并 `set_config('app.tenant_id', ..., true)`，把 tx 挂到 `req.tenantTx` |
-| `tenant-tx.decorator.ts` | `@TenantTx()` 参数装饰器，取当前请求的事务客户端 |
+| `tenancy.service.ts` | 租户表查询业务（角色列表），接收调用方的 tx |
+| `interceptors/` | `tenant-transaction.interceptor.ts`：开事务并 `set_config('app.tenant_id', ..., true)`，tx 挂到 `req.tenantTx` |
+| `decorators/` | `tenant-tx.decorator.ts`：`@TenantTx()` 取当前请求的事务客户端 |
 | `dto/` | `RoleDto` 等租户路由出参，详见该目录 README |
 
 ## 关联
 
-- `auth/tenant.middleware.ts`：从路由解析 tenantId，写入 `TenantContext`（AsyncLocalStorage）
-- `auth/tenant-membership.guard.ts`：校验用户是否属于该租户（非成员 404 / 角色不足 403）
-- `auth/membership.ts`：`@CurrentMembership()` / `@MinRole()` 装饰器
-- `prisma/prisma.service.ts`：按 tenantId 自动注入 `where` 的 extension（管资源，guard 管人）
-- `tenant-transaction.interceptor.ts`：租户请求开交互式事务并 `set_config('app.tenant_id', ..., true)`
+- `auth/middleware/tenant.middleware.ts`：从路由解析 tenantId，写入 `TenantContext`（AsyncLocalStorage）
+- `auth/guards/tenant-membership.guard.ts`：校验用户是否属于该租户（非成员 404 / 角色不足 403）
+- `auth/decorators/membership.decorator.ts`：`@CurrentMembership()` / `@MinRole()` 装饰器
+- `prisma/prisma.service.ts`：`scoped` 只用于全局表；租户表靠事务 + RLS
+- `interceptors/tenant-transaction.interceptor.ts`：租户请求开交互式事务并 `set_config('app.tenant_id', ..., true)`
 - `docs/deliverables/20261127-base-infra-rls/02-tech-design.md`：数据库层 RLS 兜底方案与实施记录
 
 ## 同步要求

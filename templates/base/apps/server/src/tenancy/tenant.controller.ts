@@ -15,15 +15,17 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
+import { API_ROUTES, asRoute } from "../../../../packages/shared/src/index";
 import type { Prisma } from "../generated/prisma/client";
-import { CurrentMembership, type Membership } from "../auth/membership";
-import { TenantMembershipGuard } from "../auth/tenant-membership.guard";
+import { CurrentMembership } from "../auth/decorators/membership.decorator";
+import type { Membership } from "../auth/membership.types";
+import { TenantMembershipGuard } from "../auth/guards/tenant-membership.guard";
 import { MembershipDto } from "../auth/dto/membership.dto";
 import { ErrorResponseDto } from "../dto/error-response.dto";
 import { RoleDto } from "./dto/role.dto";
 import { TenancyService } from "./tenancy.service";
-import { TenantTransactionInterceptor } from "./tenant-transaction.interceptor";
-import { TenantTx } from "./tenant-tx.decorator";
+import { TenantTransactionInterceptor } from "./interceptors/tenant-transaction.interceptor";
+import { TenantTx } from "./decorators/tenant-tx.decorator";
 
 /**
  * 租户上下文示例路由。
@@ -37,14 +39,14 @@ import { TenantTx } from "./tenant-tx.decorator";
 @ApiNotFoundResponse({ type: ErrorResponseDto })
 @UseGuards(TenantMembershipGuard)
 @UseInterceptors(TenantTransactionInterceptor)
-@Controller("t/:tenantId")
+@Controller(asRoute(API_ROUTES.tenant))
 export class TenantController {
   constructor(private readonly tenancy: TenancyService) {}
 
   /** 读当前用户在当前租户下的成员信息，也可作为前端判断角色的接口 */
   @ApiOperation({ summary: "当前用户在该租户下的成员信息" })
   @ApiOkResponse({ type: MembershipDto })
-  @Get("membership")
+  @Get(asRoute(API_ROUTES.tenantMembership))
   @Can.Anyone()
   membership(
     @CurrentMembership() membership: Membership,
@@ -59,7 +61,7 @@ export class TenantController {
    */
   @ApiOperation({ summary: "当前租户的角色列表（租户表查询示例）" })
   @ApiOkResponse({ type: [RoleDto] })
-  @Get("roles")
+  @Get(asRoute(API_ROUTES.tenantRoles))
   @Can.Anyone()
   roles(
     @TenantTx() tx: Prisma.TransactionClient,

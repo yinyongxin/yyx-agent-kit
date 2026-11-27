@@ -36,11 +36,18 @@ const bootstrap = async () => {
   // DTO 校验：白名单丢弃未声明字段，transform 把 body 转成 DTO 实例
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-  // Swagger UI 与 OpenAPI JSON（生成前端客户端的契约源）
-  const document = buildOpenApiDocument(app);
-  SwaggerModule.setup("api/docs", app, document, {
-    jsonDocumentUrl: "api/docs-json",
-  });
+  // Swagger UI 与 OpenAPI JSON（生成前端客户端的契约源）。
+  // 默认开发开、生产关；生产确实需要时用 SWAGGER_ENABLED=true 显式开启。
+  const swaggerEnabled =
+    process.env.SWAGGER_ENABLED === "true" ||
+    (process.env.SWAGGER_ENABLED !== "false" &&
+      process.env.NODE_ENV !== "production");
+  if (swaggerEnabled) {
+    const document = buildOpenApiDocument(app);
+    SwaggerModule.setup("api/docs", app, document, {
+      jsonDocumentUrl: "api/docs-json",
+    });
+  }
 
   await app.listen(port);
 };

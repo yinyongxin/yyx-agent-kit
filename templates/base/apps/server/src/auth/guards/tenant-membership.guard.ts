@@ -6,8 +6,9 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { PrismaService } from "../prisma/prisma.service";
-import { MinRole, ROLE_RANK, type Membership } from "./membership";
+import { PrismaService } from "../../prisma/prisma.service";
+import { ROLE_RANK, type Membership } from "../membership.types";
+import { MinRole } from "../decorators/membership.decorator";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

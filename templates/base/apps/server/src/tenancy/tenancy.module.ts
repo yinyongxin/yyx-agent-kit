@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TenantController } from "./tenant.controller";
 import { TenancyService } from "./tenancy.service";
-import { TenantTransactionInterceptor } from "./tenant-transaction.interceptor";
+import { TenantTransactionInterceptor } from "./interceptors/tenant-transaction.interceptor";
 
 @Module({
   controllers: [TenantController],

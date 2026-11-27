@@ -3,7 +3,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { PrismaModule } from "./prisma/prisma.module";
 import { AuthModule } from "./auth/auth.module";
-import { TenantMiddleware } from "./auth/tenant.middleware";
+import { TenantMiddleware } from "./auth/middleware/tenant.middleware";
 import { MeController } from "./auth/me.controller";
 import { TenancyModule } from "./tenancy/tenancy.module";
 

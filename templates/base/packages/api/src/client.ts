@@ -73,6 +73,12 @@ export const createApiClient = (options: ApiClientOptions = {}): ApiClient => {
     // health 是 @Public() 探活接口，不带租户前缀、也不需要 token
     health: () => request<HealthResponse>(API_ROUTES.health, undefined, false),
     // me 下的接口从 @CurrentUser() 取用户身份，不走 tenant guard，因此不加前缀
-    myTenants: () => request<TenantSummary[]>("/me/tenants", undefined, false),
+    // API_ROUTES 是 controller 片段，路径在这里拼接成完整路径
+    myTenants: () =>
+      request<TenantSummary[]>(
+        `${API_ROUTES.me}${API_ROUTES.meTenants}`,
+        undefined,
+        false,
+      ),
   };
 };

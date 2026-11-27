@@ -15,9 +15,10 @@
 | `jwt-auth.provider.ts` | Bearer JWT 凭证 provider，按 sub 加载用户 |
 | `me.controller.ts` | `GET /me/tenants`，返回当前用户所属租户 |
 | `dto/` | `SignInDto` / `SignInResponseDto` / `TenantSummaryDto` / `MembershipDto`，详见该目录 README |
-| `tenant.middleware.ts` | 从 `/t/:tenantId` 解析租户并写 `TenantContext`（不做校验） |
-| `tenant-membership.guard.ts` | 校验用户属于该租户（非成员 404 / 角色不足 403） |
-| `membership.ts` | `@CurrentMembership()` / `@MinRole()` 装饰器 |
+| `middleware/` | `tenant.middleware.ts`：从 `/t/:tenantId` 解析租户并写 `TenantContext`（不做校验） |
+| `guards/` | `tenant-membership.guard.ts`：校验用户属于该租户（非成员 404 / 角色不足 403） |
+| `decorators/` | `membership.decorator.ts`：`@CurrentMembership()` / `@MinRole()` |
+| `membership.types.ts` | `Membership` 类型与 `ROLE_RANK` 等级表 |
 | `tenant-context.util.ts` | AsyncLocalStorage 租户上下文，fail-closed |
 | `user.types.ts` | 对外用户类型（不含 passwordHash） |
 

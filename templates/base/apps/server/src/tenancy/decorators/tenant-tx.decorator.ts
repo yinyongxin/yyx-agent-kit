@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import type { Prisma } from "../generated/prisma/client";
+import type { Prisma } from "../../generated/prisma/client";
 
 /**
  * 取当前请求的租户事务客户端（TenantTransactionInterceptor 已设置 app.tenant_id）。
