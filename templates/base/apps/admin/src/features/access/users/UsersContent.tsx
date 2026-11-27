@@ -177,10 +177,10 @@ export const UsersContent = () => {
   return (
     <Stack gap="md" pb={table.selected.size > 0 ? 80 : 0}>
       <DataTableProvider table={table}>
+        <DataTableFilterBar />
         <DataTableToolbar>
           <Button leftSection={<IconPlus size={16} />}>{labels.create}</Button>
         </DataTableToolbar>
-        <DataTableFilterBar />
         <DataTableContent>
           <Box visibleFrom="sm">
             <DataTableTable />
