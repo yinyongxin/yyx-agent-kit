@@ -1,19 +1,5 @@
-import {
-  ActionIcon,
-  Alert,
-  Badge,
-  Button,
-  Group,
-  Modal,
-  Pagination,
-  Select,
-  Stack,
-  Table,
-  Text,
-  TextInput,
-  Tooltip,
-} from "@mantine/core";
 import { IconEdit, IconPlus, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { ActionIcon, Badge, Button, Group, Loader, Modal, Select, Stack, TextInput, Tooltip } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 import {
   tenantsControllerCreate,
@@ -22,28 +8,77 @@ import {
   tenantsControllerUpdate,
   type TenantResponseDto,
 } from "@starter/api/generated";
+import {
+  DataTableCardList,
+  DataTableContent,
+  DataTableFilterBar,
+  DataTablePagination,
+  DataTableProvider,
+  DataTableTable,
+  DataTableToolbar,
+  dataTableLabels,
+  paginationLabels as pageLabels,
+  selectField,
+  useDataTable,
+  type ColumnDef,
+  type DataTableLabels,
+} from "@/components/DataTable";
 
-const PAGE_SIZE = 10;
-type TenantStatus = "active" | "suspended";
+type TenantRow = {
+  id: string;
+  name: string;
+  slug: string;
+  status: "active" | "suspended";
+  createdAt: string;
+};
+
+type TenantForm = { name: string; slug: string; status: TenantRow["status"] };
+
+const PAGE_SIZE = 100; // 拉全量，前端分页；租户量过大时应改用服务端分页
 
 const STATUS_OPTIONS = [
   { value: "active", label: "正常" },
   { value: "suspended", label: "已停用" },
 ];
 
-type TenantForm = { name: string; slug: string; status: TenantStatus };
+const toRow = (tenant: TenantResponseDto): TenantRow => ({
+  id: tenant.id,
+  name: tenant.name,
+  slug: tenant.slug,
+  status: tenant.status as TenantRow["status"],
+  createdAt: new Date(tenant.createdAt).toLocaleString(),
+});
+
+const labels: DataTableLabels = {
+  ...dataTableLabels,
+  searchPlaceholder: "搜索租户 name / slug…",
+  search: "搜索",
+  moreFilters: "更多筛选",
+  applyFilters: "应用筛选",
+  cancelFilters: "取消",
+  clearFilter: (label) => `清除${label}筛选`,
+  emptyTitle: "暂无租户",
+  emptyDescription: "创建第一个租户后即可在此管理。",
+  create: "新建租户",
+  confirmDelete: (n) => `确定删除选中的 ${n} 个租户？有成员/订阅时会被拒绝。`,
+};
+
+const filterFields = [
+  selectField({
+    key: "status",
+    label: "状态",
+    allLabel: "全部",
+    options: STATUS_OPTIONS,
+  }),
+];
 
 export const TenantsContent = () => {
-  const [items, setItems] = useState<TenantResponseDto[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [keyword, setKeyword] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [rows, setRows] = useState<TenantRow[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [creating, setCreating] = useState(false);
-  const [editing, setEditing] = useState<TenantResponseDto | null>(null);
+  const [editing, setEditing] = useState<TenantRow | null>(null);
   const [form, setForm] = useState<TenantForm>({ name: "", slug: "", status: "active" });
   const [saving, setSaving] = useState(false);
 
@@ -51,26 +86,26 @@ export const TenantsContent = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await tenantsControllerList({
-        query: {
-          page,
-          pageSize: PAGE_SIZE,
-          ...(status ? { status: status as TenantStatus } : {}),
-          ...(keyword ? { keyword } : {}),
-        },
-      });
-      if (res.error) {
-        setError("加载租户失败");
-        return;
+      const all: TenantRow[] = [];
+      for (let page = 1; page <= 50; page += 1) {
+        const res = await tenantsControllerList({
+          query: { page, pageSize: PAGE_SIZE },
+        });
+        if (res.error) {
+          setError("加载租户失败");
+          break;
+        }
+        const items = res.data?.items ?? [];
+        all.push(...items.map(toRow));
+        if (all.length >= (res.data?.total ?? 0) || items.length === 0) break;
       }
-      setItems(res.data?.items ?? []);
-      setTotal(res.data?.total ?? 0);
+      setRows(all);
     } catch (err) {
       setError(err instanceof Error ? err.message : "加载失败");
     } finally {
       setLoading(false);
     }
-  }, [page, status, keyword]);
+  }, []);
 
   useEffect(() => {
     void load();
@@ -82,13 +117,9 @@ export const TenantsContent = () => {
     setEditing(null);
   };
 
-  const openEdit = (tenant: TenantResponseDto) => {
-    setForm({
-      name: tenant.name,
-      slug: tenant.slug,
-      status: tenant.status as TenantStatus,
-    });
-    setEditing(tenant);
+  const openEdit = (row: TenantRow) => {
+    setForm({ name: row.name, slug: row.slug, status: row.status });
+    setEditing(row);
     setCreating(false);
   };
 
@@ -128,13 +159,13 @@ export const TenantsContent = () => {
     }
   };
 
-  const remove = async (tenant: TenantResponseDto) => {
-    if (!window.confirm(`确认删除租户「${tenant.name}」？有成员/订阅时会被拒绝。`)) {
+  const remove = async (row: TenantRow) => {
+    if (!window.confirm(`确认删除租户「${row.name}」？有成员/订阅时会被拒绝。`)) {
       return;
     }
     setError(null);
     try {
-      const res = await tenantsControllerRemove({ path: { id: tenant.id } });
+      const res = await tenantsControllerRemove({ path: { id: row.id } });
       if (res.error) {
         setError("删除失败：租户仍有成员或订阅");
         return;
@@ -145,107 +176,86 @@ export const TenantsContent = () => {
     }
   };
 
+  const columns: ColumnDef<TenantRow>[] = [
+    { key: "name", title: "名称", width: 200, sortable: true },
+    { key: "slug", title: "slug", width: 200, sortable: true },
+    {
+      key: "status",
+      title: "状态",
+      width: 100,
+      sortable: true,
+      render: (row) => (
+        <Badge color={row.status === "active" ? "green" : "gray"} variant="light">
+          {row.status === "active" ? "正常" : "已停用"}
+        </Badge>
+      ),
+    },
+    { key: "createdAt", title: "创建时间", width: 180, sortable: true },
+    {
+      key: "id",
+      title: "操作",
+      width: 110,
+      render: (row) => (
+        <Group gap={4} wrap="nowrap">
+          <Tooltip label="编辑">
+            <ActionIcon variant="subtle" onClick={() => openEdit(row)}>
+              <IconEdit size={16} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="删除">
+            <ActionIcon variant="subtle" color="red" onClick={() => void remove(row)}>
+              <IconTrash size={16} />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+      ),
+    },
+  ];
+
+  const table = useDataTable<TenantRow>({
+    data: rows,
+    getRowKey: (row) => row.id,
+    keywordFields: ["name", "slug"],
+    columns,
+    filterFields,
+    labels,
+    paginationLabels: pageLabels,
+    initialFilters: { status: null },
+    state: loading ? "loading" : "success",
+  });
+
   return (
     <Stack gap="md">
-      <Group justify="space-between">
-        <Group>
-          <TextInput
-            placeholder="搜索 name / slug"
-            value={keyword}
-            onChange={(e) => {
-              setKeyword(e.currentTarget.value);
-              setPage(1);
-            }}
-          />
-          <Select
-            placeholder="状态"
-            clearable
-            data={STATUS_OPTIONS}
-            value={status}
-            onChange={(value) => {
-              setStatus(value);
-              setPage(1);
-            }}
-          />
-          <Button
-            variant="light"
-            leftSection={<IconRefresh size={16} />}
-            onClick={() => void load()}
-            loading={loading}
-          >
-            刷新
-          </Button>
+      {error && <div style={{ color: "var(--mantine-color-red-6)" }}>{error}</div>}
+
+      {loading && rows.length === 0 ? (
+        <Group justify="center" py="xl">
+          <Loader />
         </Group>
-        <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
-          新建租户
-        </Button>
-      </Group>
-
-      {error && <Alert color="red">{error}</Alert>}
-
-      <Table highlightOnHover>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>名称</Table.Th>
-            <Table.Th>slug</Table.Th>
-            <Table.Th>状态</Table.Th>
-            <Table.Th>创建时间</Table.Th>
-            <Table.Th>操作</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {items.map((tenant) => (
-            <Table.Tr key={tenant.id}>
-              <Table.Td>{tenant.name}</Table.Td>
-              <Table.Td>{tenant.slug}</Table.Td>
-              <Table.Td>
-                <Badge color={tenant.status === "active" ? "green" : "gray"}>
-                  {tenant.status === "active" ? "正常" : "已停用"}
-                </Badge>
-              </Table.Td>
-              <Table.Td>{new Date(tenant.createdAt).toLocaleString()}</Table.Td>
-              <Table.Td>
-                <Group gap="xs">
-                  <Tooltip label="编辑">
-                    <ActionIcon variant="subtle" onClick={() => openEdit(tenant)}>
-                      <IconEdit size={16} />
-                    </ActionIcon>
-                  </Tooltip>
-                  <Tooltip label="删除">
-                    <ActionIcon
-                      variant="subtle"
-                      color="red"
-                      onClick={() => void remove(tenant)}
-                    >
-                      <IconTrash size={16} />
-                    </ActionIcon>
-                  </Tooltip>
-                </Group>
-              </Table.Td>
-            </Table.Tr>
-          ))}
-          {items.length === 0 && !loading && (
-            <Table.Tr>
-              <Table.Td colSpan={5}>
-                <Text c="dimmed" ta="center">
-                  暂无租户
-                </Text>
-              </Table.Td>
-            </Table.Tr>
-          )}
-        </Table.Tbody>
-      </Table>
-
-      <Group justify="space-between">
-        <Text size="sm" c="dimmed">
-          共 {total} 个租户
-        </Text>
-        <Pagination
-          value={page}
-          onChange={setPage}
-          total={Math.max(1, Math.ceil(total / PAGE_SIZE))}
-        />
-      </Group>
+      ) : (
+        <DataTableProvider table={table}>
+          <DataTableFilterBar />
+          <DataTableToolbar>
+            <Group gap="xs">
+              <Button
+                variant="light"
+                leftSection={<IconRefresh size={16} />}
+                onClick={() => void load()}
+              >
+                刷新
+              </Button>
+              <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+                {labels.create}
+              </Button>
+            </Group>
+          </DataTableToolbar>
+          <DataTableContent>
+            <DataTableTable />
+            <DataTableCardList />
+          </DataTableContent>
+          <DataTablePagination />
+        </DataTableProvider>
+      )}
 
       <Modal
         opened={creating || Boolean(editing)}
@@ -271,7 +281,7 @@ export const TenantsContent = () => {
               data={STATUS_OPTIONS}
               value={form.status}
               onChange={(value) =>
-                setForm({ ...form, status: (value as TenantStatus) ?? "active" })
+                setForm({ ...form, status: (value as TenantRow["status"]) ?? "active" })
               }
             />
           )}
