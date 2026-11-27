@@ -58,6 +58,8 @@ apps/server/
 - **一个业务领域一个模块目录**，目录名用复数 kebab-case（`users/`、`audit-logs/`）。存量 `auth/`、`tenancy/` 为单数，保留不改。
 - **一个模块可以有多个 controller**，按路由前缀/资源划分（Nest 一个 controller 只能绑一个 `@Controller()` 前缀）。例如 `auth/` 下：`auth.controller.ts` 管 `/auth/*`（登录动作），`me.controller.ts` 管 `/me/*`（当前用户资源）。不要为了「一模块一 controller」把不同前缀硬塞进同一个类。
 - `/me/*` 属于「当前用户」资源：暂放 `auth/`（与身份强相关）；出现独立 `users/` 模块后，迁到 `users/me.controller.ts`。
+- **类型/工具文件**：少量（≤3 个）时用 `*.types.ts` / `*.util.ts` 放模块根；同类文件超过 3 个、或需要跨模块复用时，再建 `types/` / `utils/`。不要为 1–2 个文件提前建目录。
+- **已定义的构件目录**（`dto/`、`repositories/`、`providers/`、`guards/`、`middleware/`、`decorators/`、`interceptors/`）只要有 1 个文件就按目录放置，与上面的「阈值」规则不同。
 - **每个目录必须有 `README.md`**（职责 / 文件索引 / 关联 / 同步要求）。
 - `src/generated/`（Prisma Client）是生成物，禁止手改、不提交。
 - `dist/` 是构建产物，不提交。

@@ -11,7 +11,7 @@ import { Can } from "@nestjs/authorization";
 import { API_ROUTES, asRoute } from "../../../../packages/shared/src/index";
 import { ErrorResponseDto } from "../dto/error-response.dto";
 import { TenantSummaryDto } from "./dto/tenant-summary.dto";
-import { UsersRepository } from "./users.repository";
+import { UsersRepository } from "./repositories/users.repository";
 
 /** 当前登录用户自身的信息（不需要租户上下文，因此不挂 TenantMembershipGuard） */
 @ApiTags("me")

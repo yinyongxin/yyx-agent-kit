@@ -11,8 +11,8 @@
 | `auth.module.ts` | 装配官方模块；JWT 签发参数、`refreshToken: false`、生产密钥校验 |
 | `auth.controller.ts` | `POST /auth/sign-in`（`@Public()`），只做 DTO 校验与转发 |
 | `credentials.service.ts` | 验密（`PasswordHasher.verify`）+ 签发（`TokenService.issue`） |
-| `users.repository.ts` | 全局身份查询、租户列表、登录凭据读取（密码哈希不出本层） |
-| `jwt-auth.provider.ts` | Bearer JWT 凭证 provider，按 sub 加载用户 |
+| `repositories/` | `users.repository.ts`：全局身份查询、租户列表、登录凭据读取（密码哈希不出本层） |
+| `providers/` | `jwt-auth.provider.ts`：Bearer JWT 凭证 provider，按 sub 加载用户 |
 | `me.controller.ts` | `GET /me/tenants`，返回当前用户所属租户 |
 | `dto/` | `SignInDto` / `SignInResponseDto` / `TenantSummaryDto` / `MembershipDto`，详见该目录 README |
 | `middleware/` | `tenant.middleware.ts`：从 `/t/:tenantId` 解析租户并写 `TenantContext`（不做校验） |

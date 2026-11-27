@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PasswordHasher, TokenService } from "@nestjs/authentication";
-import { UsersRepository } from "./users.repository";
+import { UsersRepository } from "./repositories/users.repository";
 
 /**
  * 登录闭环的业务逻辑：验证邮箱+密码，签发 access token。
