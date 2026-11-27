@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDataTableApi } from "./DataTable";
 import type { DataTableApi } from "./useDataTable";
 import type { FilterField, FilterValues, FilterValue } from "./types";
@@ -48,6 +48,14 @@ export const DataTableFilterBar = <TRow,>({ table: propTable }: DataTableFilterB
     labels,
     filterFields,
   } = useDataTableApi<TRow>(propTable);
+
+  // 搜索改为提交式：输入只改草稿，点「搜索」/回车才提交并刷新
+  const [searchDraft, setSearchDraft] = useState(keyword);
+  useEffect(() => setSearchDraft(keyword), [keyword]);
+  const runSearch = () => {
+    if (searchDraft !== keyword) setKeyword(searchDraft);
+    else submitSearch();
+  };
 
   const [opened, { open, close }] = useDisclosure(false);
   const [draft, setDraft] = useState<FilterValues>({});
@@ -116,9 +124,9 @@ export const DataTableFilterBar = <TRow,>({ table: propTable }: DataTableFilterB
           <TextInput
             placeholder={labels.searchPlaceholder}
             leftSection={<IconSearch size={16} />}
-            value={keyword}
-            onChange={(event) => setKeyword(event.currentTarget.value)}
-            onKeyDown={(event) => event.key === "Enter" && submitSearch()}
+            value={searchDraft}
+            onChange={(event) => setSearchDraft(event.currentTarget.value)}
+            onKeyDown={(event) => event.key === "Enter" && runSearch()}
             style={{ flex: "1 1 200px", minWidth: 160 }}
             aria-label={labels.searchPlaceholder}
           />
@@ -173,7 +181,7 @@ export const DataTableFilterBar = <TRow,>({ table: propTable }: DataTableFilterB
           <Button variant="default" leftSection={<IconRotate size={16} />} onClick={resetFilters}>
             {labels.reset}
           </Button>
-          <Button leftSection={<IconSearch size={16} />} onClick={submitSearch}>
+          <Button leftSection={<IconSearch size={16} />} onClick={runSearch}>
             {labels.search}
           </Button>
         </Group>

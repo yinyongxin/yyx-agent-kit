@@ -95,6 +95,8 @@ export interface UseDataTableResult<TRow> {
   reload: () => void;
   /** 服务端模式下由业务设置数据 */
   setData: (data: TRow[]) => void;
+  /** 服务端模式：回填真实总数（分页页数以它为准；不传则用当前页行数） */
+  setTotal: (total: number | null) => void;
   /** 抽屉提交后统一更新列表（按策略精准替换/插入或刷新） */
   applyMutation: (result: MutationResult<TRow>) => void;
   errorMessage: string | null;
@@ -144,6 +146,7 @@ export const useDataTable = <TRow>({
   const [selected, setSelected] = useState<Set<RowKey>>(() => new Set());
   const [loading, setLoadingState] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [serverTotal, setServerTotal] = useState<number | null>(null);
   // 手动触发拉取的计数器：条件未变时也能强制 reload
   const [reloadNonce, setReloadNonce] = useState(0);
 
@@ -230,7 +233,7 @@ export const useDataTable = <TRow>({
     return sortKey ? sortRows(filtered, sortKey, sortDirection) : filtered;
   }, [serverMode, data, keyword, keywordFields, filters, sortKey, sortDirection]);
 
-  const total = allRows.length;
+  const total = serverMode ? (serverTotal ?? data.length) : allRows.length;
   const pages = derivePages(total, pageSize);
   const safePage = Math.min(page, pages);
   const rows = useMemo(
@@ -367,6 +370,7 @@ export const useDataTable = <TRow>({
       setError,
       reload,
       setData,
+      setTotal: setServerTotal,
       applyMutation,
       errorMessage,
       columns,
