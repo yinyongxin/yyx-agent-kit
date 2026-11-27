@@ -6,9 +6,10 @@ import { AuthModule } from "./auth/auth.module";
 import { TenantMiddleware } from "./auth/middleware/tenant.middleware";
 import { MeController } from "./auth/me.controller";
 import { TenancyModule } from "./tenancy/tenancy.module";
+import { TenantsModule } from "./tenants/tenants.module";
 
 @Module({
-  imports: [PrismaModule, AuthModule, TenancyModule],
+  imports: [PrismaModule, AuthModule, TenancyModule, TenantsModule],
   controllers: [AppController, MeController],
   providers: [AppService],
 })

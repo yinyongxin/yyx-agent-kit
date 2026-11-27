@@ -107,7 +107,10 @@ apps/server/
 
 - 统一前缀 `/api`（`API_PREFIX`，来自 `@starter/shared`）。
 - 资源用**复数 + kebab-case**：`/api/users`、`/api/audit-logs`。
-- 租户资源必须带租户前缀：`/api/t/:tenantId/users`；controller 写 `@Controller("t/:tenantId/users")`。
+- **资源分两级**：
+  - **平台级** `/api/tenants`、`/api/platform/*`：只允许 `PlatformAdminGuard`（平台管理员）。
+  - **租户级** `/api/t/:tenantId/...`：必须挂 `TenantMembershipGuard` + `TenantTransactionInterceptor`。
+  - 租户**本身**的 CRUD 属于平台级，不要写进 `/t/:tenantId/...`。
 - 非资源动作才用动词：`POST /api/auth/sign-in`、`POST /api/users/:id/disable`。
 - 关联资源用嵌套：`/api/users/:id/roles`。
 - **路由常量**：新增接口先在 `packages/shared` 的 `API_ROUTES` 加常量，controller 与 api 层引用，不要各写一份字符串。
@@ -129,6 +132,8 @@ apps/server/
 
 > DELETE 默认返回 200；要按上表返回 204，需显式 `@HttpCode(204)` + `@ApiNoContentResponse()`。
 
+> 删除有依赖的资源（如租户仍有成员/订阅）返回 **409**，不要级联删业务数据；停用用 `PATCH status`。
+
 ### 3.3 错误响应
 
 - 禁止在 Controller 里 `res.status().json()`；统一抛 `HttpException` 子类。
@@ -141,6 +146,17 @@ apps/server/
 - 响应：`{ items: T[], total: number, page: number, pageSize: number }`。
 - 筛选/排序字段必须白名单，禁止把 query 直接透传给 Prisma。
 - 排序参数：`sortBy` + `order`（`asc` / `desc`），字段映射到允许列。
+
+列表响应用具体类（不要泛型，运行时会被擦除）：
+
+```ts
+export class TenantListResponseDto {
+  @ApiProperty({ type: [TenantResponseDto] }) items!: TenantResponseDto[];
+  @ApiProperty() total!: number;
+  @ApiProperty() page!: number;
+  @ApiProperty() pageSize!: number;
+}
+```
 
 ### 3.5 认证与授权标注
 
@@ -280,5 +296,6 @@ export class UsersController {
 ## 7. 与当前代码的对应关系
 
 - `auth/` 已按本规范拆出 `dto/`；`guards/`、`middleware/`、`decorators/`、`providers/` 仍平铺在模块根，后续新增文件按本规范放置，存量文件可渐进迁移。
-- `tenancy/` 已有 `dto/`、`tenant-transaction.interceptor.ts`、`tenant-tx.decorator.ts`，作为租户路由模板。
+- `tenancy/` 已有 `dto/`、`interceptors/`、`decorators/`，作为租户路由模板。
+- `tenants/` 是**平台级租户 CRUD** 模板：`PlatformAdminGuard` + 分页/筛选 + slug 冲突 409 + 删除依赖检查 409。
 - 全局异常过滤器、响应包装拦截器尚未引入；需要时放 `common/filters/`、`common/interceptors/`，并在 `app.module.ts` 注册。

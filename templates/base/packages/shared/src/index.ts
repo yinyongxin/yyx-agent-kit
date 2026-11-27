@@ -31,6 +31,7 @@ export const API_ROUTES = {
   authSignIn: "/sign-in",
   me: "/me",
   meTenants: "/tenants",
+  tenants: "/tenants",
   tenant: "/t/:tenantId",
   tenantMembership: "/membership",
   tenantRoles: "/roles",
