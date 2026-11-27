@@ -20,6 +20,7 @@
 8. 文档：`apps/server/README.md`、`apps/server/src/config/README.md`、模板 `README.md`、`AGENTS.md`、`docs/guides/conventions.md`、`skills/standards/workspace/SKILL.md`。
 9. 后续调整：`pnpm penpot:mcp` 并入 `pnpm dev`（第 5 个进程），导航页新增「工具」分组，显示 Penpot MCP 状态（4401）与插件 manifest 链接。
 10. 视觉落地：按 Penpot 的 `Dark Glass 1440` 画板重写 `dev.page.ts`——深色玻璃拟态（CSS `backdrop-filter`）、KPI 行、半环仪表盘、服务明细表、事件流、快捷命令；数据全部实时计算，无演示数据。
+11. Bento 落地：按 Penpot 的 `Bento Grid 1440` 画板改为 Bento 布局，并实现三个可切换视图（概览 / 服务 / 工具，hash 深链）；服务视图含分组筛选，工具视图含 Penpot MCP（「打开 Penpot」跳 9001）。
 
 ## 遇到的问题
 

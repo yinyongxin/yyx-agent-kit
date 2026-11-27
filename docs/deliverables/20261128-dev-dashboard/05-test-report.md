@@ -53,3 +53,14 @@
 | 数据真实性 | 无演示数据：KPI/仪表盘/表格由探测结果计算，探测耗时为 fetch 往返时间 |
 | 响应式 | 1180px / 760px 断点与 `backdrop-filter` 回退规则已加（CSS 层） |
 | 截图 | `C:/Users/Administrator/AppData/Local/Temp/opencode/ego-devpage/dashboard-2.png`（全在线）、`dashboard-offline.png`（离线） |
+
+## 2026-11-28 Bento + 三视图验证
+
+| 项 | 结果 |
+| --- | --- |
+| 视图切换 | 概览 / 服务 / 工具 三个 tab 正常切换；hash 为 `#overview` / `#services` / `#tools`，深链打开对应视图 |
+| 概览 | Bento 混排；仪表盘 `9/9`、KPI `4/4 · 1/1 · 4/4`、事件、应用列表、服务表、命令/端口/策略 |
+| 服务 | 分组筛选：全部 9 行 → 点击「应用 4」变 4 行，激活态正确；表格含分组标签与启动命令 |
+| 工具 | MCP 卡显示 4401，按钮「打开 Penpot」指向 `http://localhost:9001` |
+| 轮询 | 切换视图不中断，仍每 5s 更新 |
+| 截图 | `bento-overview.png` / `bento-services.png` / `bento-tools.png`（同目录） |
