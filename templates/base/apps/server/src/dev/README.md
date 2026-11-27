@@ -29,11 +29,11 @@
 | 目标 | 方式 |
 | --- | --- |
 | server | 进程自身（能打开页面即在线） |
-| client / admin / portal / Penpot / Mailpit | HTTP 请求，拿到任意响应即在线 |
+| client / admin / portal / Penpot / Mailpit / Penpot MCP | HTTP 请求，拿到任意响应即在线 |
 | PostgreSQL | `SELECT 1`（Prisma，超时兜底） |
 | Redis | TCP 连接 |
 
-端口从配置推导，不写死：`client = server + 73`、`admin = +74`、`portal = +75`，依赖服务端口读 `POSTGRES_PORT` / `REDIS_PORT` / `PENPOT_*`。CLI 用 `--port-base` 生成的项目也正确。
+端口从配置推导，不写死：`client = server + 73`、`admin = +74`、`portal = +75`，依赖服务端口读 `POSTGRES_PORT` / `REDIS_PORT` / `PENPOT_*`，Penpot MCP 读 `PENPOT_MCP_PORT`（默认 4401）。CLI 用 `--port-base` 生成的项目也正确。
 
 ## 关联
 

@@ -25,6 +25,8 @@ Penpot 用独立的 PostgreSQL 15 容器（`starter-penpot-postgres`）和 Valke
 
 ## 本地 MCP（唯一模式，免 key）
 
+`pnpm dev` 已把它作为 `penpot` 进程一起启动（导航页「工具」分组可见）。只做后端/前端开发、不需要设计能力时可以不跑，单独启动方式：
+
 ```powershell
 pnpm penpot:mcp        # = npx -y @penpot/mcp@2.17.0
 ```
@@ -40,7 +42,7 @@ pnpm penpot:mcp        # = npx -y @penpot/mcp@2.17.0
 
 ### 接入步骤
 
-1. 先启动 MCP：`pnpm penpot:mcp`（保持这个终端开着）
+1. 启动 MCP：`pnpm dev` 已包含；单独跑用 `pnpm penpot:mcp`（保持终端开着）
 2. 全局 `~/.config/opencode/opencode.json` 配本地 MCP：
 
    ```json

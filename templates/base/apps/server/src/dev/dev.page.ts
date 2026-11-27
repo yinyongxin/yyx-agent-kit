@@ -148,7 +148,7 @@ export const renderDevPage = (): string => `<!doctype html>
 <script>
 (function () {
   var API = "${API_PREFIX}/dev/services";
-  var GROUP_ORDER = ["应用", "依赖服务"];
+  var GROUP_ORDER = ["应用", "工具", "依赖服务"];
   var groupsEl = document.getElementById("groups");
   var updatedEl = document.getElementById("updated");
   var refreshEl = document.getElementById("refresh");

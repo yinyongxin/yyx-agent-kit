@@ -41,7 +41,7 @@
 ## 4. 开发环境与服务
 
 - 本地依赖服务用项目自带 `docker-compose.yml`，不用全局容器（见各项目 `AGENTS.md`）。
-- 模板项目根目录 `pnpm dev` 一键起全部应用，并自动打开开发导航页 `http://localhost:47100/api/dev`（只探测端口/状态，生产 404）。
+- 模板项目根目录 `pnpm dev` 一键起全部应用（含 Penpot MCP），并自动打开开发导航页 `http://localhost:47100/api/dev`（只探测端口/状态，生产 404）。
 - 单独调试某一端用 `pnpm dev:server` 等，需要时用一次探活确认，不要反复轮询。
 - 改配置后用 `/reload`；全局 `agents/` 目录首次新建需 `opencode service restart` 一次。
 

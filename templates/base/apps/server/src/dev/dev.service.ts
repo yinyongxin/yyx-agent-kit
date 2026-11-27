@@ -4,7 +4,7 @@ import { createConnection } from "node:net";
 import { PrismaService } from "../prisma/prisma.service";
 
 export type DevServiceStatus = "online" | "offline";
-export type DevServiceGroup = "应用" | "依赖服务";
+export type DevServiceGroup = "应用" | "工具" | "依赖服务";
 
 export interface DevServiceLink {
   label: string;
@@ -80,15 +80,18 @@ export class DevService {
     const redisHost = this.config.getOrThrow<string>("dev.redisHost");
     const penpotPort = this.config.getOrThrow<number>("dev.penpotPort");
     const penpotMailpitPort = this.config.getOrThrow<number>("dev.penpotMailpitPort");
+    const penpotMcpPort = this.config.getOrThrow<number>("dev.penpotMcpPort");
+    const penpotPluginPort = this.config.getOrThrow<number>("dev.penpotPluginPort");
     const swaggerEnabled = this.config.getOrThrow<boolean>("app.swaggerEnabled");
 
-    const [clientUp, adminUp, portalUp, penpotUp, mailpitUp, postgresUp, redisUp] =
+    const [clientUp, adminUp, portalUp, penpotUp, mailpitUp, penpotMcpUp, postgresUp, redisUp] =
       await Promise.all([
         probeHttp(`http://localhost:${clientPort}`),
         probeHttp(`http://localhost:${adminPort}`),
         probeHttp(`http://localhost:${portalPort}`),
         probeHttp(`http://localhost:${penpotPort}`),
         probeHttp(`http://localhost:${penpotMailpitPort}`),
+        probeHttp(`http://localhost:${penpotPluginPort}/manifest.json`),
         this.probePostgres(),
         probeTcp(redisHost, redisPort),
       ]);
@@ -148,6 +151,21 @@ export class DevService {
         url: base(portalPort),
         links: [],
         command: "pnpm dev:portal",
+        probe: "HTTP",
+      },
+      {
+        id: "penpot-mcp",
+        name: "Penpot MCP",
+        group: "工具",
+        port: penpotMcpPort,
+        status: penpotMcpUp ? "online" : "offline",
+        links: [
+          {
+            label: "插件 manifest",
+            href: base(penpotPluginPort) + "/manifest.json",
+          },
+        ],
+        command: "pnpm penpot:mcp",
         probe: "HTTP",
       },
       {

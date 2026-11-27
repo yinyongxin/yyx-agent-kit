@@ -38,6 +38,9 @@ export const devConfig = registerAs("dev", () => {
     })(),
     penpotPort: Number(process.env.PENPOT_PORT ?? 9001),
     penpotMailpitPort: Number(process.env.PENPOT_MAILPIT_PORT ?? 8025),
+    /** 本地 Penpot MCP（pnpm penpot:mcp）：4401 MCP、4400 插件 manifest */
+    penpotMcpPort: Number(process.env.PENPOT_MCP_PORT ?? 4401),
+    penpotPluginPort: Number(process.env.PENPOT_MCP_PLUGIN_PORT ?? 4400),
   };
 });
 

@@ -10,7 +10,7 @@ description: 通过 Penpot 官方 MCP 读写当前焦点设计页，做线稿审
 ## 前置条件（缺一不可）
 
 - Penpot 已自托管并打开：`templates/base/docker-compose.yml` 启动，访问 `http://localhost:9001`
-- 本机已启动本地 MCP：`pnpm penpot:mcp`（监听 4400/4401/4402，模板不含容器版 MCP）
+- 本机已启动本地 MCP：`pnpm dev` 会一起起（`penpot` 进程），也可单独 `pnpm penpot:mcp`（监听 4400/4401/4402，模板不含容器版 MCP）
 - 全局 `opencode.json` 配了 `penpot` 远程 MCP：`http://localhost:4401/mcp`（无 key，仅本机；启动顺序：先 MCP 后 OpenCode）
 - Penpot 里加载插件（**Plugins → Load from URL → `http://localhost:4400/manifest.json`**）并 **Connect**（MCP 作用于当前焦点页）
 

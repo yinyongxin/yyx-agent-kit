@@ -18,6 +18,7 @@
 6. `app.module.ts`：按 `NODE_ENV` 条件注册 `DevModule`。
 7. `main.ts`：启动后打印「开发导航页」地址。
 8. 文档：`apps/server/README.md`、`apps/server/src/config/README.md`、模板 `README.md`、`AGENTS.md`、`docs/guides/conventions.md`、`skills/standards/workspace/SKILL.md`。
+9. 后续调整：`pnpm penpot:mcp` 并入 `pnpm dev`（第 5 个进程），导航页新增「工具」分组，显示 Penpot MCP 状态（4401）与插件 manifest 链接。
 
 ## 遇到的问题
 
