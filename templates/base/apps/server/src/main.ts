@@ -18,6 +18,7 @@ if (envPath) config({ path: envPath });
 
 import "reflect-metadata";
 import { ValidationPipe } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { NestNodeApplication, NodeAdapter } from "@nestjs/platform-node";
 import { SwaggerModule } from "@nestjs/swagger";
@@ -25,31 +26,29 @@ import { AppModule } from "./app.module";
 import { buildOpenApiDocument } from "./swagger";
 import { API_PREFIX } from "../../../packages/shared/src/index";
 
-// 本地固定 47100；部署环境可由 PORT 覆盖（生产前端同源部署，不走 Vite 代理）
-const port = Number(process.env.PORT ?? 47100);
-
 const bootstrap = async () => {
   // NestJS 12.3+ 推荐 NodeAdapter（v13 起为默认）：直接跑在 node:http 上，
   // req/res 带 Express 风格 helpers，现有 middleware 写法不变
   const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
+  const config = app.get(ConfigService);
+
   app.setGlobalPrefix(API_PREFIX.replace(/^\//, ""));
   // DTO 校验：白名单丢弃未声明字段，transform 把 body 转成 DTO 实例
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   // Swagger UI 与 OpenAPI JSON（生成前端客户端的契约源）。
   // 默认开发开、生产关；生产确实需要时用 SWAGGER_ENABLED=true 显式开启。
-  const swaggerEnabled =
-    process.env.SWAGGER_ENABLED === "true" ||
-    (process.env.SWAGGER_ENABLED !== "false" &&
-      process.env.NODE_ENV !== "production");
-  if (swaggerEnabled) {
+  if (config.getOrThrow<boolean>("app.swaggerEnabled")) {
     const document = buildOpenApiDocument(app);
     SwaggerModule.setup("api/docs", app, document, {
       jsonDocumentUrl: "api/docs-json",
     });
   }
 
-  await app.listen(port);
+  await app.listen(config.getOrThrow<number>("app.port"));
 };
 
-bootstrap();
+bootstrap().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

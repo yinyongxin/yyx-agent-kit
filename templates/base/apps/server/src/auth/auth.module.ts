@@ -1,17 +1,15 @@
 import { Module } from "@nestjs/common";
-import { AuthenticationModule } from "@nestjs/authentication";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import {
+  AuthenticationModule,
+  type Duration,
+} from "@nestjs/authentication";
 import { AuthorizationModule } from "@nestjs/authorization";
 import { JwtAuth } from "./providers/jwt-auth.provider";
 import { UsersRepository } from "./repositories/users.repository";
 import { TenantMembershipGuard } from "./guards/tenant-membership.guard";
 import { AuthController } from "./auth.controller";
 import { CredentialsService } from "./credentials.service";
-
-// 生产漏配密钥不能静默使用公开默认值（否则任何人都能自行签发 token）
-const jwtSecret = process.env.JWT_SECRET;
-if (process.env.NODE_ENV === "production" && !jwtSecret) {
-  throw new Error("JWT_SECRET is required in production");
-}
 
 /**
  * 认证（@nestjs/authentication）+ 授权（@nestjs/authorization）官方模块。
@@ -32,15 +30,19 @@ if (process.env.NODE_ENV === "production" && !jwtSecret) {
  */
 @Module({
   imports: [
-    AuthenticationModule.forRoot({
-      accessToken: {
-        key: jwtSecret ?? "dev_jwt_secret_change_me_at_least_32_bytes",
-        issuer: "starter-api",
-        audience: "starter-web",
-        ttl: "15m",
-      },
-      refreshToken: false,
-      allowInMemoryStorage: true, // 仅开发；生产注册实际用到的 store 后去掉
+    AuthenticationModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        accessToken: {
+          key: config.getOrThrow<string>("auth.jwtSecret"),
+          issuer: config.getOrThrow<string>("auth.issuer"),
+          audience: config.getOrThrow<string>("auth.audience"),
+          ttl: config.getOrThrow<string>("auth.ttl") as Duration,
+        },
+        refreshToken: false,
+        allowInMemoryStorage: true, // 仅开发；生产注册实际用到的 store 后去掉
+      }),
     }),
     AuthorizationModule.forRoot(),
   ],

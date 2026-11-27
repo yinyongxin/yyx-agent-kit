@@ -8,14 +8,16 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 
 | 路径 | 作用 |
 | --- | --- |
-| `src/main.ts` | 启动：dotenv、全局前缀/管道、Swagger、listen |
-| `src/app.module.ts` | 根模块：装配 Prisma / Auth，注册租户 middleware |
+| `src/main.ts` | 启动：加载 env、全局前缀/管道、Swagger、listen（配置从 `ConfigService` 取） |
+| `src/app.module.ts` | 根模块：装配 Config / Prisma / Auth / Tenancy / Tenants，注册租户 middleware |
+| `src/config/` | `@nestjs/config`：命名空间配置、启动时 env 校验 |
 | `src/common/` | 跨模块共享构件（filters / guards / interceptors / pipes / decorators / middleware）；按需创建 |
 | `src/dto/` | 跨模块共享 DTO（错误响应、分页等） |
 | `src/swagger.ts` | OpenAPI 文档构建（main 与导出脚本共用） |
 | `src/prisma/` | Prisma Client、`scoped` 守卫、RLS 事务入口 |
 | `src/auth/` | 登录、JWT、租户成员 guard、租户上下文 |
 | `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户事务拦截器、`@TenantTx()` |
+| `src/tenants/` | 平台级租户 CRUD（`/api/tenants`），`PlatformAdminGuard` 保护 |
 | `prisma/` | schema、models、migrations、seed |
 | `scripts/` | 一次性脚本（`export-openapi.ts`） |
 | `test/` | 接口与数据库验收脚本 |

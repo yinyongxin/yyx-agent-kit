@@ -101,6 +101,14 @@ apps/server/
 - 管道顺序：全局 `ValidationPipe` 先跑；参数级 pipe 只做类型转换（如 `ParseUUIDPipe`）。
 - 守卫顺序：全局认证 → 全局授权 → 路由级守卫；`tenantId` 由 `TenantMembershipGuard` 校验，不要再用 `ParseUUIDPipe` 期待 400。
 
+### 2.2 配置
+
+- 统一用 `@nestjs/config`（`src/config/`）：`AppConfigModule` 里 `ConfigModule.forRoot({ isGlobal: true, load, validate })`。
+- 业务代码通过 `ConfigService.get/getOrThrow` 读取命名空间配置（`app` / `database` / `auth`），**禁止直接读 `process.env`**。
+- 启动时校验：`env.validation.ts` 用 class-validator 检查必填/格式（如 `DATABASE_URL` 必填、生产必须 `JWT_SECRET`），缺失直接启动失败。
+- 新增配置项：先在 `configuration.ts` 加字段，再在 `env.validation.ts` 加校验，并同步 `.env.example`。
+- Prisma CLI / seed / scripts 在 Nest 容器外，继续用 dotenv，不能注入 `ConfigService`。
+
 ## 3. 接口设计规范
 
 ### 3.1 路由

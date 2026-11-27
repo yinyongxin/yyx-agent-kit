@@ -23,6 +23,7 @@
     "@nestjs/authentication": "^0.1.7",
     "@nestjs/authorization": "^0.1.4",
     "@nestjs/common": "^12.6.0",
+    "@nestjs/config": "^12.1.1",
     "@nestjs/core": "^12.6.0",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/microservices": "^12.6.0",
