@@ -59,6 +59,8 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | --- | --- |
 | `pnpm install` | 安装全部依赖 |
 | `pnpm dev` | 一键启动 server + client + admin + portal + Penpot MCP，并自动打开开发导航页 |
+| `start-dev.cmd` | **双击启动**：检查环境 → `docker compose up -d` → 等 PostgreSQL → `pnpm dev`（Windows） |
+| `stop-dev.cmd` | **双击停止**：结束应用进程 + `docker compose down`（保留数据卷） |
 | `pnpm build` | 构建 + 全量 typecheck（qa 判定基线） |
 | `pnpm lint` | oxlint 检查 `apps` 与 `packages`（qa 判定基线） |
 | `pnpm dev:client` | 启动客户端（47173） |
@@ -67,6 +69,15 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | `pnpm dev:server` | 启动后端（47100） |
 
 接口：`GET /api/health`（公开探活，工作台与客户端都用这个）。
+
+## 双击启动 / 停止（Windows）
+
+直接双击根目录的 `start-dev.cmd` / `stop-dev.cmd`：
+
+- **启动**：检查 pnpm / Docker → 缺 `.env` 时自动从 `.env.example` 复制 → `docker compose up -d` → 等 PostgreSQL 就绪 → `pnpm dev`；服务日志留在窗口里，关闭窗口或 `Ctrl+C` 停止
+- **停止**：释放 47100 / 47173–47175 / 4400–4403 → 清理项目目录下残留 node 监视进程 → `docker compose down`（**保留数据卷**）
+- **只检查环境**：`pwsh -NoProfile -File scripts\start.ps1 -CheckOnly`
+- Docker 未启动时启动脚本会直接提示，并停在窗口里等你看清楚
 
 ## 开发导航页
 
