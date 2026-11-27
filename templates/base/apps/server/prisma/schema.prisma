@@ -30,3 +30,15 @@ enum SubscriptionStatus {
   canceled
   expired
 }
+
+/// 用户在某个租户下的成员状态（多对多关联表字段）。
+enum UserTenantStatus {
+  active
+  suspended
+}
+
+/// 平台管理员级别：super 可管理所有租户，ops 为日常运营。
+enum PlatformAdminLevel {
+  super
+  ops
+}

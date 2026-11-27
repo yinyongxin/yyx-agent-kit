@@ -14,7 +14,7 @@
 | --- | --- |
 | `config.ts` | 手写：装配客户端（token 注入、401 回调、baseUrl） |
 | `src/client.ts` | 请求封装，支持注入 `fetcher` 适配非 Web 端 |
-| `src/types.ts` | 传输层类型（Result 包装、健康检查） |
+| `src/types.ts` | 传输层类型（Result 包装、健康检查、租户摘要） |
 | `src/index.ts` | 包入口 |
 | `src/README.md` | 本文件 |
 
@@ -24,3 +24,4 @@
 - 401 只负责通知调用方，清会话和跳登录由各端自己实现，传输层不感知路由。
 - 当前是手写实现。接入 OpenAPI 生成后，生成物放 `src/`（整个目录会被重建），手写装配留在 `config.ts`，不要混进 `src/`。
 - 小程序 / App 端没有标准 `fetch`，通过 `fetcher` 注入各自的请求器，不要改 `client.ts` 里写死实现。
+- 租户前缀由 API client 自动拼：single 模式用 `DEFAULT_TENANT_ID`，multi 模式用 `configureApiClient({ getTenantId })`；业务代码写相对路径（如 `/users`），不要自己拼 `/t/:tenantId`。`health` / `me` 无租户上下文，不加前缀。

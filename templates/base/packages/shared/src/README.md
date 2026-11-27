@@ -10,7 +10,7 @@
 
 | 文件 | 作用 |
 | --- | --- |
-| `src/index.ts` | 包入口：`API_PREFIX`、`API_ROUTES`、业务枚举、类型、工具函数 |
+| `src/index.ts` | 包入口：`API_PREFIX`、`API_ROUTES`、`TENANT_MODE` / `DEFAULT_TENANT_ID` / `tenantPath()`、业务枚举、类型、工具函数 |
 | `src/README.md` | 本文件 |
 
 ## 注意事项
@@ -19,3 +19,4 @@
 - 新增接口时先加 `API_ROUTES` 常量，再让 controller 与 api 层引用，不要两边各写一个字符串。
 - 业务枚举（状态、类型、错误码）放这里，不要在前端写字符串字面量、服务端再写一遍。
 - 服务端通过相对路径引用本包源码（`../../../packages/shared/src/index`），因为 NestJS 是 CommonJS，无法直接 `require` TS 源码包。
+- 租户交付：`TENANT_MODE` 由 CLI 的 `--tenant single|multi` 在生成时改写字面量；`DEFAULT_TENANT_ID` 是 seed 固定租户 id（single 模式由 API client 自动注入）；业务路径统一用 `tenantPath(tenantId, path)` 拼，不要在业务代码里手写 `/t/`。

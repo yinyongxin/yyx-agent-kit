@@ -1,21 +1,35 @@
-/// 业务用户。官方认证包通过 UsersRepository 按 id 加载，密码哈希由包内 PasswordHasher 管理。
+/// 全局身份用户。多租户关系放在 UserTenant，user 本身不再持有单一 tenantId。
+/// 官方认证包通过 UsersRepository 按 id/email 加载；密码哈希由包内 PasswordHasher 管理。
 model User {
   id          String     @id @default(uuid()) @db.Uuid
-  tenantId    String     @db.Uuid
-  tenant      Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   authSubject String     @unique
-  email       String?
+  email       String?    @unique
   displayName String?
   status      UserStatus @default(active)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
+  tenants          UserTenant[]
   roles            UserRole[]
   oauthConnections OAuthConnection[]
+  platformAdmin    PlatformAdmin?
 
-  @@unique([tenantId, email])
-  @@index([tenantId])
   @@map("users")
+}
+
+/// 用户-租户关联（多对多）：一个自然人可属于多个租户，每个租户有独立状态。
+/// 注意：本表是授权关系表，guard 要查询它来确定当前租户，不能被 Prisma extension 隐式注入 tenantId。
+model UserTenant {
+  userId   String           @db.Uuid
+  tenantId String           @db.Uuid
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  status   UserTenantStatus @default(active)
+  joinedAt DateTime         @default(now())
+
+  @@id([userId, tenantId])
+  @@index([tenantId])
+  @@map("user_tenants")
 }
 
 /// 外部身份连接（Google / 微信等），按 provider + 外部 ID（subject）唯一。

@@ -43,6 +43,7 @@ docs/
 
 | 需求 | 状态 | 更新日期 | 入口 |
 | --- | --- | --- | --- |
+| 20261127-base-infra-tenancy | 开发中（未归档） | 2026-11-27 | [02-tech-design.md](deliverables/20261127-base-infra-tenancy/02-tech-design.md) |
 | 20261126-admin-table | 已交付 | 2026-11-26 | [06-record.md](deliverables/20261126-admin-table/06-record.md) |
 | 20261124-admin-mantine | 已归档（阶段 5 通过） | 2026-11-26 | [06-record.md](deliverables/20261124-admin-mantine/06-record.md) |
 | 20261124-admin-router | 已归档（阶段 5 未独立执行） | 2026-11-26 | [06-record.md](deliverables/20261124-admin-router/06-record.md) |

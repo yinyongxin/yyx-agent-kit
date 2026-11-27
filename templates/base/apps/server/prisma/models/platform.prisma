@@ -1,0 +1,10 @@
+/// 平台管理员（全局表）：用 User + level 标记，与业务用户共用一套认证，不建独立登录。
+/// 删除 User 时级联删除；删除 Tenant 不影响平台管理员。
+model PlatformAdmin {
+  userId    String             @id @db.Uuid
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level     PlatformAdminLevel @default(ops)
+  createdAt DateTime           @default(now())
+
+  @@map("platform_admins")
+}

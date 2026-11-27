@@ -13,6 +13,11 @@ import { createApiClient, type ApiClientOptions } from "./src/client";
 export interface ConfigureApiClientOptions {
   /** 取当前 access token；返回 null 表示未登录 */
   getToken?: () => string | null;
+  /**
+   * 取当前租户 id。multi 模式必填（由租户切换器写入数据源）；
+   * single 模式可不填，API client 自动用 shared 的 DEFAULT_TENANT_ID。
+   */
+  getTenantId?: () => string | null;
   /** 收到 401 时回调：清会话并跳登录。登录接口自身不触发 */
   onUnauthorized?: () => void;
   /** 非 Web 端注入自己的请求器 */

@@ -5,6 +5,9 @@ import type { User } from "./user.types";
 /**
  * 官方 @nestjs/authentication 不读用户表，只通过本类拿用户。
  * 密码哈希留在仓库内部，对外只返回不含敏感字段的 User（见官方文档 Quick Start）。
+ *
+ * 注意：User 是全局身份表（UNSCOPED），这里不能用 tenantId 过滤——
+ * 登录时还没有租户上下文，强制 scoped 会抛「上下文缺失」。
  */
 @Injectable()
 export class UsersRepository {
@@ -15,13 +18,9 @@ export class UsersRepository {
       where: { id, status: "active" },
       select: {
         id: true,
-        tenantId: true,
         email: true,
         displayName: true,
         status: true,
-        roles: {
-          select: { role: { select: { code: true } } },
-        },
       },
     }) as Promise<User | null>;
   }
@@ -31,13 +30,10 @@ export class UsersRepository {
       where: { email, status: "active" },
       select: {
         id: true,
-        tenantId: true,
         email: true,
         displayName: true,
         status: true,
-        roles: { select: { role: { select: { code: true } } } },
       },
     }) as Promise<User | null>;
   }
 }
-

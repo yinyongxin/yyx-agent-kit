@@ -2,6 +2,7 @@ import { config } from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { resolve } from "node:path";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { DEFAULT_TENANT_ID } from "../../../packages/shared/src/index";
 
 /**
  * seed 只负责初始业务数据（默认租户/角色/权限点/套餐），不负责表结构，也不负责已有数据演进。
@@ -18,8 +19,15 @@ const prisma = new PrismaClient({
   }),
 });
 
-// 默认租户 slug。单租户阶段所有用户归到这个租户。
+// 默认租户 slug。单租户部署只建这一个租户；多对多关系下用户通过 UserTenant 关联进来。
 const DEFAULT_TENANT_SLUG = "default";
+
+// 示例用户：seed 后可用它构造 token 验证租户边界 guard；生产部署可删。
+const SEED_USER = {
+  authSubject: "seed-admin",
+  email: "admin@example.com",
+  displayName: "示例管理员",
+} as const;
 
 // 内置角色 + 权限。admin 拥有全部权限，member 拥有只读权限。
 const PERMISSIONS = [
@@ -56,7 +64,7 @@ async function main() {
   const tenant = await prisma.tenant.upsert({
     where: { slug: DEFAULT_TENANT_SLUG },
     update: {},
-    create: { slug: DEFAULT_TENANT_SLUG, name: "默认租户" },
+    create: { id: DEFAULT_TENANT_ID, slug: DEFAULT_TENANT_SLUG, name: "默认租户" },
   });
 
   // 权限点
@@ -71,6 +79,7 @@ async function main() {
   }
 
   // 角色 + 角色权限
+  let adminRoleId: string | undefined;
   for (const r of ROLES) {
     const role = await prisma.role.upsert({
       where: { tenantId_code: { tenantId: tenant.id, code: r.code } },
@@ -99,7 +108,36 @@ async function main() {
         create: { roleId: role.id, permissionId },
       });
     }
+
+    if (r.code === "admin") adminRoleId = role.id;
   }
+
+  // 示例用户（全局身份）+ 默认租户成员关系 + admin 角色 + 平台管理员
+  const user = await prisma.user.upsert({
+    where: { email: SEED_USER.email },
+    update: { displayName: SEED_USER.displayName },
+    create: SEED_USER,
+  });
+
+  await prisma.userTenant.upsert({
+    where: { userId_tenantId: { userId: user.id, tenantId: tenant.id } },
+    update: { status: "active" },
+    create: { userId: user.id, tenantId: tenant.id, status: "active" },
+  });
+
+  if (adminRoleId) {
+    await prisma.userRole.upsert({
+      where: { userId_roleId: { userId: user.id, roleId: adminRoleId } },
+      update: {},
+      create: { userId: user.id, roleId: adminRoleId },
+    });
+  }
+
+  await prisma.platformAdmin.upsert({
+    where: { userId: user.id },
+    update: { level: "super" },
+    create: { userId: user.id, level: "super" },
+  });
 
   // 套餐
   for (const p of PLANS) {
@@ -110,7 +148,7 @@ async function main() {
     });
   }
 
-  console.log("seed 完成：默认租户、内置角色、权限点、套餐已就绪");
+  console.log("seed 完成：默认租户、内置角色、权限点、套餐、示例用户与平台管理员已就绪");
 }
 
 main()

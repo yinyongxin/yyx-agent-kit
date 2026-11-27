@@ -4,6 +4,22 @@ export const APP_NAME = "starter";
 export const API_PREFIX = "/api";
 
 /**
+ * 租户交付模式。CLI 生成项目时按 --tenant 改写这里的字面量：
+ *   --tenant=single → 前端 API client 自动注入 DEFAULT_TENANT_ID，业务代码不感知 tenantId
+ *   --tenant=multi  → 调用方通过 getTenantId 提供当前租户（租户切换器写入）
+ *
+ * 用联合类型声明而不是 as const，避免模板里 "multi" 与 "single" 比较被 TS 判为无交集。
+ */
+export const TENANT_MODE: "single" | "multi" = "multi";
+
+/** 单租户 seed 的固定租户 id，与 seed.ts 保持一致；只用于 single 模式自动注入 */
+export const DEFAULT_TENANT_ID = "00000000-0000-4000-8000-000000000001";
+
+/** 拼出带租户前缀的业务路径：/t/:tenantId/... */
+export const tenantPath = (tenantId: string, path: string): string =>
+  `/t/${tenantId}${path.startsWith("/") ? path : `/${path}`}`;
+
+/**
  * 业务路由表。新增接口先在这里加常量，再由 controller 和 api 层引用，
  * 避免前后端各写一份字符串。
  *

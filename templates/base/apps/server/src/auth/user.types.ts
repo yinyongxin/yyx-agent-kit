@@ -1,10 +1,11 @@
-/** 业务用户模型（由我们定义，官方认证包只认这个形状）。 */
+/** 全局身份用户（由我们定义，官方认证包只认这个形状）。
+ *
+ * 多对多改造后 User 不再持有 tenantId；角色信息也不在这里——
+ * 当前租户的角色由 TenantMembershipGuard 按 UserRole + Role.tenantId 查询，避免跨租户混淆。
+ */
 export interface User {
   id: string;
-  tenantId: string;
   email: string | null;
   displayName: string | null;
   status: string;
-  /** 角色 code 列表，如 ["admin"] / ["member"]，供 @nestjs/authorization 的 policy 使用 */
-  roles: Array<{ role: { code: string } }>;
 }

@@ -5,6 +5,7 @@ import {
 import { AuthorizationModule } from "@nestjs/authorization";
 import { JwtAuth } from "./jwt-auth.provider";
 import { UsersRepository } from "./users.repository";
+import { TenantMembershipGuard } from "./tenant-membership.guard";
 
 /**
  * 认证（@nestjs/authentication）+ 授权（@nestjs/authorization）官方模块。
@@ -33,7 +34,7 @@ import { UsersRepository } from "./users.repository";
     }),
     AuthorizationModule.forRoot(),
   ],
-  providers: [UsersRepository, JwtAuth],
-  exports: [UsersRepository],
+  providers: [UsersRepository, JwtAuth, TenantMembershipGuard],
+  exports: [UsersRepository, TenantMembershipGuard],
 })
 export class AuthModule {}
