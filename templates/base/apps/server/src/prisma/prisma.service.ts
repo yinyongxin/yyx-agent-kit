@@ -33,6 +33,7 @@ const WHERE_OPERATIONS = new Set([
   "aggregate",
   "groupBy",
   "updateMany",
+  "updateManyAndReturn",
   "deleteMany",
 ]);
 
@@ -84,46 +85,54 @@ export class PrismaService
    */
   readonly scoped = this.$extends({
     query: {
-      $allModels: {
-        async $allOperations({ model, operation, args, query }: {
-          model: string;
-          operation: string;
-          args: Record<string, unknown>;
-          query: (args: Record<string, unknown>) => Promise<unknown>;
-        }) {
-          // raw 查询没有 model，必须最先拦；否则会绕过下面的模型级检查
+      // 必须用顶层 $allOperations：Prisma 官方明确说明 $allModels 下的版本
+      // 只拦截模型操作，raw query（model === undefined）根本不会触发——
+      // 放在 $allModels 里会让 raw SQL 禁用形同虚设。
+      async $allOperations({ model, operation, args, query }: {
+        model?: string;
+        operation: string;
+        args: Record<string, unknown>;
+        query: (args: Record<string, unknown>) => Promise<unknown>;
+      }) {
+        // raw query 没有 model；client 级操作（$connect / $transaction 等）也没有，直接透传
+        if (model === undefined) {
           if (isRawOperation(operation)) {
             throw new Error(
               "scoped client 禁止 raw SQL：会绕过租户隔离。请改用 Prisma API，或用裸 PrismaClient 查全局表",
             );
           }
-
-          // 授权关系表 / 全局表不注入，也不受 DENIED 限制（guard 需要 userTenant.findUnique）
-          if (UNSCOPED_MODELS.has(model)) return query(args);
-
-          if (DENIED_OPERATIONS.has(operation)) {
-            throw new Error(
-              `scoped client 禁止 ${operation}（无法注入 tenantId）：请改用 findFirst / updateMany / deleteMany`,
-            );
-          }
-
-          const tenantId = TenantContext.getTenantId();
-
-          if (operation === "create" || operation === "createMany") {
-            const data = (args as { data?: Record<string, unknown> | Record<string, unknown>[] }).data;
-            // 注入值必须后置：业务 data 若带 tenantId 不能覆盖请求上下文，否则可跨租户写入
-            const inject = (d: Record<string, unknown>) => ({ ...d, tenantId });
-            const newData = Array.isArray(data) ? data.map(inject) : inject(data ?? {});
-            return query({ ...args, data: newData });
-          }
-
-          if (WHERE_OPERATIONS.has(operation)) {
-            const where = (args as { where?: Record<string, unknown> }).where ?? {};
-            return query({ ...args, where: { ...where, tenantId } });
-          }
-
           return query(args);
-        },
+        }
+
+        // 授权关系表 / 全局表不注入，也不受 DENIED 限制（guard 需要 userTenant.findUnique）
+        if (UNSCOPED_MODELS.has(model)) return query(args);
+
+        if (DENIED_OPERATIONS.has(operation)) {
+          throw new Error(
+            `scoped client 禁止 ${operation}（无法注入 tenantId）：请改用 findFirst / updateMany / deleteMany`,
+          );
+        }
+
+        const tenantId = TenantContext.getTenantId();
+
+        if (
+          operation === "create" ||
+          operation === "createMany" ||
+          operation === "createManyAndReturn"
+        ) {
+          const data = (args as { data?: Record<string, unknown> | Record<string, unknown>[] }).data;
+          // 注入值必须后置：业务 data 若带 tenantId 不能覆盖请求上下文，否则可跨租户写入
+          const inject = (d: Record<string, unknown>) => ({ ...d, tenantId });
+          const newData = Array.isArray(data) ? data.map(inject) : inject(data ?? {});
+          return query({ ...args, data: newData });
+        }
+
+        if (WHERE_OPERATIONS.has(operation)) {
+          const where = (args as { where?: Record<string, unknown> }).where ?? {};
+          return query({ ...args, where: { ...where, tenantId } });
+        }
+
+        return query(args);
       },
     },
   });

@@ -42,6 +42,24 @@
 | P2 | 基建表与 feature 开关：AuditLog / Setting / Customer / Notification + CLI `--features` | 兑现「可复用基建」承诺 |
 | P2 | TenantPermission（module 分组）+ Role 继承 + ABAC scope 助手 | 兑现「租户内定义权限 + 数据级权限」决策 |
 
+## 第二轮审查（A1/A2 修复后复查）
+
+| 编号 | 严重度 | 发现 | 状态 |
+| --- | --- | --- | --- |
+| B0 | **高** | A2 的修复**原本不生效**：Prisma 官方明确说明 `$allModels.$allOperations` 只拦截模型操作，raw query（`model === undefined`）根本不会触发。必须用顶层 `query.$allOperations` | **已修**：extension 改为顶层 `$allOperations`，raw 在 `model === undefined` 分支抛错 |
+| B1 | 中 | Prisma 5.14+ 的 `createManyAndReturn` / `updateManyAndReturn` 不在注入清单里，会静默透传绕过 tenantId | **已修**：加入对应清单 |
+| B2 | **高** | **交互式事务是 extension 的固有盲区**：多个权威来源（Prisma issue #17948 / #20738、multi-tenant-saas 实践指南）指出 `tx` 可能不继承 extension，事务内查询可绕过隔离；且 extension 里调用 client 级方法会脱离当前事务 | **未修**，见下方「根本性结论」 |
+| B3 | 中 | 嵌套写入（`create` 里的 `roles: { create: [...] }`）不会被 extension 注入 tenantId；当前 Role.tenantId 必填会报错（fail-loud），但若子表字段可选就会写入空值 | 未修，靠规范约束 |
+
+### 根本性结论（来自权威多租户实践）
+
+> "Raw queries and interactive transactions are the two places a Prisma extension does not reach... the database-side policy remains the layer that decides what those paths can actually see."
+> — multi-tenant-saas.com《Prisma Client Extensions for Tenant Scoping》
+
+应用层 extension **不是完整的安全边界**。即使把能拦的都拦了，raw query、交互式事务、嵌套写入仍可能绕过。成熟方案要求叠加**数据库层 RLS（Row-Level Security）**：extension 负责注入 `SET app.tenant_id`，PostgreSQL 的 RLS policy 负责最终拒绝越权行。两层互补，不是冗余。
+
+对我们而言：当前架构在应用层已尽量收紧（顶层拦截 + fail-closed），但缺少 RLS 兜底，因此**还不能说「隔离在架构层已闭环」**。这是后续 P0 级别的架构工作，且必须有 PostgreSQL 环境做并发验证。
+
 ## 一句话结论
 
-**单租户**架构兼容但产品未支持（CLI 仍重、前端无适配）；**多租户**隔离机制已立但运营闭环缺失且有可绕过的裂缝；**可复用基建**目前只有身份骨架，四层和 feature 开关都还没落地。要真正支持你说的三个目标，至少还要完成上表 P0 + P1。
+**单租户**架构兼容但产品未支持（CLI 仍重、前端无适配）；**多租户**隔离机制在应用层已收紧但缺数据库层兜底，运营闭环也缺失；**可复用基建**目前只有身份骨架，四层和 feature 开关都还没落地。要真正支持你说的三个目标，至少还要完成 P0 + P1，其中 **RLS 兜底应排在最前**。
