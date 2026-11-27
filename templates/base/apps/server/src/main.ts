@@ -17,7 +17,7 @@ const envPath = findEnv();
 if (envPath) config({ path: envPath });
 
 import "reflect-metadata";
-import { ValidationPipe } from "@nestjs/common";
+import { ValidationPipe, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { NestNodeApplication, NodeAdapter } from "@nestjs/platform-node";
@@ -31,6 +31,7 @@ const bootstrap = async () => {
   // req/res 带 Express 风格 helpers，现有 middleware 写法不变
   const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
   const config = app.get(ConfigService);
+  const port = config.getOrThrow<number>("app.port");
 
   app.setGlobalPrefix(API_PREFIX.replace(/^\//, ""));
   // DTO 校验：白名单丢弃未声明字段，transform 把 body 转成 DTO 实例
@@ -45,7 +46,11 @@ const bootstrap = async () => {
     });
   }
 
-  await app.listen(config.getOrThrow<number>("app.port"));
+  await app.listen(port);
+
+  if (config.getOrThrow<string>("app.nodeEnv") !== "production") {
+    Logger.log(`开发导航页：http://localhost:${port}/api/dev`, "Bootstrap");
+  }
 };
 
 bootstrap().catch((err) => {

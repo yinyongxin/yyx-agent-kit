@@ -3,6 +3,7 @@
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "scripts": {
+    "dev": "concurrently --kill-others-on-fail -n server,client,admin,portal -c blue,green,magenta,cyan \"pnpm dev:server\" \"pnpm dev:client\" \"pnpm dev:admin\" \"pnpm dev:portal\" \"node scripts/open-dev.mjs\"",
     "dev:client": "pnpm --filter @starter/client dev",
     "dev:admin": "pnpm --filter @starter/admin dev",
     "dev:portal": "pnpm --filter @starter/portal dev",
@@ -13,6 +14,7 @@
     "lint": "oxlint apps packages --ignore-pattern \"**/next-env.d.ts\" --ignore-pattern \"**/generated/**\""
   },
   "devDependencies": {
+    "concurrently": "^10.0.7",
     "dotenv": "^18.0.10",
     "oxlint": "^1.0.0",
     "typescript": "6.0.3"

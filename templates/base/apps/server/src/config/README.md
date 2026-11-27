@@ -9,7 +9,7 @@
 | 文件 | 作用 |
 | --- | --- |
 | `config.module.ts` | `AppConfigModule`：`ConfigModule.forRoot({ isGlobal, load, validate })` |
-| `configuration.ts` | 命名空间配置：`app` / `database` / `auth` |
+| `configuration.ts` | 命名空间配置：`app` / `database` / `auth` / `dev`（开发导航页端口推导） |
 | `env.validation.ts` | 启动时用 class-validator 校验 env（DATABASE_URL 必填、生产必须 JWT_SECRET 等） |
 
 ## 使用方式

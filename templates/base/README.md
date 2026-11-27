@@ -58,6 +58,7 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | 命令 | 作用 |
 | --- | --- |
 | `pnpm install` | 安装全部依赖 |
+| `pnpm dev` | 一键启动 server + client + admin + portal，并自动打开开发导航页 |
 | `pnpm build` | 构建 + 全量 typecheck（qa 判定基线） |
 | `pnpm lint` | oxlint 检查 `apps` 与 `packages`（qa 判定基线） |
 | `pnpm dev:client` | 启动客户端（47173） |
@@ -66,6 +67,19 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | `pnpm dev:server` | 启动后端（47100） |
 
 接口：`GET /api/health`（公开探活，工作台与客户端都用这个）。
+
+## 开发导航页
+
+`pnpm dev` 同时启动 server / client / admin / portal，server 就绪后自动打开
+`http://localhost:47100/api/dev`：
+
+- 各应用端口、在线状态、打开链接
+- server 的 health / Swagger / OpenAPI JSON 入口
+- PostgreSQL / Redis / Penpot / Mailpit 状态
+- 未启动的服务显示启动命令，点击可复制
+
+页面每 5 秒自动检测。只探测端口与在线状态，不返回连接串等敏感信息；仅开发环境注册，生产访问 404。
+单独启动某一端仍可用 `pnpm dev:server` / `pnpm dev:admin` 等命令。
 
 ## 端口
 

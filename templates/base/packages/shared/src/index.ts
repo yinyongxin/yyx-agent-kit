@@ -30,6 +30,9 @@ export const API_ROUTES = {
   tenant: "/t/:tenantId",
   tenantMembership: "/membership",
   tenantRoles: "/roles",
+  /** 本地开发导航页（仅开发环境注册，生产 404） */
+  dev: "/dev",
+  devServices: "/dev/services",
 } as const;
 
 /** Nest 的 @Controller / @Get 路径不带前导斜杠，用它在 controller 里引用 API_ROUTES */
