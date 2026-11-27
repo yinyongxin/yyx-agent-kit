@@ -27,6 +27,7 @@ import {
 import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
+import { useAuthUser } from "@/lib/use-auth-user";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import classes from "./HeaderMegaMenu.module.css";
@@ -74,6 +75,7 @@ const MegaLinks = ({ items }: { items: MegaItem[] }) => {
 export const HeaderMegaMenu = () => {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
+  const { user, onLogout } = useAuthUser();
 
   return (
     <Box>
@@ -134,7 +136,7 @@ export const HeaderMegaMenu = () => {
           </Group>
 
           <Group gap="xs">
-            <Box visibleFrom="sm"><UserMenu variant="header" /></Box>
+            <Box visibleFrom="sm"><UserMenu variant="header" user={user} onLogout={onLogout} /></Box>
             <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" aria-label="打开菜单" />
           </Group>
         </>
@@ -164,7 +166,7 @@ export const HeaderMegaMenu = () => {
           </Collapse>
           <Link to="/settings" className={classes.link}>设置</Link>
         </AdminScrollArea>
-        <UserMenu variant="drawer" />
+        <UserMenu variant="drawer" user={user} onLogout={onLogout} />
       </Drawer>
     </Box>
   );

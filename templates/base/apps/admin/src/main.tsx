@@ -5,6 +5,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { routeTree } from "./routeTree.gen";
 import "./index.css";
+import "./lib/api-client";
 
 // Mantine 9 默认 cursorType=default，交互元素不会显示小手；官方配置项改成 pointer
 const theme = createTheme({ cursorType: "pointer" });

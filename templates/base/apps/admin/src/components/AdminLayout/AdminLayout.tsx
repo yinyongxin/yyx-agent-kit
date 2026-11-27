@@ -1,4 +1,4 @@
-import { Outlet } from "@tanstack/react-router";
+import { Outlet, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { LayoutModeProvider, type AdminLayoutMode } from "@/components/LayoutMode";
@@ -7,7 +7,14 @@ import { DoubleNavbar } from "@/components/navbar/DoubleNavbar";
 import { NavbarNested } from "@/components/navbar/NavbarNested";
 
 export const AdminLayout = () => {
+  const location = useLocation();
   const [mode, setMode] = useState<AdminLayoutMode>("nested");
+
+  // 登录页使用独立布局，不显示侧边栏/顶栏
+  if (location.pathname === "/login") {
+    return <Outlet />;
+  }
+
   const isHeader = mode === "header-mega-menu";
 
   return (

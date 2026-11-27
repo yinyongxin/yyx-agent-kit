@@ -9,6 +9,7 @@ import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useAuthUser } from "@/lib/use-auth-user";
 import classes from "./DoubleNavbar.module.css";
 
 const GROUPS: {
@@ -52,6 +53,7 @@ export const DoubleNavbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const group = groupForPath(pathname);
+  const { user, onLogout } = useAuthUser();
 
   return (
     <nav className={classes.navbar}>
@@ -81,7 +83,7 @@ export const DoubleNavbar = () => {
               ))}
             </div>
           </AdminScrollArea>
-          <UserMenu variant="icon" />
+          <UserMenu variant="icon" user={user} onLogout={onLogout} />
         </div>
         <div className={classes.main}>
           <Title order={4} className={classes.title}>

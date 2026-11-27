@@ -9,6 +9,7 @@ import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
 import { LinksGroup } from "@/components/navbar/NavbarLinksGroup";
+import { useAuthUser } from "@/lib/use-auth-user";
 import classes from "./NavbarNested.module.css";
 
 const MENU: {
@@ -46,7 +47,10 @@ const MENU: {
 ];
 
 // 基于 ui.mantine.dev 官方 NavbarNested：分组 + 图标 + 可折叠，子项直接跳路由
-export const NavbarNested = () => (
+export const NavbarNested = () => {
+  const { user, onLogout } = useAuthUser();
+
+  return (
   <nav className={classes.navbar}>
     <div className={classes.header}>
       <Group justify="space-between">
@@ -61,9 +65,10 @@ export const NavbarNested = () => (
         ))}
       </div>
     </AdminScrollArea>
-    <UserMenu variant="sidebar" />
+    <UserMenu variant="sidebar" user={user} onLogout={onLogout} />
   </nav>
-);
+  );
+};
 
 
 
