@@ -1,9 +1,4 @@
-import {
-  API_ROUTES,
-  DEFAULT_TENANT_ID,
-  TENANT_MODE,
-  tenantPath,
-} from "@starter/shared";
+import { API_ROUTES, tenantPath } from "@starter/shared";
 import type { HealthResponse, TenantSummary } from "./types";
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
@@ -14,8 +9,9 @@ export interface ApiClientOptions {
   /** 取当前 access token，返回 null 表示未登录 */
   getToken?: () => string | null;
   /**
-   * 取当前租户 id。multi 模式必填（由租户切换器写入）；
-   * single 模式可不填——自动用 DEFAULT_TENANT_ID，业务代码不感知 tenantId。
+   * 取当前租户 id，带租户前缀的接口必填。
+   * 多租户：租户切换器写入；单租户：`() => DEFAULT_TENANT_ID`。
+   * 缺失时直接抛错（fail-fast），避免静默请求无前缀路径。
    */
   getTenantId?: () => string | null;
   /** 收到 401 时回调：清会话并跳登录，由调用方实现 */
@@ -48,11 +44,13 @@ export const createApiClient = (options: ApiClientOptions = {}): ApiClient => {
 
     let finalPath = path;
     if (scoped) {
-      const tenantId =
-        options.getTenantId?.() ?? (TENANT_MODE === "single" ? DEFAULT_TENANT_ID : null);
-      if (tenantId) {
-        finalPath = tenantPath(tenantId, path);
+      const tenantId = options.getTenantId?.();
+      if (!tenantId) {
+        throw new Error(
+          "缺少租户上下文：请配置 getTenantId（单租户返回 DEFAULT_TENANT_ID）",
+        );
       }
+      finalPath = tenantPath(tenantId, path);
     }
 
     const response = await fetcher(`${baseUrl}${finalPath}`, { ...init, headers });

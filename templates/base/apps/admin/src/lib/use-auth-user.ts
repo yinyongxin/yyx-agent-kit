@@ -5,7 +5,8 @@ import { authStore } from "./auth";
 export const useAuthUser = () => {
   const navigate = useNavigate();
   const email = authStore.getEmail() ?? "";
-  const name = email ? email.split("@")[0] : "管理员";
+  const localPart = email.split("@")[0] ?? "";
+  const name = localPart || "管理员";
 
   return {
     user: { name, email, roleLabel: "平台管理员" },

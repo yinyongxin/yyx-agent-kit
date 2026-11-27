@@ -30,4 +30,4 @@
 - **首次 clone 后**先跑一次 `pnpm api:generate`，否则 `@starter/api/generated` 不存在、typecheck 会报模块缺失。
 - 手写 `client.ts` 保留给健康检查等轻量调用；生成客户端与手写 client 不混用同一导出名。
 - 小程序 / App 端没有标准 `fetch`，通过 `fetcher` 注入各自的请求器，不要改 `client.ts` 里写死实现。
-- 租户前缀由 API client 自动拼：single 模式用 `DEFAULT_TENANT_ID`，multi 模式用 `configureApiClient({ getTenantId })`；业务代码写相对路径（如 `/users`），不要自己拼 `/t/:tenantId`。`health` / `me` 无租户上下文，不加前缀。
+- 租户前缀由 API client 自动拼：用 `configureApiClient({ getTenantId })` 提供当前租户；单租户部署返回 `DEFAULT_TENANT_ID`。缺失时 client 直接抛错（fail-fast）。业务代码写相对路径（如 `/users`），不要自己拼 `/t/:tenantId`。`health` / `me` 无租户上下文，不加前缀。

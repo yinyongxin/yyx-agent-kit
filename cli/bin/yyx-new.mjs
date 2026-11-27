@@ -15,7 +15,6 @@ const HELP = `yyx-new — 从 yyx-agent-kit 模板创建新项目
 选项:
   -p, --path <目录>       生成到哪个目录（默认当前目录）
       --port-base <数字>  端口基址，client/admin/portal/server = +73/+74/+75/+00（默认 47100）
-      --tenant <模式>     租户交付模式 single|multi（默认 multi；single 时前端自动填默认租户 id，业务代码不感知）
   -f, --force             目标目录已存在时覆盖
   -h, --help              显示帮助
   -v, --version           显示版本
@@ -26,7 +25,7 @@ const HELP = `yyx-new — 从 yyx-agent-kit 模板创建新项目
 `;
 
 function parseArgs(argv) {
-  const opts = { path: null, portBase: 47100, force: false, tenant: 'multi' };
+  const opts = { path: null, portBase: 47100, force: false };
   const pos = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -42,12 +41,6 @@ function parseArgs(argv) {
       const v = Number(argv[++i]);
       if (!Number.isInteger(v) || v < 1 || v > 65535) throw new Error('--port-base 必须是有效端口号');
       opts.portBase = v;
-      continue;
-    }
-    if (a === '--tenant' || a.startsWith('--tenant=')) {
-      const v = a.startsWith('--tenant=') ? a.slice('--tenant='.length) : argv[++i];
-      if (!v || !['single', 'multi'].includes(v)) throw new Error('--tenant 必须是 single 或 multi');
-      opts.tenant = v;
       continue;
     }
     if (a.startsWith('-')) throw new Error(`未知选项: ${a}`);
@@ -77,7 +70,7 @@ function main() {
   if (opts.help) { process.stdout.write(HELP); return; }
   if (opts.version) { console.log(VERSION); return; }
 
-  const { name, portBase, force, tenant } = opts;
+  const { name, portBase, force } = opts;
   if (!/^[a-z0-9][a-z0-9-_]*$/.test(name)) {
     console.error('错误: 项目名只能包含小写字母、数字、- 和 _，且以字母或数字开头');
     process.exit(1);
@@ -125,11 +118,6 @@ function main() {
     ['47174', String(portBase + 74)],
     ['47175', String(portBase + 75)],
     ['47100', String(portBase)],
-    // 租户交付模式：single 时前端 API client 自动注入 seed 的固定租户 id，业务代码不感知
-    [
-      'export const TENANT_MODE: "single" | "multi" = "multi";',
-      `export const TENANT_MODE: "single" | "multi" = "${tenant}";`,
-    ],
   ];
 
   let changed = 0;

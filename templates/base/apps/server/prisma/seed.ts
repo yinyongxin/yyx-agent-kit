@@ -75,8 +75,21 @@ async function ensureRuntimeSchemaUsage() {
     adapter: new PrismaPg({ connectionString: adminUrl }),
   });
   try {
+    // migrate reset 会重建 schema，init-db.sql 不会再跑；这里把运行时账号的权限补齐
     await admin.$executeRawUnsafe(
       `GRANT USAGE ON SCHEMA public TO ${quoted}`,
+    );
+    await admin.$executeRawUnsafe(
+      `GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO ${quoted}`,
+    );
+    await admin.$executeRawUnsafe(
+      `GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${quoted}`,
+    );
+    await admin.$executeRawUnsafe(
+      `ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ${quoted}`,
+    );
+    await admin.$executeRawUnsafe(
+      `ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO ${quoted}`,
     );
   } finally {
     await admin.$disconnect();
