@@ -79,6 +79,23 @@ apps/server/
 
 原则：**能放模块内就不放全局**。全局构件必须与业务无关，且被多个模块使用。
 
+### 2.1 注册方式
+
+| 构件 | 全局生效 | 局部生效 |
+| --- | --- | --- |
+| Middleware | `AppModule.configure()` 里 `consumer.apply(X).forRoutes(...)` | 模块的 `configure()`；或只对特定路由 `forRoutes` |
+| Exception Filter | `app.useGlobalFilters(new X())` 或 `APP_FILTER` provider | `@UseFilters(X)`（控制器/方法） |
+| Pipe | `app.useGlobalPipes(new ValidationPipe(...))`（已在 `main.ts`） | `@UsePipes(X)`；参数级 `@Param("id", ParseUUIDPipe)` |
+| Guard | `APP_GUARD` provider（官方认证/授权包已全局注册） | `@UseGuards(X)`（控制器/方法） |
+| Interceptor | `app.useGlobalInterceptors` 或 `APP_INTERCEPTOR` | `@UseInterceptors(X)`（控制器/方法） |
+| 自定义装饰器 | 无需注册 | 参数装饰器由 Nest 解析；元数据装饰器由 `Reflector` 读取 |
+
+注意：
+
+- 全局构件的注册点只在 `main.ts`（`useGlobal*`）或 `app.module.ts`（`APP_*` provider），不要散落到各模块。
+- 管道顺序：全局 `ValidationPipe` 先跑；参数级 pipe 只做类型转换（如 `ParseUUIDPipe`）。
+- 守卫顺序：全局认证 → 全局授权 → 路由级守卫；`tenantId` 由 `TenantMembershipGuard` 校验，不要再用 `ParseUUIDPipe` 期待 400。
+
 ## 3. 接口设计规范
 
 ### 3.1 路由
