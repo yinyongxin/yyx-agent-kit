@@ -130,6 +130,7 @@ jobs:
           pnpm --filter @starter/server test:members
           pnpm --filter @starter/server test:roles
           pnpm --filter @starter/server test:permissions
+          pnpm --filter @starter/server test:authz
           pnpm --filter @starter/server test:rls
           pnpm --filter @starter/server test:generated
           pnpm --filter @starter/server test:logs

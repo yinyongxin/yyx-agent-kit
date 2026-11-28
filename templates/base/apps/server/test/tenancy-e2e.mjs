@@ -122,6 +122,12 @@ if (token) {
         membership.json?.role === "admin",
       `HTTP ${membership.status}`,
     );
+    check(
+      "E3 管理员权限为通配 *",
+      Array.isArray(membership.json?.permissions) &&
+        membership.json.permissions.includes("*"),
+      JSON.stringify(membership.json?.permissions ?? []),
+    );
 
     // S1 应用层接线：租户表必须走 prisma.tenant（事务内 RLS），seed 默认租户有 2 个角色
     const roles = await request("GET", `/t/${tenantId}/roles`, null, token);

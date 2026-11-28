@@ -13,4 +13,11 @@ export class MembershipDto {
 
   @ApiProperty({ example: "active" })
   status!: string;
+
+  @ApiProperty({
+    type: [String],
+    example: ["user:read", "knowledge:read"],
+    description: '当前租户下的权限点并集；owner / admin 返回 ["*"]',
+  })
+  permissions!: string[];
 }

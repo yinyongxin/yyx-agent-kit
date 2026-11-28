@@ -26,11 +26,11 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
-import { API_ROUTES, asRoute } from "../../shared";
+import { API_ROUTES, asRoute, PERMISSIONS } from "../../shared";
 import type { Prisma } from "../../generated/prisma/client";
 import { Audit } from "../../audit/audit.decorator";
 import { ErrorResponseDto } from "../../dto/error-response.dto";
-import { MinRole } from "../../auth/decorators/membership.decorator";
+import { RequirePermission } from "../../auth/decorators/permission.decorator";
 import { TenantMembershipGuard } from "../../auth/guards/tenant-membership.guard";
 import { TenantTx } from "../decorators/tenant-tx.decorator";
 import { TenantTransactionInterceptor } from "../interceptors/tenant-transaction.interceptor";
@@ -65,6 +65,7 @@ export class RolesController {
   @ApiOperation({ summary: "角色列表（分页 / 内置或自定义 / name、code 搜索）" })
   @ApiOkResponse({ type: RoleListResponseDto })
   @Get()
+  @RequirePermission(PERMISSIONS.roleRead)
   @Can.Anyone()
   list(
     @TenantTx() tx: Prisma.TransactionClient,
@@ -78,6 +79,7 @@ export class RolesController {
   @ApiOperation({ summary: "角色选项（不分页，成员角色下拉用）" })
   @ApiOkResponse({ type: [RoleOptionDto] })
   @Get(asRoute(API_ROUTES.tenantRoleOptions))
+  @RequirePermission(PERMISSIONS.roleRead)
   @Can.Anyone()
   options(
     @TenantTx() tx: Prisma.TransactionClient,
@@ -89,6 +91,7 @@ export class RolesController {
   @ApiOperation({ summary: "角色详情（含权限点 code）" })
   @ApiOkResponse({ type: RoleResponseDto })
   @Get(":roleId")
+  @RequirePermission(PERMISSIONS.roleRead)
   @Can.Anyone()
   get(
     @TenantTx() tx: Prisma.TransactionClient,
@@ -103,7 +106,7 @@ export class RolesController {
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiConflictResponse({ type: ErrorResponseDto })
   @Post()
-  @MinRole("admin")
+  @RequirePermission(PERMISSIONS.roleWrite)
   @Can.Anyone()
   @Audit({
     action: "role.create",
@@ -123,7 +126,7 @@ export class RolesController {
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   @Patch(":roleId")
-  @MinRole("admin")
+  @RequirePermission(PERMISSIONS.roleWrite)
   @Can.Anyone()
   @Audit({
     action: "role.update",
@@ -145,7 +148,7 @@ export class RolesController {
   @ApiConflictResponse({ type: ErrorResponseDto })
   @HttpCode(204)
   @Delete(":roleId")
-  @MinRole("admin")
+  @RequirePermission(PERMISSIONS.roleWrite)
   @Can.Anyone()
   @Audit({
     action: "role.delete",

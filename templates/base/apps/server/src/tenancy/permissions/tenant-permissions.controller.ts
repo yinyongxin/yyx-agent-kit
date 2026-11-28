@@ -8,9 +8,10 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
-import { API_ROUTES, asRoute } from "../../shared";
+import { API_ROUTES, asRoute, PERMISSIONS } from "../../shared";
 import { ErrorResponseDto } from "../../dto/error-response.dto";
 import { TenantMembershipGuard } from "../../auth/guards/tenant-membership.guard";
+import { RequirePermission } from "../../auth/decorators/permission.decorator";
 import { PermissionDto } from "./dto/permission.dto";
 import { PermissionsService } from "./permissions.service";
 
@@ -32,6 +33,7 @@ export class TenantPermissionsController {
   @ApiOperation({ summary: "权限点目录（角色分配用）" })
   @ApiOkResponse({ type: [PermissionDto] })
   @Get()
+  @RequirePermission(PERMISSIONS.roleRead)
   @Can.Anyone()
   list(@Param("tenantId") _tenantId: string): Promise<PermissionDto[]> {
     return this.permissions.list();

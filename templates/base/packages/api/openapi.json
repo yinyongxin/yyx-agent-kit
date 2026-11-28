@@ -3120,13 +3120,25 @@
           "status": {
             "type": "string",
             "example": "active"
+          },
+          "permissions": {
+            "example": [
+              "user:read",
+              "knowledge:read"
+            ],
+            "description": "当前租户下的权限点并集；owner / admin 返回 [\"*\"]",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
           "tenantId",
           "userId",
           "role",
-          "status"
+          "status",
+          "permissions"
         ]
       },
       "RoleDto": {

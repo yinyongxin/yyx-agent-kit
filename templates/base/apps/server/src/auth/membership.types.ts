@@ -4,6 +4,8 @@ export interface Membership {
   userId: string;
   role: string;
   status: string;
+  /** 当前租户下的权限点并集；owner/admin 为 ["*"] */
+  permissions: string[];
 }
 
 /** 角色等级：简单阶梯（对应 seed 的 admin / member；自定义角色留到 RBAC 阶段） */

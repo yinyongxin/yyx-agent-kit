@@ -10,7 +10,7 @@
 
 | 方法 | 路径 | 权限 | 说明 |
 | --- | --- | --- | --- |
-| GET | `/t/:tenantId/permissions` | 成员 | 全部权限点（code / name / description） |
+| GET | `/t/:tenantId/permissions` | role:read | 全部权限点（code / name / description） |
 
 ## 注意
 

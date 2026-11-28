@@ -44,6 +44,7 @@ pnpm --filter @starter/server test:users     # 平台用户 CRUD
 pnpm --filter @starter/server test:members   # 租户成员管理
 pnpm --filter @starter/server test:roles     # 租户角色与权限分配
 pnpm --filter @starter/server test:permissions # 平台权限点管理
+pnpm --filter @starter/server test:authz   # 接口级权限校验
 pnpm --filter @starter/server test:rls       # RLS 并发
 pnpm --filter @starter/server test:generated # OpenAPI 生成客户端联动
 ```

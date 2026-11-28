@@ -27,11 +27,12 @@ import {
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
 import { CurrentUser } from "@nestjs/authentication";
-import { API_ROUTES, asRoute } from "../../shared";
+import { API_ROUTES, asRoute, PERMISSIONS } from "../../shared";
 import type { Prisma } from "../../generated/prisma/client";
 import { Audit } from "../../audit/audit.decorator";
 import { ErrorResponseDto } from "../../dto/error-response.dto";
-import { CurrentMembership, MinRole } from "../../auth/decorators/membership.decorator";
+import { CurrentMembership } from "../../auth/decorators/membership.decorator";
+import { RequirePermission } from "../../auth/decorators/permission.decorator";
 import type { Membership } from "../../auth/membership.types";
 import { TenantMembershipGuard } from "../../auth/guards/tenant-membership.guard";
 import { TenantTx } from "../decorators/tenant-tx.decorator";
@@ -64,6 +65,7 @@ export class TenantMembersController {
   @ApiOperation({ summary: "租户成员列表（分页 / 成员状态 / email、displayName 搜索）" })
   @ApiOkResponse({ type: MemberListResponseDto })
   @Get()
+  @RequirePermission(PERMISSIONS.userRead)
   @Can.Anyone()
   list(
     @TenantTx() tx: Prisma.TransactionClient,
@@ -78,7 +80,7 @@ export class TenantMembersController {
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiConflictResponse({ type: ErrorResponseDto })
   @Post()
-  @MinRole("admin")
+  @RequirePermission(PERMISSIONS.userWrite)
   @Can.Anyone()
   @Audit({
     action: "member.create",
@@ -97,7 +99,7 @@ export class TenantMembersController {
   @ApiOkResponse({ type: MemberResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @Patch(":userId")
-  @MinRole("admin")
+  @RequirePermission(PERMISSIONS.userWrite)
   @Can.Anyone()
   @Audit({
     action: "member.update",
@@ -120,7 +122,7 @@ export class TenantMembersController {
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @HttpCode(204)
   @Delete(":userId")
-  @MinRole("admin")
+  @RequirePermission(PERMISSIONS.userWrite)
   @Can.Anyone()
   @Audit({
     action: "member.delete",

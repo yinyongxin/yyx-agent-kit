@@ -16,9 +16,9 @@
 | `me.controller.ts` | `GET /me/tenants`，返回当前用户所属租户 |
 | `dto/` | `SignInDto` / `SignInResponseDto` / `TenantSummaryDto` / `MembershipDto`，详见该目录 README |
 | `middleware/` | `tenant.middleware.ts`：从 `/t/:tenantId` 解析租户并写 `TenantContext`（不做校验） |
-| `guards/` | `tenant-membership.guard.ts`：校验用户属于该租户（非成员 404 / 角色不足 403） |
-| `decorators/` | `membership.decorator.ts`：`@CurrentMembership()` / `@MinRole()` |
-| `membership.types.ts` | `Membership` 类型与 `ROLE_RANK` 等级表 |
+| `guards/` | `tenant-membership.guard.ts`：校验用户属于该租户（非成员 404 / 角色或权限不足 403） |
+| `decorators/` | `membership.decorator.ts`：`@CurrentMembership()` / `@MinRole()`；`permission.decorator.ts`：`@RequirePermission()` |
+| `membership.types.ts` | `Membership` 类型（含 `permissions` 并集）与 `ROLE_RANK` 等级表 |
 | `tenant-context.util.ts` | AsyncLocalStorage 租户上下文，fail-closed |
 | `user.types.ts` | 对外用户类型（不含 passwordHash） |
 
@@ -31,7 +31,7 @@
 
 ## 同步要求
 
-- 新增 `/t/:tenantId/...` 业务 controller **必须挂 `TenantMembershipGuard`**
+- 新增 `/t/:tenantId/...` 业务 controller **必须挂 `TenantMembershipGuard`**；需要写权限的接口加 `@RequirePermission(PERMISSIONS.xxx)`，不要只依赖 `@MinRole`
 - 密码哈希只能留在 Repository / Seed，禁止出现在任何对外响应与日志
 - 改动登录行为必须同步更新 `test/tenancy-e2e.mjs` 与 `docs/guides/credentials.md`
 - `PasswordHasher` 复用 `AuthenticationModule` 导出的实例，不要在本模块重复注册

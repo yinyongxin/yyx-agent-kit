@@ -3,7 +3,7 @@
 ## 职责
 
 - 维护「用户 ↔ 租户」关系（`UserTenant`）与成员在当前租户下的角色（`UserRole`）
-- 查询：租户内任意成员可见；增删改：`admin` / `owner`
+- 查询：租户内任意成员可见（需 `user:read`）；写：`user:write`（`owner` / `admin` 视为全权限）
 - 不修改全局 `User`（邮箱、密码、账号状态由平台「用户管理」负责）
 - 不能修改 / 移除自己，避免管理员把自己锁出租户
 
@@ -11,10 +11,10 @@
 
 | 方法 | 路径 | 权限 | 说明 |
 | --- | --- | --- | --- |
-| GET | `/t/:tenantId/members` | 成员 | 分页 + `status` + `keyword`（email / displayName） |
-| POST | `/t/:tenantId/members` | admin | 按邮箱添加已存在用户，角色默认 `member` |
-| PATCH | `/t/:tenantId/members/:userId` | admin | 更新租户内状态 / 整体替换角色 |
-| DELETE | `/t/:tenantId/members/:userId` | admin | 移除成员及其在本租户的角色 |
+| GET | `/t/:tenantId/members` | user:read | 分页 + `status` + `keyword`（email / displayName） |
+| POST | `/t/:tenantId/members` | user:write | 按邮箱添加已存在用户，角色默认 `member` |
+| PATCH | `/t/:tenantId/members/:userId` | user:write | 更新租户内状态 / 整体替换角色 |
+| DELETE | `/t/:tenantId/members/:userId` | user:write | 移除成员及其在本租户的角色 |
 
 ## 数据与隔离
 

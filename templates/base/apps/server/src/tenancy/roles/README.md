@@ -3,7 +3,7 @@
 ## 职责
 
 - 维护租户内角色（`Role`）与角色权限（`RolePermission`）
-- 查询：租户内任意成员可见；写：`admin` / `owner`
+- 查询：租户内任意成员可见（需 `role:read`）；写：`role:write`（`owner` / `admin` 视为全权限）
 - 内置角色（`isSystem=true`，seed 维护的 `admin` / `member`）**只读**：不能改名、改权限、删除
 - 自定义角色可创建 / 更新 / 删除；`code` 创建后不可修改
 - 删除前检查是否有成员仍在使用，避免成员变成「无角色」
@@ -12,12 +12,12 @@
 
 | 方法 | 路径 | 权限 | 说明 |
 | --- | --- | --- | --- |
-| GET | `/t/:tenantId/roles` | 成员 | 分页 + `kind`（system/custom）+ name/code 搜索 |
-| GET | `/t/:tenantId/roles/options` | 成员 | 全部角色精简列表（成员页下拉） |
-| GET | `/t/:tenantId/roles/:roleId` | 成员 | 详情（含权限点 code） |
-| POST | `/t/:tenantId/roles` | admin | 创建自定义角色（可选权限点） |
-| PATCH | `/t/:tenantId/roles/:roleId` | admin | name / description / 权限点整体替换 |
-| DELETE | `/t/:tenantId/roles/:roleId` | admin | 删除自定义角色（有成员 409） |
+| GET | `/t/:tenantId/roles` | role:read | 分页 + `kind`（system/custom）+ name/code 搜索 |
+| GET | `/t/:tenantId/roles/options` | role:read | 全部角色精简列表（成员页下拉） |
+| GET | `/t/:tenantId/roles/:roleId` | role:read | 详情（含权限点 code） |
+| POST | `/t/:tenantId/roles` | role:write | 创建自定义角色（可选权限点） |
+| PATCH | `/t/:tenantId/roles/:roleId` | role:write | name / description / 权限点整体替换 |
+| DELETE | `/t/:tenantId/roles/:roleId` | role:write | 删除自定义角色（有成员 409） |
 
 ## 数据与隔离
 
