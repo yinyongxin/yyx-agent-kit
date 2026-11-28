@@ -6,7 +6,7 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Public } from "@nestjs/authentication";
-import { API_ROUTES, asRoute } from "../../../../packages/shared/src/index";
+import { API_ROUTES, asRoute } from "../shared";
 import { ErrorResponseDto } from "../dto/error-response.dto";
 import { CredentialsService } from "./credentials.service";
 import { SignInDto, SignInResponseDto } from "./dto/sign-in.dto";

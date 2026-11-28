@@ -16,7 +16,7 @@ import { SwaggerModule } from "@nestjs/swagger";
 import { Logger as PinoLogger, LoggerErrorInterceptor } from "nestjs-pino";
 import { AppModule } from "./app.module";
 import { buildOpenApiDocument } from "./swagger";
-import { API_PREFIX } from "../../../packages/shared/src/index";
+import { API_PREFIX } from "./shared";
 
 const bootstrap = async () => {
   // NestJS 12.3+ 推荐 NodeAdapter（v13 起为默认）：直接跑在 node:http 上，

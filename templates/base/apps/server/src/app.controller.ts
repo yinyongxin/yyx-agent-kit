@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Public } from "@nestjs/authentication";
 import { AppService } from "./app.service";
 import { HealthDto } from "./dto/health.dto";
-import { API_ROUTES, asRoute } from "../../../packages/shared/src/index";
+import { API_ROUTES, asRoute } from "./shared";
 
 const HEALTH_PATH = asRoute(API_ROUTES.health);
 

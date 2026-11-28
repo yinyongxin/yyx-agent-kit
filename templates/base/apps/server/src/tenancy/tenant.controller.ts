@@ -15,7 +15,7 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
-import { API_ROUTES, asRoute } from "../../../../packages/shared/src/index";
+import { API_ROUTES, asRoute } from "../shared";
 import type { Prisma } from "../generated/prisma/client";
 import { CurrentMembership } from "../auth/decorators/membership.decorator";
 import type { Membership } from "../auth/membership.types";

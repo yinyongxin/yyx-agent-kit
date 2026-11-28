@@ -24,7 +24,7 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
-import { API_ROUTES, asRoute } from "../../../../packages/shared/src/index";
+import { API_ROUTES, asRoute } from "../shared";
 import { Audit } from "../audit/audit.decorator";
 import { PlatformAdminGuard } from "../auth/guards/platform-admin.guard";
 import { ErrorResponseDto } from "../dto/error-response.dto";

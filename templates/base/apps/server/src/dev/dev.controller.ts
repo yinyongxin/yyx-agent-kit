@@ -8,7 +8,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { ApiExcludeController } from "@nestjs/swagger";
 import { Public } from "@nestjs/authentication";
-import { API_ROUTES, asRoute } from "../../../../packages/shared/src/index";
+import { API_ROUTES, asRoute } from "../shared";
 import { DevService, type DevServiceInfo } from "./dev.service";
 import { renderDevPage } from "./dev.page";
 
