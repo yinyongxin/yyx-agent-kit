@@ -47,6 +47,18 @@ class EnvironmentVariables {
   SWAGGER_ENABLED?: string;
 
   @IsOptional()
+  @IsInt()
+  API_RATE_LIMIT_MAX?: number;
+
+  @IsOptional()
+  @IsInt()
+  API_RATE_LIMIT_WINDOW_SECONDS?: number;
+
+  @IsOptional()
+  @IsString()
+  TRUST_PROXY?: string;
+
+  @IsOptional()
   @IsIn(["development", "production", "test"])
   NODE_ENV?: string;
 

@@ -1,6 +1,8 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { APP_GUARD } from "@nestjs/core";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { RateLimitGuard } from "./common/guards/rate-limit.guard";
 import { AuditModule } from "./audit/audit.module";
 import { LoggingModule } from "./logging/logging.module";
 import { LogsModule } from "./logs/logs.module";
@@ -34,7 +36,10 @@ const isProduction = process.env.NODE_ENV === "production";
     ...(isProduction ? [] : [DevModule]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: RateLimitGuard },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

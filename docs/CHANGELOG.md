@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **全站 API 限流**：新增 `common/guards/rate-limit.guard.ts`（`APP_GUARD`，IP + Controller.method 固定窗口，默认 120 次/60 秒）；`@RateLimit()` 覆盖单路由、`@SkipRateLimit()` 跳过（健康检查）；`TRUST_PROXY` 支持反向代理真实 IP；新增开发探针与 `test:rate-limit`
 - **登录失败锁定**：新增 `RedisModule` / `LoginThrottleService`，按「邮箱+IP」和「IP」双维度计数（默认 5 次 / 5 分钟，锁 15 分钟，IP 阈值 30）；登录成功清零邮箱+IP；Redis 不可用时 fail-open；登录页展示 429 文案；新增 `test:throttle` 并纳入 CI
 - **账号自助与安全**：新增 `PATCH /me`（显示名）与 `POST /me/password`（校验旧密码、至少 8 位、新旧不能相同）；管理端「账号设置」页接入个人资料与修改密码；审计 `user.profile.update` / `user.password.change`；新增 `test:profile` 并纳入 CI。当前无 session store，修改密码不会立即使已签发 JWT 失效
 - **管理端导航一致性**：HeaderMegaMenu 接入 `useMenuAccess`，平台菜单与日志菜单按 `isPlatformAdmin` 过滤，角色菜单按当前租户 `role:read` 过滤；设置入口统一改为「账号设置」

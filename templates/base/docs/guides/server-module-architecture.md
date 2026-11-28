@@ -174,6 +174,7 @@ export class TenantListResponseDto {
 - 需要登录：默认全局认证 guard；方法/类上再加 `@Can.Anyone()` 明确授权要求。
 - 需要特定平台策略：`@Can(Policy, "ability")`。
 - 租户内按权限点授权：`@RequirePermission(PERMISSIONS.userRead)`（可传多个，全部满足）。权限来自当前租户所有角色的并集；`owner` / `admin` 视为拥有全部权限（`membership.permissions = ["*"]`）。
+- 全站限流：`RateLimitGuard`（`APP_GUARD`）默认开启，按 IP + Controller.method 固定窗口；健康检查用 `@SkipRateLimit()`，单路由用 `@RateLimit({ limit, windowSeconds })` 覆盖。Redis 不可用时 fail-open。
 - 租户路由：`@UseGuards(TenantMembershipGuard)` + `@UseInterceptors(TenantTransactionInterceptor)`；`TenantMembershipGuard` 同时校验成员身份与 `@RequirePermission`。
 - Swagger：需要登录的 controller 加 `@ApiBearerAuth()`；公开端点不要加。
 - 错误响应也要声明（至少 401；租户路由补 403/404），用共享的 `ErrorResponseDto`，否则生成的错误类型是 `unknown`。

@@ -48,6 +48,7 @@ pnpm --filter @starter/server test:permissions # 平台权限点管理
 pnpm --filter @starter/server test:authz   # 接口级权限校验
 pnpm --filter @starter/server test:profile # 账号资料与修改密码
 pnpm --filter @starter/server test:throttle # 登录失败锁定
+pnpm --filter @starter/server test:rate-limit # 全站 API 限流
 pnpm --filter @starter/server test:provisioning # 租户引导 + 平台级成员管理
 pnpm --filter @starter/server test:rls       # RLS 并发
 pnpm --filter @starter/server test:generated # OpenAPI 生成客户端联动

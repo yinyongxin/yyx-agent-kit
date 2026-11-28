@@ -18,12 +18,23 @@ import { AppModule } from "./app.module";
 import { buildOpenApiDocument } from "./swagger";
 import { API_PREFIX } from "./shared";
 
+/** TRUST_PROXY：true/false 或逗号分隔的代理地址/网段；默认信任本机与私网代理 */
+const parseTrustProxy = (): true | false | string[] => {
+  const raw = (process.env.TRUST_PROXY ?? "loopback,linklocal,uniquelocal").trim();
+  if (raw === "false") return false;
+  if (raw === "true") return true;
+  return raw
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+};
+
 const bootstrap = async () => {
   // NestJS 12.3+ 推荐 NodeAdapter（v13 起为默认）：直接跑在 node:http 上，
   // req/res 带 Express 风格 helpers，现有 middleware 写法不变
   const app = await NestFactory.create<NestNodeApplication>(
     AppModule,
-    new NodeAdapter(),
+    new NodeAdapter({ trustProxy: parseTrustProxy() }),
     { bufferLogs: true },
   );
   const config = app.get(ConfigService);

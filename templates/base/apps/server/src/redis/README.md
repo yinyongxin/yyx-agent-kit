@@ -18,4 +18,4 @@
 - `REDIS_URL` 为空时只打一次 warn，不阻塞启动
 - `enableOfflineQueue: false`，避免 Redis 故障时请求堆积
 - 业务不要直接 import `ioredis`；需要新命令时在 `RedisService` 增加封装
-- 当前主要用于 `auth/login-throttle.service.ts`
+- 当前主要用于 `auth/login-throttle.service.ts` 与 `common/guards/rate-limit.guard.ts`

@@ -9,6 +9,7 @@ import { ConfigService } from "@nestjs/config";
 import { ApiExcludeController } from "@nestjs/swagger";
 import { Public } from "@nestjs/authentication";
 import { API_ROUTES, asRoute } from "../shared";
+import { RateLimit } from "../common/decorators/rate-limit.decorator";
 import { DevService, type DevServiceInfo } from "./dev.service";
 import { renderDevPage } from "./dev.page";
 
@@ -57,6 +58,15 @@ export class DevController {
         error instanceof Error ? error.message : "开发服务探测失败",
       );
     }
+  }
+
+  /** 全局限流验收探针：3 次/分钟，仅开发环境注册 */
+  @Public()
+  @Get(asRoute(API_ROUTES.devRateLimitProbe))
+  @RateLimit({ limit: 3, windowSeconds: 60 })
+  rateLimitProbe(): { ok: true } {
+    this.assertDev();
+    return { ok: true };
   }
 
   private assertDev() {

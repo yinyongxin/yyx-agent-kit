@@ -9,6 +9,11 @@ export const appConfig = registerAs("app", () => ({
   swaggerEnabled:
     process.env.SWAGGER_ENABLED === "true" ||
     (process.env.SWAGGER_ENABLED !== "false" && !isProduction()),
+  /** 全站 API 限流默认值（IP + Controller.method 固定窗口） */
+  apiRateLimitMax: Number(process.env.API_RATE_LIMIT_MAX ?? 120),
+  apiRateLimitWindowSeconds: Number(
+    process.env.API_RATE_LIMIT_WINDOW_SECONDS ?? 60,
+  ),
 }));
 
 /** 数据访问配置（运行时连接串；迁移用 MIGRATE_DATABASE_URL 在 prisma7.config.ts 单独读） */

@@ -15,6 +15,7 @@
 - **租户接口授权按权限点**：租户内业务接口用 `@RequirePermission(PERMISSIONS.xxx)` 声明所需权限（可传多个，全部满足）；权限来自当前租户角色并集，`owner` / `admin` 视为拥有全部权限（`["*"]`）。不要只靠 `@MinRole` 做业务授权，权限点才对应角色配置。
 - **跨租户成员操作**：平台级引导/恢复走 `/tenants/:tenantId/members`（写操作要求 `super`），不要为了让平台管理员通过 `TenantMembershipGuard` 而伪造租户成员关系。
 - **管理端前端权限**：按钮 / 操作项显隐用 `<Can permission="user:write">`，租户页面级门禁用 `<PermissionGate>`，平台页面用 `<PlatformAdminGate>`；导航菜单用 `useMenuAccess()`（平台专属标 `platformOnly`，租户菜单标 `permission`）。前端只做展示收口，后端仍必须用 `@RequirePermission` / `PlatformAdminGuard` 拦截。
+- **全站 API 限流**：`RateLimitGuard` 通过 `APP_GUARD` 默认开启（Redis，IP + Controller.method，默认 120 次/分钟）；健康检查/探针用 `@SkipRateLimit()`；高成本或敏感接口用 `@RateLimit({ limit, windowSeconds })` 覆盖；反向代理部署配置 `TRUST_PROXY`。
 - **审计日志**：关键写操作（登录、租户/角色/成员/权限点变更）在 controller 加 `@Audit({ action, resource })`；表 `audit_logs` 为 append-only（RLS 禁止改删），查询走 `/starter/api/audit-logs`，管理端 `/observability/audit-logs`。规范见 `apps/server/src/audit/README.md`。
 - **链路追踪**：`apps/server/src/tracing.ts` 初始化 OTel → Tempo（`OTEL_ENABLED=true` 时生效）；入站 server span 由 `TraceMiddleware` 创建（NodeAdapter 下 HTTP 插桩的 context 传不进 middleware），不要重复建 span，也不要改响应头 traceId 来源。
 - 开发期接口统一用 `/api` 相对路径，由 Vite 代理到后端，**不写死后端域名**。

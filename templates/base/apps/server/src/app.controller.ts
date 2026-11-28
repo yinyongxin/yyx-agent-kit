@@ -2,6 +2,7 @@ import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Public } from "@nestjs/authentication";
 import { AppService } from "./app.service";
+import { SkipRateLimit } from "./common/decorators/rate-limit.decorator";
 import { HealthDto } from "./dto/health.dto";
 import { API_ROUTES, asRoute } from "./shared";
 
@@ -16,6 +17,7 @@ export class AppController {
   @ApiOperation({ summary: "健康检查（公开）" })
   @ApiOkResponse({ type: HealthDto })
   @Public()
+  @SkipRateLimit()
   @Get(HEALTH_PATH)
   getHealth(): HealthDto {
     return this.appService.getHealth();
