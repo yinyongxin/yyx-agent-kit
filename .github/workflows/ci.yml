@@ -1,0 +1,148 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "templates/base/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "templates/base/**"
+      - ".github/workflows/ci.yml"
+
+defaults:
+  run:
+    working-directory: templates/base
+
+jobs:
+  verify:
+    name: build + e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_DB: app
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app_dev_pwd
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: templates/base/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Init database roles
+        run: PGPASSWORD=app_dev_pwd psql -h localhost -U app -d app -f docker/init-db.sql
+
+      - name: Write .env
+        run: |
+          cat > .env <<'EOF'
+          COMPOSE_PROJECT_NAME=starter
+          POSTGRES_DB=app
+          POSTGRES_USER=app
+          POSTGRES_PASSWORD=app_dev_pwd
+          POSTGRES_PORT=5432
+          REDIS_PASSWORD=app_redis_pwd
+          REDIS_PORT=6379
+          DATABASE_URL=postgresql://app_rw:app_rw_pwd_2026@localhost:5432/app
+          MIGRATE_DATABASE_URL=postgresql://app:app_dev_pwd@localhost:5432/app
+          REDIS_URL=redis://localhost:6379
+          PORT=47100
+          NODE_ENV=test
+          JWT_SECRET=dev_jwt_secret_change_me_at_least_32_bytes
+          APP_URL=http://localhost:47100
+          LOG_LEVEL=debug
+          LOG_HTTP_BODY=true
+          LOG_BODY_LIMIT=16384
+          LOG_FILE=
+          LOG_ROTATE_FREQUENCY=daily
+          LOG_ROTATE_SIZE=50m
+          LOG_ROTATE_KEEP=7
+          LOG_SERVICE_NAME=starter-api
+          LOKI_URL=http://localhost:47110
+          OTEL_ENABLED=false
+          EOF
+
+      - name: Prisma generate
+        run: pnpm --filter @starter/server prisma:generate
+
+      - name: Migrate + seed
+        run: |
+          pnpm --filter @starter/server db:deploy
+          pnpm --filter @starter/server db:seed
+
+      - name: Generate API client
+        run: pnpm api:generate
+
+      - name: Build
+        run: pnpm build
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Start server
+        run: |
+          pnpm --filter @starter/server start > /tmp/server.log 2>&1 &
+          echo $! > /tmp/server.pid
+          for i in $(seq 1 40); do
+            if curl -fsS http://localhost:47100/api/health >/dev/null 2>&1; then
+              echo "server ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "server failed to start"
+          cat /tmp/server.log
+          exit 1
+
+      - name: E2E tests
+        run: |
+          pnpm --filter @starter/server test:e2e
+          pnpm --filter @starter/server test:tenants
+          pnpm --filter @starter/server test:rls
+          pnpm --filter @starter/server test:generated
+          pnpm --filter @starter/server test:logs
+          pnpm --filter @starter/server test:audit
+          pnpm --filter @starter/server test:traces
+
+      - name: Upload server log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log
+          path: |
+            /tmp/server.log
+            templates/base/logs/*.log
+          if-no-files-found: ignore

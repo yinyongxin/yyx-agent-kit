@@ -81,6 +81,18 @@ Grafana 预置两条告警规则（错误日志过多、慢请求过多），通
 
 接口：`GET /api/health`（公开探活，工作台与客户端都用这个）。
 
+## CI
+
+模板自带 `.github/workflows/ci.yml`，生成项目后可直接用：
+
+1. `pnpm install --frozen-lockfile`
+2. 起 PostgreSQL（pgvector）与 Redis，执行 `docker/init-db.sql` 创建 `app_rw`
+3. `prisma generate` → `db:deploy` → `db:seed`
+4. `pnpm api:generate` → `pnpm build` → `pnpm lint`
+5. 启动 server，依次跑 `test:e2e` / `tenants` / `rls` / `generated` / `logs` / `audit` / `traces`
+
+Loki / Tempo 不可达时 `test:logs` / `test:traces` 自动 SKIP；失败会上传 server 日志。
+
 ## 双击启动 / 停止（Windows）
 
 直接双击根目录的 `start-dev.cmd` / `stop-dev.cmd`：
