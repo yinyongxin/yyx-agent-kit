@@ -33,7 +33,10 @@ export const DataTableTable = <TRow,>({ table: propTable }: DataTableTableProps<
     isSelected,
     allPageSelected,
     somePageSelected,
+    selectable,
   } = useDataTableApi<TRow>(propTable);
+
+  const visibleColumns = columns.filter((column) => !column.hidden);
 
   return (
     <Table.ScrollContainer
@@ -50,16 +53,18 @@ export const DataTableTable = <TRow,>({ table: propTable }: DataTableTableProps<
       >
         <Table.Thead>
           <Table.Tr>
-            {/* 首列固定放全选：全选/取消当前页，部分选中时显示半选态 */}
-            <Table.Th w={44}>
-              <Checkbox
-                aria-label={somePageSelected ? "取消全选当前页" : "全选当前页"}
-                checked={allPageSelected}
-                indeterminate={somePageSelected}
-                onChange={(event) => toggleAll(event.currentTarget.checked)}
-              />
-            </Table.Th>
-            {columns.map((column) => {
+            {/* 首列固定放全选：全选/取消当前页，部分选中时显示半选态；无批量操作时整列隐藏 */}
+            {selectable && (
+              <Table.Th w={44}>
+                <Checkbox
+                  aria-label={somePageSelected ? "取消全选当前页" : "全选当前页"}
+                  checked={allPageSelected}
+                  indeterminate={somePageSelected}
+                  onChange={(event) => toggleAll(event.currentTarget.checked)}
+                />
+              </Table.Th>
+            )}
+            {visibleColumns.map((column) => {
               const active = sortKey === column.key;
               const Icon = sortIcon(active, sortDirection);
               return (
@@ -96,14 +101,16 @@ export const DataTableTable = <TRow,>({ table: propTable }: DataTableTableProps<
                 // 选中行高亮：用主题变量而非硬编码颜色，适配明暗主题
                 bg={isSelected(key) ? "var(--mantine-color-blue-light)" : undefined}
               >
-                {/* 行选择列：aria-label 带主键，便于读屏区分不同行 */}
-                <Table.Td>
-                  <Checkbox
-                    aria-label={`选择行 ${String(key)}`}
-                    checked={isSelected(key)}
-                    onChange={() => toggleRow(key)}
-                  />
-                </Table.Td>
+                {/* 行选择列：aria-label 带主键，便于读屏区分不同行；无批量操作时隐藏 */}
+                {selectable && (
+                  <Table.Td>
+                    <Checkbox
+                      aria-label={`选择行 ${String(key)}`}
+                      checked={isSelected(key)}
+                      onChange={() => toggleRow(key)}
+                    />
+                  </Table.Td>
+                )}
                 {/* 数据列：业务可传 render 自定义单元格（Badge/Avatar 等）；
                     没传则取对应字段值，null/undefined 显示为空字符串 */}
                 {columns.map((column) => (

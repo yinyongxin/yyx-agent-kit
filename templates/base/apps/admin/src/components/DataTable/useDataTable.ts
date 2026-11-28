@@ -40,6 +40,8 @@ export interface UseDataTableOptions<TRow> {
   onEmptyAction?: () => void;
   /** 搜索按钮点击时的重新拉取回调（客户端模式） */
   onSearch?: () => void;
+  /** 是否启用行选择；没有批量操作的表不要开，默认 false */
+  selectable?: boolean;
   /**
    * 服务端查询回调：传了即进入服务端模式，前端不再对 data 做过滤/排序/分页。
    * hook 在条件变化时调用它，业务在其中发请求并 setData/setLoading/setError。
@@ -109,6 +111,7 @@ export interface DataTableApi<TRow> extends UseDataTableResult<TRow> {
   labels: DataTableLabels;
   paginationLabels: PaginationLabels;
   getRowKey: (row: TRow) => RowKey;
+  selectable: boolean;
   onRetry?: () => void;
   onEmptyAction?: () => void;
 }
@@ -125,6 +128,7 @@ export const useDataTable = <TRow>({
   onRetry,
   onEmptyAction,
   onSearch,
+  selectable = false,
   queryOptions,
   mutationConfig,
   initialPageSize = 10,
@@ -378,6 +382,7 @@ export const useDataTable = <TRow>({
       labels,
       paginationLabels,
       getRowKey,
+      selectable,
       onRetry,
       onEmptyAction,
     }),
@@ -387,7 +392,7 @@ export const useDataTable = <TRow>({
       submitSearch, resetFilters, toggleSort, setPage, setPageSize, toggleRow,
       toggleAll, clearSelection, isSelected, allPageSelected, somePageSelected,
       setLoading, setError, reload, applyMutation, errorMessage, columns, filterFields, labels,
-      paginationLabels, getRowKey, onRetry, onEmptyAction,
+      paginationLabels, getRowKey, selectable, onRetry, onEmptyAction,
     ],
   );
 };

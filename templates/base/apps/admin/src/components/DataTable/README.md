@@ -51,7 +51,14 @@ const table = useDataTable({
 
 `useDataTableApi(tableProp?)` 先取显式 prop，没传才读 Provider；所以「必须在 Provider 内部」不是硬约束。**但放在 Provider 外面的组件必须显式传 `table`**——因为 prop 是可选的，typecheck 抓不到漏传，运行时才会报错。
 
-### 两种数据模式（默认服务端）
+### 选择列 / 操作列按需显示
+
+- 行选择列默认**不显示**；只有需要批量操作的表才在 `useDataTable` 传 `selectable: true`（当前为成员、用户、文件）。
+- `DataTableBatchBar` 在 `selectable=false` 或 `actions` 为空时直接不渲染。
+- 操作列是业务列：没有操作能力时给对应 `ColumnDef` 设 `hidden: true`，表格与卡片视图都会跳过该列；不要固定渲染一列「—」。
+- 这样只读账号不会看到勾选框和空操作列。
+
+
 
 | 模式 | 触发 | 使用场景 | 数据 / 过滤 |
 | --- | --- | --- | --- |

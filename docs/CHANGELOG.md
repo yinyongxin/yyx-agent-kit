@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **DataTable 列按需显示**：新增 `selectable`（默认 false）与 `ColumnDef.hidden`；没有批量操作的表不再显示勾选列，没有操作能力的页面不再显示操作列；成员/用户/文件按权限动态启用，只读账号不再出现空操作列
 - **导航与账号入口收口**：租户切换移入用户信息面板；账号设置从导航移除，统一从用户面板进入；删除无用的 `/integration` 页面；权限点页面改为只读（权限点由后端 seed/迁移维护）
 - **EGO 全账号验收 + 平台运维只读修复**：实际登录并操作 8 个演示账号；发现 `ops` 可创建租户，已给租户/用户/权限点的写接口补 `@RequirePlatformAdminLevel("super")`，管理端同步隐藏 ops 的写按钮；验证成员添加/移除、文件上传/删除、多租户切换、停用/禁用账号与页面门禁
 - **测试租户清理命令**：新增 `db:cleanup:test-tenants`，默认 dry-run，`-- --apply` 硬删除软删除的测试租户（e2e/audit/prov/ui/ego/qa/test）并级联角色/成员/文件/订阅；默认保留 `default`、`demo-b` 与审计日志，`--purge-audit` 通过 `MIGRATE_DATABASE_URL` 清空审计表；开发面板「工具 → 数据库维护」提供预览 / 清理测试租户 / 清空审计日志按钮

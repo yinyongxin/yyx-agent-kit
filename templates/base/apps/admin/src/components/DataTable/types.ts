@@ -15,6 +15,8 @@ export interface ColumnDef<TRow> {
   title: ReactNode;
   width?: number | string;
   sortable?: boolean;
+  /** true 时不渲染该列；用于按权限隐藏操作列 */
+  hidden?: boolean;
   render?: (row: TRow) => ReactNode;
 }
 

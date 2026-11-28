@@ -341,6 +341,7 @@ export const TenantMembersContent = ({
       key: "key",
       title: "操作",
       width: 110,
+      hidden: !canWrite,
       render: (row) =>
         isSelf(row) || !canWrite ? (
           <Text size="sm" c="dimmed">
@@ -411,6 +412,7 @@ export const TenantMembersContent = ({
 
   const table = useDataTable<MemberRow>({
     getRowKey: (row) => row.key,
+    selectable: canWrite,
     keywordFields: ["email", "displayName"],
     columns,
     filterFields,

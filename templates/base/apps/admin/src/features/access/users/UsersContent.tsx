@@ -236,6 +236,7 @@ export const UsersContent = () => {
       key: "key",
       title: "操作",
       width: 110,
+      hidden: !canWrite,
       render: (row) =>
         canWrite ? (
           <Group gap={4} wrap="nowrap">
@@ -287,6 +288,7 @@ export const UsersContent = () => {
 
   const table = useDataTable<UserRow>({
     getRowKey: (row) => row.key,
+    selectable: canWrite,
     keywordFields: ["email", "displayName"],
     columns,
     filterFields,

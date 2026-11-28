@@ -209,6 +209,7 @@ export const PermissionsContent = () => {
       key: "key",
       title: "操作",
       width: 110,
+      hidden: !canWrite,
       render: (row) =>
         canWrite ? (
           <Group gap={4} wrap="nowrap">

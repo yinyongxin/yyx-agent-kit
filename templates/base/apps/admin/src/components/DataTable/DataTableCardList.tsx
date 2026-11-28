@@ -8,8 +8,9 @@ export interface DataTableCardListProps<TRow> {
 
 /** 移动卡片视图：一份列配置两套 DOM（CSS 断点切换） */
 export const DataTableCardList = <TRow,>({ table: propTable }: DataTableCardListProps<TRow>) => {
-  const { rows, columns, getRowKey, isSelected, toggleRow } =
+  const { rows, columns, getRowKey, isSelected, toggleRow, selectable } =
     useDataTableApi<TRow>(propTable);
+  const visibleColumns = columns.filter((column) => !column.hidden);
 
   return (
     <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm" hiddenFrom="sm">
@@ -23,14 +24,16 @@ export const DataTableCardList = <TRow,>({ table: propTable }: DataTableCardList
             bg={isSelected(key) ? "var(--mantine-color-blue-light)" : undefined}
           >
             <Group justify="space-between" mb="xs">
-              <Text fw={600}>{String(row[columns[0]?.key as keyof TRow] ?? "")}</Text>
-              <Checkbox
-                aria-label={`选择行 ${String(key)}`}
-                checked={isSelected(key)}
-                onChange={() => toggleRow(key)}
-              />
+              <Text fw={600}>{String(row[visibleColumns[0]?.key as keyof TRow] ?? "")}</Text>
+              {selectable && (
+                <Checkbox
+                  aria-label={`选择行 ${String(key)}`}
+                  checked={isSelected(key)}
+                  onChange={() => toggleRow(key)}
+                />
+              )}
             </Group>
-            {columns.slice(1).map((column) => (
+            {visibleColumns.slice(1).map((column) => (
               <Group key={column.key} justify="space-between" gap="xs" mb={4}>
                 <Text size="sm" c="dimmed">
                   {column.title}

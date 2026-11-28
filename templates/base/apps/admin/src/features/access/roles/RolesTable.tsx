@@ -251,6 +251,7 @@ export const RolesTable = ({ tenantId }: { tenantId: string }) => {
       key: "key",
       title: "操作",
       width: 110,
+      hidden: !canWrite,
       render: (row) =>
         row.isSystem || !canWrite ? (
           <Tooltip

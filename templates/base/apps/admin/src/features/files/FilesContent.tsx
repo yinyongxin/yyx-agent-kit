@@ -49,6 +49,7 @@ import {
   type QueryContext,
 } from "@/components/DataTable";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { usePermissions } from "@/lib/permissions";
 import { useTenant } from "@/lib/tenant";
 
 type FileRow = FileResponseDto & { key: string; sizeLabel: string };
@@ -106,6 +107,8 @@ const toRow = (file: FileResponseDto): FileRow => ({
 /** 租户文件：服务端分页 / 搜索 / 类型筛选，上传下载均走鉴权接口 */
 export const FilesContent = () => {
   const { tenantId } = useTenant();
+  const { can } = usePermissions();
+  const canWrite = can(PERMISSIONS.fileWrite);
   const apiRef = useRef<DataTableApi<FileRow> | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -293,6 +296,7 @@ export const FilesContent = () => {
 
   const table = useDataTable<FileRow>({
     getRowKey: (row) => row.key,
+    selectable: canWrite,
     keywordFields: ["name"],
     columns,
     filterFields,
@@ -364,7 +368,7 @@ export const FilesContent = () => {
         <DataTablePagination />
       </DataTableProvider>
 
-      <DataTableBatchBar table={table} actions={batchActions} />
+      {canWrite && <DataTableBatchBar table={table} actions={batchActions} />}
     </Stack>
   );
 };

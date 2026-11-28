@@ -14,11 +14,13 @@ export interface DataTableBatchBarProps<TRow> {
  * 业务只提供动作清单（含真正改数据的 run），不必自己拼 ActionBar + Modal。
  */
 export const DataTableBatchBar = <TRow,>({ table: propTable, actions }: DataTableBatchBarProps<TRow>) => {
-  const { selected, clearSelection, labels } = useDataTableApi<TRow>(propTable);
+  const { selected, clearSelection, labels, selectable } = useDataTableApi<TRow>(propTable);
   const [pending, setPending] = useState<{
     action: DataTableBatchAction;
     keys: RowKey[];
   } | null>(null);
+
+  if (!selectable || actions.length === 0) return null;
 
   const execute = (action: DataTableBatchAction, keys: RowKey[]) => {
     action.run(keys);
