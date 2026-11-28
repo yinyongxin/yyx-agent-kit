@@ -113,7 +113,7 @@ export const DataTableTable = <TRow,>({ table: propTable }: DataTableTableProps<
                 )}
                 {/* 数据列：业务可传 render 自定义单元格（Badge/Avatar 等）；
                     没传则取对应字段值，null/undefined 显示为空字符串 */}
-                {columns.map((column) => (
+                {visibleColumns.map((column) => (
                   <Table.Td key={column.key}>
                     {column.render
                       ? column.render(row)
