@@ -1,11 +1,13 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
-import { meControllerMe, type MeResponseDto } from "@starter/api/generated";
+import { meControllerGet, type MeResponseDto } from "@starter/api/generated";
 import { authStore } from "./auth";
 import { getApiErrorMessage } from "./api-error";
 
@@ -15,19 +17,30 @@ type MeState = {
   error: string | null;
 };
 
-const MeContext = createContext<MeState>({
+type MeContextValue = MeState & {
+  /** 资料修改后重新拉取 /me */
+  refresh: () => void;
+};
+
+const MeContext = createContext<MeContextValue>({
   me: null,
   loading: true,
   error: null,
+  refresh: () => undefined,
 });
 
-/** 当前登录用户资料（/me），用于平台级页面门禁 */
+/** 当前登录用户资料（/me），用于平台级页面门禁与个人中心 */
 export const MeProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<MeState>({
     me: null,
     loading: true,
     error: null,
   });
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const refresh = useCallback(() => {
+    setReloadKey((key) => key + 1);
+  }, []);
 
   useEffect(() => {
     if (!authStore.isAuthenticated()) {
@@ -36,7 +49,8 @@ export const MeProvider = ({ children }: { children: ReactNode }) => {
     }
 
     let alive = true;
-    void meControllerMe()
+    setState((prev) => ({ ...prev, loading: true }));
+    void meControllerGet()
       .then((res) => {
         if (!alive) return;
         if (res.error || !res.data) {
@@ -61,9 +75,11 @@ export const MeProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [reloadKey]);
 
-  return <MeContext.Provider value={state}>{children}</MeContext.Provider>;
+  const value = useMemo(() => ({ ...state, refresh }), [state, refresh]);
+
+  return <MeContext.Provider value={value}>{children}</MeContext.Provider>;
 };
 
 export const useMe = () => useContext(MeContext);

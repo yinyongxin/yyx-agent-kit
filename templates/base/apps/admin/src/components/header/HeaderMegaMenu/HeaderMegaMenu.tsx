@@ -28,21 +28,27 @@ import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuthUser } from "@/lib/use-auth-user";
+import { useMenuAccess, type MenuLinkMeta } from "@/lib/menu-access";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import classes from "./HeaderMegaMenu.module.css";
 
-type MegaItem = { icon: typeof IconHome2; title: string; description: string; to: string };
+type MegaItem = MenuLinkMeta & {
+  icon: typeof IconHome2;
+  title: string;
+  description: string;
+  to: string;
+};
 
 const OVERVIEW: MegaItem[] = [
   { icon: IconGauge, title: "工作台", description: "待办列表与常用入口", to: "/" },
 ];
 
 const PERMISSIONS: MegaItem[] = [
-  { icon: IconFingerprint, title: "用户", description: "用户管理", to: "/access/users" },
-  { icon: IconBook, title: "角色", description: "角色管理", to: "/access/roles" },
-  { icon: IconCoin, title: "租户", description: "租户管理", to: "/access/tenants" },
-  { icon: IconChartPie3, title: "权限", description: "权限管理", to: "/access/permissions" },
+  { icon: IconFingerprint, title: "用户", description: "用户管理", to: "/access/users", platformOnly: true },
+  { icon: IconBook, title: "角色", description: "角色管理", to: "/access/roles", permission: "role:read" },
+  { icon: IconCoin, title: "租户", description: "租户管理", to: "/access/tenants", platformOnly: true },
+  { icon: IconChartPie3, title: "权限", description: "权限管理", to: "/access/permissions", platformOnly: true },
 ];
 
 const MegaLinks = ({ items }: { items: MegaItem[] }) => {
@@ -76,6 +82,8 @@ export const HeaderMegaMenu = () => {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const { user, onLogout } = useAuthUser();
+  const { isPlatformAdmin, canSee } = useMenuAccess();
+  const permissionItems = PERMISSIONS.filter(canSee);
 
   return (
     <Box>
@@ -103,9 +111,10 @@ export const HeaderMegaMenu = () => {
                 <MegaLinks items={OVERVIEW} />
               </HoverCard.Dropdown>
             </HoverCard>
+            {permissionItems.length > 0 && (
             <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
               <HoverCard.Target>
-                <Link to="/access/users" className={classes.link} onClick={(e) => e.preventDefault()}>
+                <Link to={permissionItems[0]?.to ?? "/"} className={classes.link} onClick={(e) => e.preventDefault()}>
                   <Center inline>
                     <Box component="span" mr={5}>权限管理</Box>
                     <IconChevronDown size={16} />
@@ -115,26 +124,31 @@ export const HeaderMegaMenu = () => {
               <HoverCard.Dropdown style={{ overflow: "hidden" }}>
                 <Group justify="space-between" px="md">
                   <Text fw={500}>权限管理</Text>
-                  <Anchor component={Link} to="/access/users" fz="xs">查看全部</Anchor>
+                  <Anchor component={Link} to={permissionItems[0]?.to ?? "/"} fz="xs">查看全部</Anchor>
                 </Group>
                 <Divider my="sm" />
-                <MegaLinks items={PERMISSIONS} />
+                <MegaLinks items={permissionItems} />
                 <div className={classes.dropdownFooter}>
                   <Group justify="space-between">
                     <div>
-                      <Text fw={500} fz="sm">系统设置</Text>
-                      <Text size="xs" c="dimmed">租户与权限配置</Text>
+                      <Text fw={500} fz="sm">账号设置</Text>
+                      <Text size="xs" c="dimmed">个人资料与密码</Text>
                     </div>
-                    <Anchor component={Link} to="/settings" fz="xs">前往设置</Anchor>
+                    <Anchor component={Link} to="/settings" fz="xs">前往账号设置</Anchor>
                   </Group>
                 </div>
               </HoverCard.Dropdown>
             </HoverCard>
+            )}
             <Link to="/settings" className={classes.link}>
-              <Center inline><IconSettings size={16} /><Box component="span" ml={5}>设置</Box></Center>
+              <Center inline><IconSettings size={16} /><Box component="span" ml={5}>账号设置</Box></Center>
             </Link>
-            <Link to="/observability/logs" className={classes.link}>日志</Link>
-            <Link to="/observability/audit-logs" className={classes.link}>审计日志</Link>
+            {isPlatformAdmin && (
+              <>
+                <Link to="/observability/logs" className={classes.link}>日志</Link>
+                <Link to="/observability/audit-logs" className={classes.link}>审计日志</Link>
+              </>
+            )}
           </Group>
 
           <Group gap="xs">
@@ -157,18 +171,26 @@ export const HeaderMegaMenu = () => {
           <Collapse expanded={linksOpened}>
             <MegaLinks items={OVERVIEW} />
           </Collapse>
-          <UnstyledButton className={classes.link} onClick={toggleLinks}>
-            <Center inline>
-              <Box component="span" mr={5}>权限管理</Box>
-              <IconChevronDown size={16} />
-            </Center>
-          </UnstyledButton>
-          <Collapse expanded={linksOpened}>
-            <MegaLinks items={PERMISSIONS} />
-          </Collapse>
-          <Link to="/settings" className={classes.link}>设置</Link>
-          <Link to="/observability/logs" className={classes.link}>日志</Link>
-          <Link to="/observability/audit-logs" className={classes.link}>审计日志</Link>
+          {permissionItems.length > 0 && (
+            <>
+              <UnstyledButton className={classes.link} onClick={toggleLinks}>
+                <Center inline>
+                  <Box component="span" mr={5}>权限管理</Box>
+                  <IconChevronDown size={16} />
+                </Center>
+              </UnstyledButton>
+              <Collapse expanded={linksOpened}>
+                <MegaLinks items={permissionItems} />
+              </Collapse>
+            </>
+          )}
+          <Link to="/settings" className={classes.link}>账号设置</Link>
+          {isPlatformAdmin && (
+            <>
+              <Link to="/observability/logs" className={classes.link}>日志</Link>
+              <Link to="/observability/audit-logs" className={classes.link}>审计日志</Link>
+            </>
+          )}
         </AdminScrollArea>
         <UserMenu variant="drawer" user={user} onLogout={onLogout} />
       </Drawer>

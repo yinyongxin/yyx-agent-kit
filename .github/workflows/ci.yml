@@ -141,6 +141,7 @@ jobs:
           pnpm --filter @starter/server test:roles
           pnpm --filter @starter/server test:permissions
           pnpm --filter @starter/server test:authz
+          pnpm --filter @starter/server test:profile
           pnpm --filter @starter/server test:provisioning
           pnpm --filter @starter/server test:rls
           pnpm --filter @starter/server test:generated

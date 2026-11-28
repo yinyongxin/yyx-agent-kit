@@ -149,7 +149,7 @@ export const UserMenu = ({
           to={settingsTo}
           leftSection={<IconSettings size={14} />}
         >
-          设置
+          账号设置
         </Menu.Item>
 
         <Menu.Divider />

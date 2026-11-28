@@ -60,6 +60,14 @@ export class UsersRepository {
     });
   }
 
+  /** 修改密码专用：读取当前哈希（不返回给 Controller） */
+  findPasswordHash(id: string) {
+    return this.prisma.scoped.user.findUnique({
+      where: { id },
+      select: { id: true, email: true, passwordHash: true },
+    });
+  }
+
   /** 当前用户资料 + 是否平台管理员（/me） */
   async findProfile(userId: string) {
     const row = await this.prisma.scoped.user.findFirst({

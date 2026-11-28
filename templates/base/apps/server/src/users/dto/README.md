@@ -14,6 +14,8 @@
 | `user-response.dto.ts` | `UserResponseDto` / `UserListResponseDto` |
 | `me-response.dto.ts` | `MeResponseDto`：当前用户资料 + 平台管理员标记 |
 | `tenant-summary.dto.ts` | `TenantSummaryDto`：我所属租户摘要 |
+| `update-profile.dto.ts` | `UpdateProfileDto`：显示名 |
+| `change-password.dto.ts` | `ChangePasswordDto`：当前密码 + 新密码 |
 
 ## 注意事项
 
