@@ -174,6 +174,7 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 - 表 `audit_logs`（append-only）：`actorUserId` / `actorLabel` / `tenantId` / `action` / `resource` / `result` / `before` / `after` / `traceId` / `ip` / `userAgent`
 - 数据库层 RLS 禁止 UPDATE / DELETE（不建 policy），写入用 `createMany`
 - 关键写操作在 controller 加 `@Audit({ action, resource })`；登录在 `CredentialsService` 手动记录成功 / 失败
+- 更新 / 删除的旧值：service 拿到旧实体后调 `RequestContext.setAuditBefore(value)`，拦截器写入 `before`，详情里可与 `after` 对比
 - 查询：`GET /api/audit-logs`、`GET /api/audit-logs/:id`（平台管理员）
 - 管理端 `/observability/audit-logs`
 - 与请求日志分开：请求日志是排障数据（Loki，短保留），审计是合规数据（PostgreSQL，长保留）

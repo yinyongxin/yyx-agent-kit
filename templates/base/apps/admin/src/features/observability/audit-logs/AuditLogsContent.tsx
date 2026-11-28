@@ -1,10 +1,9 @@
 import { useCallback, useRef, useState } from "react";
-import { IconFileSearch, IconRefresh } from "@tabler/icons-react";
+import { IconFileSearch } from "@tabler/icons-react";
 import {
   ActionIcon,
   Alert,
   Badge,
-  Button,
   Code,
   Divider,
   Drawer,
@@ -80,7 +79,7 @@ const labels: DataTableLabels = {
   clearFilter: (label) => `清除${label}筛选`,
   emptyTitle: "暂无审计记录",
   emptyDescription: "关键写操作与登录会自动写入审计日志",
-  create: "刷新",
+  create: "新建",
 };
 
 const filterFields = [
@@ -218,18 +217,9 @@ export const AuditLogsContent = () => {
       <DataTableProvider table={table}>
         <DataTableFilterBar />
         <DataTableToolbar>
-          <Group gap="xs">
-            <Button
-              variant="default"
-              leftSection={<IconRefresh size={16} />}
-              onClick={() => table.reload()}
-            >
-              刷新
-            </Button>
-            <Text size="xs" c="dimmed">
-              append-only；写入后不可修改或删除
-            </Text>
-          </Group>
+          <Text size="xs" c="dimmed">
+            append-only；筛选 / 搜索即刷新，写入后不可修改或删除
+          </Text>
         </DataTableToolbar>
         <DataTableContent>
           <DataTableTable />

@@ -72,6 +72,6 @@ RLS（迁移 `20261128053657_audit_logs`）：
 ## 注意
 
 - 只审计关键写操作；普通查询不要加，否则表会迅速膨胀
-- `before` 不在拦截器里自动获取；需要旧值快照时在 service 里显式传（或在业务事务里记录）
+- `before`：在 service 拿到旧实体后调用 `RequestContext.setAuditBefore(value)`，拦截器会写进 before；更新/删除都应设置
 - 审计写入失败不会让业务失败，但会 `warn` 到应用日志；对强合规场景应加补偿队列
 - 新增查询条件：先确认字段已写入，再扩展 `QueryAuditLogsDto` 与 `AuditRepository.buildWhere`

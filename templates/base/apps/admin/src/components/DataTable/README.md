@@ -15,7 +15,7 @@ Headless 表格底座：状态与配置集中在 `useDataTable` 返回的实例�
 | `DataTableTable.tsx` | 桌面表格视图（sticky 表头 + 行选择 + 可聚焦排序按钮） |
 | `DataTableCardList.tsx` | 移动卡片视图（一份配置两套 DOM） |
 | `DataTablePagination.tsx` | 分页 + 每页条数，页数读实例单一来源 |
-| `DataTableToolbar.tsx` | 工具栏（新建 / 导入 / 导出等页面操作） |
+| `DataTableToolbar.tsx` | 工具栏（新建 / 导入 / 导出等页面操作；**不要放刷新按钮**，搜索/筛选即刷新） |
 | `DataTableBatchBar.tsx` | 批量操作条（ActionBar + 确认弹窗），业务只给动作清单 |
 | `useDataTable.ts` | 控制器：状态 + 配置 → `DataTableApi<TRow>`，泛型靠 `getRowKey` 推断 |
 | `functions.ts` | 纯逻辑：四态判定 / 过滤 / 排序 / 分页推导 / 选中切换 / 筛选芯片 |

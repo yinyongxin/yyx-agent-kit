@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import type { Tenant } from "../generated/prisma/client";
+import { RequestContext } from "../logging/request-context";
 import type { CreateTenantDto } from "./dto/create-tenant.dto";
 import type { QueryTenantsDto } from "./dto/query-tenants.dto";
 import type { TenantListResponseDto } from "./dto/tenant-list-response.dto";
@@ -59,7 +60,9 @@ export class TenantsService {
     id: string,
     input: UpdateTenantDto,
   ): Promise<TenantResponseDto> {
-    await this.get(id); // 不存在则 404
+    // 旧值同时用于 404 判断与审计 before 快照
+    const before = await this.get(id);
+    RequestContext.setAuditBefore(before);
 
     const tenant = await this.tenants.update(id, {
       ...(input.name !== undefined ? { name: input.name } : {}),
@@ -70,7 +73,8 @@ export class TenantsService {
 
   /** 只允许删空租户（无成员、无订阅）；有依赖时 409，停用走 PATCH status */
   async remove(id: string): Promise<void> {
-    await this.get(id);
+    const before = await this.get(id);
+    RequestContext.setAuditBefore(before);
 
     const [members, subscriptions] = await Promise.all([
       this.tenants.countMembers(id),

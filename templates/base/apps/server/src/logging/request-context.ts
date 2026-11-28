@@ -11,6 +11,8 @@ export interface RequestContextValue {
   ip?: string;
   /** User-Agent；审计日志用 */
   userAgent?: string;
+  /** 审计 before 快照：业务 service 在更新/删除前写入，AuditInterceptor 读取 */
+  auditBefore?: unknown;
 }
 
 const storage = new AsyncLocalStorage<RequestContextValue>();
@@ -36,5 +38,18 @@ export const RequestContext = {
 
   getRequestId(): string | undefined {
     return storage.getStore()?.requestId;
+  },
+
+  /**
+   * 写入审计 before 快照。
+   * 在 service 的更新/删除逻辑里、拿到旧实体后调用；同一请求只保留最后一次。
+   */
+  setAuditBefore(value: unknown): void {
+    const ctx = storage.getStore();
+    if (ctx) ctx.auditBefore = value;
+  },
+
+  getAuditBefore(): unknown {
+    return storage.getStore()?.auditBefore;
   },
 };

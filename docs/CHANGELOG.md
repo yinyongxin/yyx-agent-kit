@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **审计 before 快照 + DataTable 刷新规范**：更新/删除前在 service 调 `RequestContext.setAuditBefore(旧值)`，审计详情同时展示 before/after；移除日志页与审计页工具栏「刷新」按钮（搜索/筛选即刷新），AGENTS 与 DataTable README 明确该规范
 - **日志轮转与告警**：本地文件改用 `pino-roll`，按天/50m 切分（`app.YYYY-MM-DD.N.log`），保留 7 个（`LOG_ROTATE_*`）；Grafana provisioning 新增两条告警规则（错误日志 >10/5m、慢请求 >5/5m），状态 `health=ok`
 - **开发导航页统一展示本地凭据**：`/api/dev#services` 的「本地凭据」卡片覆盖 server 测试账号、PostgreSQL（应用 + 管理）、Redis、Penpot、Grafana；点击值复制；凭据从 `.env` / `DATABASE_URL` 解析，仅开发环境返回
 - **Grafana 概览与本地凭据**：Grafana 固定 12.4.16（13.x 的 Loki/Tempo bundled 插件在 Explore 加载失败）；默认账号 `admin` / `starter_grafana_2026`，开发导航页新增「本地凭据」卡片（可点击复制）；新增预置 Dashboard「Starter 概览」（日志量 / 错误数 / 按 level 曲线 / 告警日志），dev 页 Grafana 入口指向该概览

@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   IconFileSearch,
-  IconRefresh,
   IconSearch,
 } from "@tabler/icons-react";
 import {
   ActionIcon,
   Alert,
   Badge,
-  Button,
   Code,
   Divider,
   Drawer,
@@ -110,7 +108,7 @@ const labels: DataTableLabels = {
   clearFilter: (label) => `清除${label}筛选`,
   emptyTitle: "暂无日志",
   emptyDescription: "确认应用已产生日志，并已启动 observability（Loki + Alloy）",
-  create: "刷新",
+  create: "新建",
 };
 
 const filterFields = [
@@ -138,7 +136,6 @@ export const LogsContent = () => {
   const apiRef = useRef<DataTableApi<LogRow> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<Record<string, number> | null>(null);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   const [detail, setDetail] = useState<LogRow | null>(null);
   const [trace, setTrace] = useState<LogEntryDto[] | null>(null);
@@ -269,7 +266,7 @@ export const LogsContent = () => {
     return () => {
       cancelled = true;
     };
-  }, [range, refreshKey]);
+  }, [range]);
 
   return (
     <Stack gap="md">
@@ -297,21 +294,9 @@ export const LogsContent = () => {
       <DataTableProvider table={table}>
         <DataTableFilterBar />
         <DataTableToolbar>
-          <Group gap="xs">
-            <Button
-              variant="default"
-              leftSection={<IconRefresh size={16} />}
-              onClick={() => {
-                setRefreshKey((value) => value + 1);
-                table.reload();
-              }}
-            >
-              刷新
-            </Button>
-            <Text size="xs" c="dimmed">
-              数据来自 Loki；traceId 可在详情里看到完整时间线
-            </Text>
-          </Group>
+          <Text size="xs" c="dimmed">
+            数据来自 Loki；筛选 / 搜索即刷新，traceId 可在详情里看到完整时间线
+          </Text>
         </DataTableToolbar>
         <DataTableContent>
           <DataTableTable />

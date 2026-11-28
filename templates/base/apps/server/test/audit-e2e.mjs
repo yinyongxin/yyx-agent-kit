@@ -100,6 +100,12 @@ const updateAudit = items.find(
   (item) => item.action === "tenant.update" && item.resourceId === tenantId,
 );
 check("记录 tenant.update", Boolean(updateAudit));
+check("tenant.update 有 before", Boolean(updateAudit?.before?.name), updateAudit?.before?.name ?? "");
+check(
+  "before / after 名称不同",
+  updateAudit?.before?.name !== updateAudit?.after?.name,
+  `before=${updateAudit?.before?.name} after=${updateAudit?.after?.name}`,
+);
 
 const filtered = await request(
   "GET",

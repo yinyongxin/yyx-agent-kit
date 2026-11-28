@@ -21,7 +21,7 @@
 - 前端样式与组件库：**管理端（`apps/admin`）允许使用 Mantine 组件库**；`apps/client`、`apps/portal` 不引入第三方 UI 组件库，样式用 Tailwind 原子类。分工见 `.opencode/skills/standards/react/SKILL.md` 的「技术栈」一节。
 - 组件写法统一 `export const Comp = () => {}`，不使用 `function` 声明，不使用 `export default`。
 - **先检索再开发**：新增 UI / 功能前，先看 `apps/admin/src/components`、现有 feature 与 `packages/*`；能复用就复用，不重复造轮子（表格、页面壳、用户菜单、品牌等已有底座）。
-- **管理端数据表格统一用 `DataTable`，默认服务端模式**：用 `queryOptions` 让搜索/筛选/排序/分页走后端；`data` 客户端模式只用于 mock / 小数据演示。不要手写 Mantine `Table` + `Pagination`。
+- **管理端数据表格统一用 `DataTable`，默认服务端模式**：用 `queryOptions` 让搜索/筛选/排序/分页走后端；`data` 客户端模式只用于 mock / 小数据演示。不要手写 Mantine `Table` + `Pagination`。**工具栏不要放「刷新」按钮**：搜索 / 筛选 / 分页变化本身就会重新请求，`reload()` 只用于业务动作后的重拉。
 - 页面文件放在 `[业务名]/[业务名].tsx`，页面内组件放同级 `components/`。
 - 后端 Controller 只做参数校验和转发，业务逻辑放 Service。
 - 后端禁止 `res.status().json()` 手动返回错误，统一抛 `HttpException` 子类。
