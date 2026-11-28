@@ -38,9 +38,10 @@
 ```bash
 pnpm --filter @starter/server db:cleanup:test-tenants          # 预演
 pnpm --filter @starter/server db:cleanup:test-tenants -- --apply
+pnpm --filter @starter/server db:cleanup:test-tenants -- --apply --purge-audit
 ```
 
-只删除软删除测试租户及其角色/成员/文件/订阅，保留 `default`、`demo-b` 和审计日志。
+只删除软删除测试租户及其角色/成员/文件/订阅；默认保留 `default`、`demo-b` 和审计日志。加 `--purge-audit` 会通过 `MIGRATE_DATABASE_URL` 清空 `audit_logs`（仅本地维护使用）。
 
 > 以上账号密码会在开发导航页 `http://localhost:47100/starter/api/dev#services` 的「本地凭据」卡片统一展示（点击值可复制）；该页仅开发环境注册，生产返回 404。
 

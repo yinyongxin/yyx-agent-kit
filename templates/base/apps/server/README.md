@@ -42,7 +42,7 @@ pnpm --filter @starter/server prisma:generate
 pnpm --filter @starter/server db:deploy      # 应用迁移（MIGRATE_DATABASE_URL）
 pnpm --filter @starter/server db:seed
 pnpm --filter @starter/server db:seed:demo   # 本地演示账号（平台/租户/成员/多租户/停用/禁用）
-pnpm --filter @starter/server db:cleanup:test-tenants # 清理软删除测试租户（默认 dry-run，加 -- --apply 执行）
+pnpm --filter @starter/server db:cleanup:test-tenants # 清理软删除测试租户（默认 dry-run；加 -- --apply --purge-audit 可连审计日志一起清空）
 pnpm --filter @starter/server test:e2e       # 登录 + 租户边界
 pnpm --filter @starter/server test:users     # 平台用户 CRUD
 pnpm --filter @starter/server test:members   # 租户成员管理

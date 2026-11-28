@@ -76,3 +76,4 @@ RLS（迁移 `20261128053657_audit_logs`）：
 - `before`：在 service 拿到旧实体后调用 `RequestContext.setAuditBefore(value)`，拦截器会写进 before；更新/删除都应设置
 - 审计写入失败不会让业务失败，但会 `warn` 到应用日志；对强合规场景应加补偿队列
 - 新增查询条件：先确认字段已写入，再扩展 `QueryAuditLogsDto` 与 `AuditRepository.buildWhere`
+- 本地需要彻底清空审计表时用 `pnpm --filter @starter/server db:cleanup:test-tenants -- --apply --purge-audit`；该命令用 `MIGRATE_DATABASE_URL` 绕过 append-only RLS，仅限本地维护，不要在生产执行
