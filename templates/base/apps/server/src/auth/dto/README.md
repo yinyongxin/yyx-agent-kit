@@ -10,7 +10,8 @@
 | --- | --- |
 | `sign-in.dto.ts` | `SignInDto`（邮箱/密码）+ `SignInResponseDto`（accessToken/tokenType） |
 | `tenant-summary.dto.ts` | `TenantSummaryDto`：我所属租户的摘要 |
-| `membership.dto.ts` | `MembershipDto`：我在某租户下的成员信息 |
+| `membership.dto.ts` | `MembershipDto`：我在某租户下的成员信息与权限并集 |
+| `me-response.dto.ts` | `MeResponseDto`：当前用户资料 + `isPlatformAdmin` |
 
 ## 注意事项
 

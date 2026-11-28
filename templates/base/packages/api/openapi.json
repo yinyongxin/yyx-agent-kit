@@ -23,6 +23,53 @@
         ]
       }
     },
+    "/starter/api/me": {
+      "get": {
+        "operationId": "MeController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "当前用户资料（含平台管理员标记）",
+        "tags": [
+          "me"
+        ]
+      }
+    },
     "/starter/api/me/tenants": {
       "get": {
         "operationId": "MeController_tenants",
@@ -2799,29 +2846,33 @@
           "status"
         ]
       },
-      "TenantSummaryDto": {
+      "MeResponseDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
-          "name": {
-            "type": "string"
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "example": "admin@example.com"
           },
-          "slug": {
-            "type": "string"
+          "displayName": {
+            "type": "string",
+            "nullable": true,
+            "example": "示例管理员"
           },
-          "joinedAt": {
-            "format": "date-time",
-            "type": "string"
+          "isPlatformAdmin": {
+            "type": "boolean",
+            "description": "是否为平台管理员（super / ops）"
           }
         },
         "required": [
           "id",
-          "name",
-          "slug",
-          "joinedAt"
+          "email",
+          "displayName",
+          "isPlatformAdmin"
         ]
       },
       "ErrorResponseDto": {
@@ -2847,6 +2898,31 @@
         "required": [
           "statusCode",
           "message"
+        ]
+      },
+      "TenantSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "joinedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "joinedAt"
         ]
       },
       "LogEntryDto": {

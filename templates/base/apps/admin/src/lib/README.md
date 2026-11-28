@@ -11,6 +11,8 @@
 | `auth.ts` | token / 邮箱的本地存储与登录态判断 |
 | `api-client.ts` | 配置 OpenAPI 生成客户端：baseUrl、Bearer 注入、401 跳登录 |
 | `api-error.ts` | 从生成客户端错误体提取可展示的 message（string / string[]） |
+| `me.tsx` | `MeProvider` / `useMe()`：加载 `/me`，提供平台管理员标记 |
+| `permissions.tsx` | `TenantPermissionsProvider` / `usePermissions()`：加载指定租户的 membership 与权限并集 |
 
 ## 注意事项
 

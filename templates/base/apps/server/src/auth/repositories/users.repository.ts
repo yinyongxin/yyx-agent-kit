@@ -60,6 +60,27 @@ export class UsersRepository {
     }));
   }
 
+  /** 当前用户资料 + 是否平台管理员（/me） */
+  async findProfile(userId: string) {
+    const row = await this.prisma.scoped.user.findFirst({
+      where: { id: userId, status: "active" },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        platformAdmin: { select: { level: true } },
+      },
+    });
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      email: row.email,
+      displayName: row.displayName,
+      isPlatformAdmin: Boolean(row.platformAdmin),
+    };
+  }
+
   /** 登录专用：取密码哈希。User 是 UNSCOPED 全局表，无租户上下文也能查。 */
   async findCredentials(
     email: string,

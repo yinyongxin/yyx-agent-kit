@@ -23,6 +23,7 @@ import {
   type RoleResponseDto,
 } from "@starter/api/generated";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { usePermissions } from "@/lib/permissions";
 import {
   DataTableCardList,
   DataTableContent,
@@ -117,6 +118,8 @@ const emptyForm: RoleForm = {
 
 export const RolesTable = ({ tenantId }: { tenantId: string }) => {
   const apiRef = useRef<DataTableApi<RoleRow> | null>(null);
+  const { can } = usePermissions();
+  const canWrite = can("role:write");
   const [actionError, setActionError] = useState<string | null>(null);
   const [permissionOptions, setPermissionOptions] = useState<
     { value: string; label: string }[]
@@ -249,8 +252,14 @@ export const RolesTable = ({ tenantId }: { tenantId: string }) => {
       title: "操作",
       width: 110,
       render: (row) =>
-        row.isSystem ? (
-          <Tooltip label="内置角色由 seed 维护，不可修改">
+        row.isSystem || !canWrite ? (
+          <Tooltip
+            label={
+              row.isSystem
+                ? "内置角色由 seed 维护，不可修改"
+                : "当前账号缺少 role:write 权限"
+            }
+          >
             <Text size="sm" c="dimmed">
               —
             </Text>
@@ -323,9 +332,11 @@ export const RolesTable = ({ tenantId }: { tenantId: string }) => {
       <DataTableProvider table={table}>
         <DataTableFilterBar />
         <DataTableToolbar>
-          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
-            {labels.create}
-          </Button>
+          {canWrite && (
+            <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+              {labels.create}
+            </Button>
+          )}
         </DataTableToolbar>
         <DataTableContent>
           <DataTableTable />

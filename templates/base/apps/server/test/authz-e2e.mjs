@@ -72,6 +72,13 @@ check(
   JSON.stringify(adminMembership.json?.permissions ?? []),
 );
 
+const adminMe = await request("GET", "/me", undefined, adminToken);
+check(
+  "管理员 /me 标记为平台管理员",
+  adminMe.status === 200 && adminMe.json?.isPlatformAdmin === true,
+  `HTTP ${adminMe.status}, isPlatformAdmin=${adminMe.json?.isPlatformAdmin}`,
+);
+
 const suffix = Date.now();
 const userEmail = `authz-user-${suffix}@example.com`;
 const userPassword = "authz_user_pwd_2026";
@@ -105,6 +112,13 @@ check(
     memberMembership.json.permissions.includes("user:read") &&
     !memberMembership.json.permissions.includes("*"),
   JSON.stringify(memberMembership.json?.permissions ?? []),
+);
+
+const memberMe = await request("GET", "/me", undefined, userToken);
+check(
+  "普通成员 /me 非平台管理员",
+  memberMe.status === 200 && memberMe.json?.isPlatformAdmin === false,
+  `HTTP ${memberMe.status}, isPlatformAdmin=${memberMe.json?.isPlatformAdmin}`,
 );
 
 const memberRoles = await request("GET", rolesPath, undefined, userToken);

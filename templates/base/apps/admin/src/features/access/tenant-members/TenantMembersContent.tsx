@@ -32,6 +32,7 @@ import {
 } from "@starter/api/generated";
 import { authStore } from "@/lib/auth";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { usePermissions } from "@/lib/permissions";
 import {
   DataTableBatchBar,
   DataTableCardList,
@@ -115,6 +116,8 @@ const filterFields = [
 /** 租户成员管理：服务端 DataTable + 添加/编辑/停用/移除 */
 export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
   const apiRef = useRef<DataTableApi<MemberRow> | null>(null);
+  const { can } = usePermissions();
+  const canWrite = can("user:write");
   const [actionError, setActionError] = useState<string | null>(null);
   const [roleOptions, setRoleOptions] = useState<{ value: string; label: string }[]>([]);
 
@@ -299,7 +302,7 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
       title: "操作",
       width: 110,
       render: (row) =>
-        isSelf(row) ? (
+        isSelf(row) || !canWrite ? (
           <Text size="sm" c="dimmed">
             —
           </Text>
@@ -423,15 +426,17 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
   ];
 
   return (
-    <Stack gap="md" pb={table.selected.size > 0 ? 80 : 0}>
+    <Stack gap="md" pb={canWrite && table.selected.size > 0 ? 80 : 0}>
       {actionError && <Alert color="red">{actionError}</Alert>}
 
       <DataTableProvider table={table}>
         <DataTableFilterBar />
         <DataTableToolbar>
-          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
-            {labels.create}
-          </Button>
+          {canWrite && (
+            <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+              {labels.create}
+            </Button>
+          )}
         </DataTableToolbar>
         <DataTableContent>
           <DataTableTable />
@@ -440,7 +445,7 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
         <DataTablePagination />
       </DataTableProvider>
 
-      <DataTableBatchBar table={table} actions={batchActions} />
+      {canWrite && <DataTableBatchBar table={table} actions={batchActions} />}
 
       <Modal
         opened={creating || Boolean(editing)}

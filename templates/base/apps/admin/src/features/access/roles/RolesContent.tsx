@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Alert, Select, Stack, Text } from "@mantine/core";
 import { meControllerTenants, type TenantSummaryDto } from "@starter/api/generated";
+import { PermissionGate } from "@/components/Permission";
+import { TenantPermissionsProvider } from "@/lib/permissions";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { RolesTable } from "./RolesTable";
 
@@ -55,7 +57,11 @@ export const RolesContent = () => {
         allowDeselect={false}
         w={360}
       />
-      <RolesTable key={tenantId} tenantId={tenantId} />
+      <TenantPermissionsProvider tenantId={tenantId}>
+        <PermissionGate permission="role:read">
+          <RolesTable key={tenantId} tenantId={tenantId} />
+        </PermissionGate>
+      </TenantPermissionsProvider>
     </Stack>
   );
 };

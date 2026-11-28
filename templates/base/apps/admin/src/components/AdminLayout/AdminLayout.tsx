@@ -5,6 +5,7 @@ import { LayoutModeProvider, type AdminLayoutMode } from "@/components/LayoutMod
 import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
 import { DoubleNavbar } from "@/components/navbar/DoubleNavbar";
 import { NavbarNested } from "@/components/navbar/NavbarNested";
+import { MeProvider } from "@/lib/me";
 
 export const AdminLayout = () => {
   const location = useLocation();
@@ -18,8 +19,9 @@ export const AdminLayout = () => {
   const isHeader = mode === "header-mega-menu";
 
   return (
-    <LayoutModeProvider mode={mode} setMode={setMode}>
-      {isHeader ? (
+    <MeProvider>
+      <LayoutModeProvider mode={mode} setMode={setMode}>
+        {isHeader ? (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
           <HeaderMegaMenu />
           <AdminScrollArea style={{ flex: 1, minHeight: 0 }}>
@@ -48,6 +50,7 @@ export const AdminLayout = () => {
           </AdminScrollArea>
         </div>
       )}
-    </LayoutModeProvider>
+      </LayoutModeProvider>
+    </MeProvider>
   );
 };

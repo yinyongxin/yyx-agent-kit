@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **管理端前端权限消费**：新增 `TenantPermissionsProvider` / `usePermissions()`、`<Can>`、`<PermissionGate>`、`<PlatformAdminGate>` 与统一 403 内容；成员页按 `user:write`、角色页按 `role:write` 隐藏新建 / 编辑 / 删除 / 批量操作；用户、租户、权限、日志、审计页统一平台管理员门禁；新增 `GET /me` 返回 `isPlatformAdmin`；`test:authz` 增加 `/me` 断言
 - **接口级权限校验**：新增 `@RequirePermission(...codes)` 与 `TenantMembershipGuard` 权限检查（权限来自当前租户角色并集，`owner`/`admin` 视为 `["*"]`）；租户成员 / 角色 / 权限目录接口改用权限点授权（`user:read`/`user:write`、`role:read`/`role:write`）；`/membership` 返回 `permissions`；新增 `test:authz` 验证“同一 token 授权后即时生效”，并纳入 CI
 - **权限点管理模块**：新增 `src/permissions/`（`/permissions` 平台管理员 CRUD：分页 / 搜索、code 唯一且创建后不可改、被角色引用时禁止删除、审计 before/after）；租户权限目录控制器改为 `TenantPermissionsController`，避免与平台接口生成客户端重名；管理端「权限」页接入真实接口（服务端 DataTable、新建 / 编辑 / 删除、按 code 前缀分组、引用数保护）；新增 `test:permissions` 并纳入 CI
 - **租户角色管理模块**：新增 `src/tenancy/roles/` 与 `src/tenancy/permissions/`（`/t/:tenantId/roles` 分页 / 类型筛选 / 搜索、自定义角色 CRUD、角色权限整体替换、权限点目录；内置角色只读、code 租户内唯一、删除前检查成员占用）；原 `GET /roles` 精简列表改为 `/roles/options`，成员页同步切换；管理端「角色」页接入真实接口（租户切换、服务端 DataTable、新建 / 编辑 / 删除、权限多选）；新增 `test:roles` 并纳入 CI
