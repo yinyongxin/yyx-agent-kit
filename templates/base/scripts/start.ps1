@@ -45,7 +45,7 @@ if (-not $ready) {
 }
 
 Write-Host "==> 启动开发服务（关闭窗口或 Ctrl+C 停止）" -ForegroundColor Cyan
-Write-Host "    开发导航页：http://localhost:47100/api/dev" -ForegroundColor DarkGray
+Write-Host "    开发导航页：http://localhost:47100/starter/api/dev" -ForegroundColor DarkGray
 Write-Host ""
 pnpm dev
 

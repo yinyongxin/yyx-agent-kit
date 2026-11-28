@@ -4,17 +4,17 @@
 
 一个页面看全本地启动情况：KPI（应用 / 工具 / 依赖在线数、在线率、探测耗时）、各服务端口与状态、Swagger / health 入口，以及状态变化事件与启动命令。
 
-只在**非生产环境**注册；生产访问 `/api/dev` 直接 404。
+只在**非生产环境**注册；生产访问 `/starter/api/dev` 直接 404。
 
 ## 入口
 
 | 地址 | 内容 |
 | --- | --- |
-| `GET /api/dev` | 导航页（原生 HTML，每 5 秒轮询） |
-| `GET /api/dev#overview` | 概览视图 |
-| `GET /api/dev#services` | 服务视图（分组筛选 + 全宽表格） |
-| `GET /api/dev#tools` | 工具视图（命令 / MCP / 入口） |
-| `GET /api/dev/services` | 探测结果 JSON |
+| `GET /starter/starter/api/dev` | 导航页（原生 HTML，每 5 秒轮询） |
+| `GET /starter/starter/api/dev#overview` | 概览视图 |
+| `GET /starter/starter/api/dev#services` | 服务视图（分组筛选 + 全宽表格） |
+| `GET /starter/starter/api/dev#tools` | 工具视图（命令 / MCP / 入口） |
+| `GET /starter/starter/api/dev/services` | 探测结果 JSON |
 
 页面与接口都是 `@Public()`，未登录也能打开。
 

@@ -19,7 +19,7 @@
 | `audit-context.ts` | 审计上下文门面：业务 service 用 `setBefore()` 写旧值快照 |
 | `audit.repository.ts` | 平台查询：事务内 `set_config('app.audit_scope','all')` 后查全量 |
 | `audit-query.service.ts` | 列表 / 详情 DTO 转换 |
-| `audit.controller.ts` | `GET /api/audit-logs`、`GET /api/audit-logs/:id`（平台管理员） |
+| `audit.controller.ts` | `GET /starter/starter/api/audit-logs`、`GET /starter/starter/api/audit-logs/:id`（平台管理员） |
 | `dto/` | 查询参数与响应结构 |
 
 ## 使用方式

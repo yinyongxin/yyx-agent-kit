@@ -18,7 +18,7 @@ for (let i = 0; i < 5; i++) {
   dir = resolve(dir, "..");
 }
 
-const BASE = process.env.API_BASE ?? "http://localhost:47100/api";
+const BASE = process.env.API_BASE ?? "http://localhost:47100/starter/api";
 const EMAIL = process.env.SEED_USER_EMAIL ?? "admin@example.com";
 const PASSWORD = process.env.SEED_USER_PASSWORD ?? "seed_pwd_2026";
 const DEFAULT_TENANT_ID = "00000000-0000-4000-8000-000000000001";

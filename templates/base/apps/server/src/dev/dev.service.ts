@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { createConnection } from "node:net";
+import { API_PREFIX } from "../shared";
 import { PrismaService } from "../prisma/prisma.service";
 
 export type DevServiceStatus = "online" | "offline";
@@ -127,13 +128,14 @@ export class DevService {
     ]);
 
     const base = (p: number) => `http://localhost:${p}`;
+    const apiBase = `${base(port)}${API_PREFIX}`;
     const serverLinks: DevServiceLink[] = [
-      { label: "health", href: `${base(port)}/api/health` },
+      { label: "health", href: `${apiBase}/health` },
     ];
     if (swaggerEnabled) {
       serverLinks.push(
-        { label: "Swagger", href: `${base(port)}/api/docs` },
-        { label: "OpenAPI JSON", href: `${base(port)}/api/docs-json` },
+        { label: "Swagger", href: `${apiBase}/docs` },
+        { label: "OpenAPI JSON", href: `${apiBase}/docs-json` },
       );
     }
 

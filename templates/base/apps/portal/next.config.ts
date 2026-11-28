@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { API_PREFIX } from "@starter/shared";
 
 const apiOrigin = process.env.API_ORIGIN ?? "http://localhost:47100";
 
@@ -32,8 +33,8 @@ const nextConfig: NextConfig = {
     // 与 client / admin 一致：前端统一走 /api，不写死后端域名
     return [
       {
-        source: "/api/:path*",
-        destination: `${apiOrigin}/api/:path*`,
+        source: `${API_PREFIX}/:path*`,
+        destination: `${apiOrigin}${API_PREFIX}/:path*`,
       },
     ];
   },

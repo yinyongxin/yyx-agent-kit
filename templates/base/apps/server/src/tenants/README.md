@@ -2,7 +2,7 @@
 
 ## 职责
 
-平台管理员对**租户本身**的 CRUD（`/api/tenants`），不是租户内业务（`/api/t/:tenantId/...`，见 `../tenancy/`）。
+平台管理员对**租户本身**的 CRUD（`/starter/api/tenants`），不是租户内业务（`/starter/api/t/:tenantId/...`，见 `../tenancy/`）。
 
 ## 文件索引
 
@@ -18,11 +18,11 @@
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| GET | `/api/tenants` | 分页 + status/keyword 筛选 |
-| GET | `/api/tenants/:id` | 详情 |
-| POST | `/api/tenants` | 创建（slug 唯一） |
-| PATCH | `/api/tenants/:id` | 更新 name/status（slug 不可改） |
-| DELETE | `/api/tenants/:id` | 仅空租户；有成员/订阅返回 409 |
+| GET | `/starter/api/tenants` | 分页 + status/keyword 筛选 |
+| GET | `/starter/api/tenants/:id` | 详情 |
+| POST | `/starter/api/tenants` | 创建（slug 唯一） |
+| PATCH | `/starter/api/tenants/:id` | 更新 name/status（slug 不可改） |
+| DELETE | `/starter/api/tenants/:id` | 仅空租户；有成员/订阅返回 409 |
 
 ## 关键约定
 

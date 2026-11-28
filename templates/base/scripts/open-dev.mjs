@@ -16,7 +16,7 @@ for (let dir = process.cwd(), i = 0; i < 4; i++, dir = resolve(dir, "..")) {
 }
 
 const port = Number(process.env.PORT ?? 47100);
-const url = `http://localhost:${port}/api/dev`;
+const url = `http://localhost:${port}/starter/api/dev`;
 const deadline = Date.now() + 90_000;
 
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));

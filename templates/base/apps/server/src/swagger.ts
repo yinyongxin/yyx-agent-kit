@@ -4,6 +4,7 @@ import {
   SwaggerModule,
   type OpenAPIObject,
 } from "@nestjs/swagger";
+import { API_PREFIX } from "./shared";
 
 /**
  * 构建 OpenAPI 文档。
@@ -12,7 +13,7 @@ import {
 export const buildOpenApiDocument = (app: INestApplication): OpenAPIObject => {
   const config = new DocumentBuilder()
     .setTitle("starter API")
-    .setDescription("starter 模板后端接口（Bearer JWT，多租户路由 /api/t/:tenantId/...）")
+    .setDescription(`starter 模板后端接口（Bearer JWT，多租户路由 ${API_PREFIX}/t/:tenantId/...）`)
     .setVersion("1.0")
     .addBearerAuth()
     .build();

@@ -11,7 +11,7 @@
 | 请求日志 | pino + nestjs-pino，自动完成日志（req/res、状态、耗时、userId/tenantId） | ✅ |
 | traceId | W3C `traceparent`，所有响应头 + 错误体 | ✅ |
 | 日志存储 | stdout + `logs/app.YYYY-MM-DD.N.log` → Alloy → Loki | ✅ |
-| 日志查询 | `/api/logs`、`/stats`、`/trace/:id` + 管理端日志页 | ✅ |
+| 日志查询 | `/starter/api/logs`、`/stats`、`/trace/:id` + 管理端日志页 | ✅ |
 | 审计 | `audit_logs` append-only（RLS 禁改删），`@Audit` + before/after | ✅ |
 | 慢查询 | `scoped` extension + 租户事务计时，默认 100ms | ✅ |
 | 链路追踪 | OTel → Tempo，server span + pg 子 span | ✅ |
@@ -113,4 +113,4 @@ open http://localhost:47111/d/starter-overview
 # 2) 日志页搜索 traceId，或 Tempo 输入 traceId
 ```
 
-本地凭据在 `http://localhost:47100/api/dev#services` 的「本地凭据」卡片。
+本地凭据在 `http://localhost:47100/starter/starter/api/dev#services` 的「本地凭据」卡片。

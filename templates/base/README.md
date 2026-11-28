@@ -79,7 +79,7 @@ Grafana 预置两条告警规则（错误日志过多、慢请求过多），通
 | `pnpm dev:portal` | 启动门户（47175） |
 | `pnpm dev:server` | 启动后端（47100） |
 
-接口：`GET /api/health`（公开探活，工作台与客户端都用这个）。
+接口：`GET /starter/starter/api/health`（公开探活，工作台与客户端都用这个）。
 
 ## CI
 
@@ -131,7 +131,7 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 ## 开发导航页
 
 `pnpm dev` 同时启动 server / client / admin / portal 和 Penpot MCP，server 就绪后自动打开
-`http://localhost:47100/api/dev`：
+`http://localhost:47100/starter/starter/api/dev`：
 
 - 各应用端口、在线状态、打开链接
 - server 的 health / Swagger / OpenAPI JSON 入口

@@ -22,8 +22,9 @@ import {
   type RoleDto,
   type TenantSummaryDto,
 } from "@starter/api/generated";
+import { API_PREFIX } from "@starter/shared";
 
-// 生成路径已含 /api，baseUrl 留空走 Vite 代理（/api → localhost:47100）
+// 生成路径已含 API_PREFIX，baseUrl 留空走 Vite 代理（API_PREFIX → localhost:47100）
 client.setConfig({ baseUrl: "" });
 
 const authHeaders = (token: string) => ({
@@ -92,7 +93,7 @@ export const IntegrationContent = () => {
     <Stack gap="md">
       <Card withBorder padding="lg">
         <Stack gap="sm" maw={420}>
-          <Title order={4}>登录（POST /api/auth/sign-in）</Title>
+          <Title order={4}>{`登录（POST ${API_PREFIX}/auth/sign-in）`}</Title>
           <TextInput
             label="邮箱"
             value={email}
@@ -117,7 +118,7 @@ export const IntegrationContent = () => {
       {tenants.length > 0 && (
         <Card withBorder padding="lg">
           <Title order={4} mb="sm">
-            我的租户（GET /api/me/tenants）
+            {`我的租户（GET ${API_PREFIX}/me/tenants）`}
           </Title>
           <Table highlightOnHover>
             <Table.Thead>
@@ -153,7 +154,7 @@ export const IntegrationContent = () => {
       {membership && (
         <Card withBorder padding="lg">
           <Title order={4} mb="sm">
-            当前租户成员（GET /api/t/:tenantId/membership）
+            {`当前租户成员（GET ${API_PREFIX}/t/:tenantId/membership）`}
           </Title>
           <Group gap="lg">
             <Text size="sm">role：{membership.role}</Text>
@@ -166,7 +167,7 @@ export const IntegrationContent = () => {
       {roles.length > 0 && (
         <Card withBorder padding="lg">
           <Title order={4} mb="sm">
-            当前租户角色（GET /api/t/:tenantId/roles）
+            {`当前租户角色（GET ${API_PREFIX}/t/:tenantId/roles）`}
           </Title>
           <Group gap="sm">
             {roles.map((role) => (

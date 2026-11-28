@@ -27,8 +27,8 @@ apps/server/
 │   │   └── README.md
 │   ├── auth/                   # 领域模块：认证与授权
 │   │   ├── auth.module.ts
-│   │   ├── auth.controller.ts  # /api/auth/*
-│   │   ├── me.controller.ts    # /api/me/*（当前用户资源）
+│   │   ├── auth.controller.ts  # /starter/api/auth/*
+│   │   ├── me.controller.ts    # /starter/api/me/*（当前用户资源）
 │   │   ├── credentials.service.ts
 │   │   ├── dto/
 │   │   ├── guards/
@@ -114,13 +114,13 @@ apps/server/
 ### 3.1 路由
 
 - 统一前缀 `/api`（`API_PREFIX`，来自 `@starter/shared`）。
-- 资源用**复数 + kebab-case**：`/api/users`、`/api/audit-logs`。
+- 资源用**复数 + kebab-case**：`/starter/api/users`、`/starter/api/audit-logs`。
 - **资源分两级**：
-  - **平台级** `/api/tenants`、`/api/platform/*`：只允许 `PlatformAdminGuard`（平台管理员）。
-  - **租户级** `/api/t/:tenantId/...`：必须挂 `TenantMembershipGuard` + `TenantTransactionInterceptor`。
+  - **平台级** `/starter/api/tenants`、`/starter/api/platform/*`：只允许 `PlatformAdminGuard`（平台管理员）。
+  - **租户级** `/starter/api/t/:tenantId/...`：必须挂 `TenantMembershipGuard` + `TenantTransactionInterceptor`。
   - 租户**本身**的 CRUD 属于平台级，不要写进 `/t/:tenantId/...`。
-- 非资源动作才用动词：`POST /api/auth/sign-in`、`POST /api/users/:id/disable`。
-- 关联资源用嵌套：`/api/users/:id/roles`。
+- 非资源动作才用动词：`POST /starter/starter/api/auth/sign-in`、`POST /starter/starter/api/users/:id/disable`。
+- 关联资源用嵌套：`/starter/api/users/:id/roles`。
 - **路由常量**：新增接口先在 `packages/shared` 的 `API_ROUTES` 加常量，controller 与 api 层引用，不要各写一份字符串。
 - 租户路由的参数名**必须叫 `tenantId`**：`TenantMembershipGuard` 只读 `req.params.tenantId`，写成 `:id` 会静默 404。
 

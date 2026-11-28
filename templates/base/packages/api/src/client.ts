@@ -1,4 +1,4 @@
-import { API_ROUTES, tenantPath } from "@starter/shared";
+import { API_PREFIX, API_ROUTES, tenantPath } from "@starter/shared";
 import type { HealthResponse, TenantSummary } from "./types";
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
@@ -27,7 +27,7 @@ export interface ApiClient {
 }
 
 export const createApiClient = (options: ApiClientOptions = {}): ApiClient => {
-  const baseUrl = options.baseUrl ?? "/api";
+  const baseUrl = options.baseUrl ?? API_PREFIX;
   const fetcher: FetchLike = options.fetcher ?? ((input, init) => fetch(input, init));
 
   const request = async <T>(

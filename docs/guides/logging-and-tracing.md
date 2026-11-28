@@ -36,7 +36,7 @@ pino + nestjs-pino 在这些点成熟，NodeAdapter 实测通过（健康检查�
                                                        │
                                    ┌───────────────────┴───────────────────┐
                              Grafana Explore / Dashboard           管理端「日志」页
-                                                                  GET /api/logs
+                                                                  GET /starter/starter/api/logs
 
 请求 ──► TraceMiddleware（OTel server span）──► pg / 出站 HTTP 子 span
                     │
@@ -82,7 +82,7 @@ pino + nestjs-pino 在这些点成熟，NodeAdapter 实测通过（健康检查�
 ### OTel span（Tempo）
 
 - `src/tracing.ts` 由 `main.ts` 第一行 import，初始化 `@opentelemetry/sdk-node`；未配置 `OTEL_ENABLED` / endpoint 时完全不加载 SDK
-- 入站 server span 由 `TraceMiddleware` 自己创建（`SpanKind.SERVER`），名称 `GET /api/health`，属性 `http.request.method` / `url.path` / `http.response.status_code`
+- 入站 server span 由 `TraceMiddleware` 自己创建（`SpanKind.SERVER`），名称 `GET /starter/starter/api/health`，属性 `http.request.method` / `url.path` / `http.response.status_code`
 - **为什么不用 HTTP 插桩的入站 span**：Nest NodeAdapter 在请求 emit 之后异步调度，middleware 里拿不到插桩创建的 active span（实测 `none`），traceId 会与 Tempo 对不上；因此关闭入站插桩，自己 `startSpan` + `context.with` 包裹请求链
 - 出站 HTTP client span 与 pg 查询 span 仍然自动生成（`pg.query:SELECT`、`pg-pool.connect`），是 server span 的子 span
 - 导出：OTLP HTTP → Tempo（默认 `http://localhost:47114`）
@@ -93,7 +93,7 @@ pino + nestjs-pino 在这些点成熟，NodeAdapter 实测通过（健康检查�
 
 ## 4. 日志内容
 
-每个请求一条 completion log（`/api/dev` 与 SSE 除外）：
+每个请求一条 completion log（`/starter/api/dev` 与 SSE 除外）：
 
 ```json
 {
@@ -164,7 +164,7 @@ Grafana 固定 **12.x**：13.x 的 Loki/Tempo bundled 插件在 Explore 里加�
 验证：
 
 ```bash
-curl -s http://localhost:47100/api/health > /dev/null
+curl -s http://localhost:47100/starter/starter/api/health > /dev/null
 curl -s -G http://localhost:47110/loki/api/v1/query_range \
   --data-urlencode '{service="starter-api"}' --data-urlencode 'limit=5'
 ```
@@ -175,9 +175,9 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| GET | `/api/logs` | 时间范围 / level / traceId / userId / tenantId / path / keyword 检索 |
-| GET | `/api/logs/stats?range=15m` | 按 level 统计（页面徽章 + 分页总数） |
-| GET | `/api/logs/trace/:traceId` | 同 traceId 时间线（近 24h 升序） |
+| GET | `/starter/api/logs` | 时间范围 / level / traceId / userId / tenantId / path / keyword 检索 |
+| GET | `/starter/api/logs/stats?range=15m` | 按 level 统计（页面徽章 + 分页总数） |
+| GET | `/starter/api/logs/trace/:traceId` | 同 traceId 时间线（近 24h 升序） |
 
 - 平台管理员专用（`PlatformAdminGuard`）
 - Loki 不可达时返回 502/503，不影响业务接口
@@ -197,7 +197,7 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 - 数据库层 RLS 禁止 UPDATE / DELETE（不建 policy），写入用 `createMany`
 - 关键写操作在 controller 加 `@Audit({ action, resource })`；登录在 `CredentialsService` 手动记录成功 / 失败
 - 更新 / 删除的旧值：service 拿到旧实体后调 `RequestContext.setAuditBefore(value)`，拦截器写入 `before`，详情里可与 `after` 对比
-- 查询：`GET /api/audit-logs`、`GET /api/audit-logs/:id`（平台管理员）
+- 查询：`GET /starter/starter/api/audit-logs`、`GET /starter/starter/api/audit-logs/:id`（平台管理员）
 - 管理端 `/observability/audit-logs`
 - 与请求日志分开：请求日志是排障数据（Loki，短保留），审计是合规数据（PostgreSQL，长保留）
 
@@ -213,7 +213,7 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 - 规则放在 Grafana 的 `General` folder，启动时由 provisioning 自动加载
 - 通知默认走 `grafana-default-email`；本地没配 SMTP 只会记录发送失败，不影响规则状态
 - 生产在 `Alerting → Contact points` 接 Slack / 邮件 / Webhook，并在 `Notification policies` 分配
-- 查规则状态：`GET /api/prometheus/grafana/api/v1/rules`（health=ok 表示表达式可执行）
+- 查规则状态：`GET /starter/api/prometheus/grafana/api/v1/rules`（health=ok 表示表达式可执行）
 
 ## 9. 性能与容量
 
@@ -227,12 +227,12 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 
 ## 10. 验证基线
 
-- `/api/health` 响应头有 `X-Trace-Id` / `traceparent`
+- `/starter/api/health` 响应头有 `X-Trace-Id` / `traceparent`
 - 入站 `traceparent` 被复用
 - 登录请求日志中 `password` / `accessToken` 为 `[REDACTED]`
 - 401/500 响应体带 `traceId`，日志级别 warn/error
 - 日志页能按 level / 时间范围 / traceId 查到对应请求
 - 审计页能查到登录成功/失败与租户 CRUD，`after` 不含密码
 - 慢查询日志：`SLOW_SQL_MS=1` 时日志出现 `msg:"slow query"`（带 traceId / model / operation）
-- Tempo：`GET /api/traces/<响应头 traceId>` 200，含 `GET /api/...` server span 与 `pg.query:*` 子 span
+- Tempo：`GET /starter/api/traces/<响应头 traceId>` 200，含 `GET /starter/api/...` server span 与 `pg.query:*` 子 span
 - `pnpm --filter @starter/server test:e2e`、`test:tenants`、`test:rls`、`test:generated`、`test:logs`、`test:audit`、`test:traces` 全过

@@ -20,7 +20,7 @@ for (let i = 0; i < 5; i++) {
   dir = resolve(dir, "..");
 }
 
-const BASE = process.env.API_BASE ?? "http://localhost:47100/api";
+const BASE = process.env.API_BASE ?? "http://localhost:47100/starter/api";
 const TEMPO = process.env.TEMPO_URL ?? "http://localhost:47113";
 const EMAIL = process.env.SEED_USER_EMAIL ?? "admin@example.com";
 const PASSWORD = process.env.SEED_USER_PASSWORD ?? "seed_pwd_2026";
@@ -79,12 +79,12 @@ check("Tempo 收到 health trace", Boolean(trace), traceId);
 
 if (trace) {
   const spans = listSpans(trace);
-  check("包含 server span", spans.some((span) => span.name === "GET /api/health"));
+  check("包含 server span", spans.some((span) => span.name.endsWith("/api/health")));
   check(
     "所有 span traceId 一致",
     spans.every((span) => span.traceId === hexToBase64(traceId)),
   );
-  const server = spans.find((span) => span.name === "GET /api/health");
+  const server = spans.find((span) => span.name.endsWith("/api/health"));
   const attrs = Object.fromEntries(
     (server?.attributes ?? []).map((attr) => [
       attr.key,
@@ -121,7 +121,7 @@ if (signInTraceId) {
   check("Tempo 收到登录 trace", Boolean(signInTrace), signInTraceId);
   if (signInTrace) {
     const spans = listSpans(signInTrace);
-    check("包含 POST /api/auth/sign-in", spans.some((span) => span.name === "POST /api/auth/sign-in"));
+    check("包含 POST /api/auth/sign-in", spans.some((span) => span.name.includes("/api/auth/sign-in")));
     check(
       "包含数据库子 span",
       spans.some((span) => span.name.startsWith("pg.query")),

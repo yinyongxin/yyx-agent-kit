@@ -9,7 +9,10 @@ import type { NodeResponse } from "@nestjs/platform-node";
 import { Observable } from "rxjs";
 import { tap } from "rxjs/operators";
 import type { TracedRequest } from "./trace.middleware";
+import { API_PREFIX } from "../shared";
 import { truncateForLog } from "./sanitize";
+
+const DEV_PREFIX = `${API_PREFIX}/dev`;
 
 /**
  * 把请求体 / 响应体挂到 req 上，供 pino 的 completion log（customProps）统一输出。
@@ -55,7 +58,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
   private shouldSkip(req: TracedRequest): boolean {
     const url = req.url ?? "";
-    if (url.startsWith("/api/dev")) return true;
+    if (url.startsWith(DEV_PREFIX)) return true;
 
     const contentType = String(req.headers?.["content-type"] ?? "");
     if (contentType.includes("multipart/form-data")) return true;

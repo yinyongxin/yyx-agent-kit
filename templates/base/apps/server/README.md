@@ -11,7 +11,7 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/main.ts` | 启动：加载 env、全局前缀/管道、Swagger、listen（配置从 `ConfigService` 取） |
 | `src/app.module.ts` | 根模块：装配 Config / Prisma / Auth / Tenancy / Tenants，注册租户 middleware |
 | `src/config/` | `@nestjs/config`：命名空间配置、启动时 env 校验 |
-| `src/dev/` | 本地开发导航页 `/api/dev`（仅非生产环境注册） |
+| `src/dev/` | 本地开发导航页 `/starter/starter/api/dev`（仅非生产环境注册） |
 | `src/common/` | 跨模块共享构件（filters / guards / interceptors / pipes / decorators / middleware）；按需创建 |
 | `src/dto/` | 跨模块共享 DTO（错误响应、分页等） |
 | `src/swagger.ts` | OpenAPI 文档构建（main 与导出脚本共用） |
@@ -19,7 +19,7 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/logging/` | pino 请求日志、traceId/响应头、请求响应体脱敏、全局异常过滤器 |
 | `src/auth/` | 登录、JWT、租户成员 guard、租户上下文 |
 | `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户事务拦截器、`@TenantTx()` |
-| `src/tenants/` | 平台级租户 CRUD（`/api/tenants`），`PlatformAdminGuard` 保护 |
+| `src/tenants/` | 平台级租户 CRUD（`/starter/api/tenants`），`PlatformAdminGuard` 保护 |
 | `prisma/` | schema、models、migrations、seed |
 | `scripts/` | 一次性脚本（`export-openapi.ts`） |
 | `test/` | 接口与数据库验收脚本 |
@@ -50,6 +50,6 @@ pnpm --filter @starter/server test:generated # OpenAPI 生成客户端联动
 ## 同步要求
 
 - 新增 `src/*` 目录必须有 `README.md`。
-- 接口变更后运行 `pnpm api:generate`，同步 `packages/api/openapi.json`。
+- 接口变更后运行 `pnpm api:generate`，同步 `packages/starter/api/openapi.json`。
 - 新增租户表必须补 RLS 迁移，并在 `prisma/README.md` 记录。
 - 改 `prisma/models/*.prisma` 后运行 `pnpm --filter @starter/server schema:check`；字段规范见 [`docs/guides/database-conventions.md`](../../docs/guides/database-conventions.md)。

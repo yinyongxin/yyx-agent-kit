@@ -57,7 +57,7 @@ USER app
 EXPOSE 47100
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:47100/api/health >/dev/null || exit 1
+  CMD wget -qO- http://127.0.0.1:47100/starter/api/health >/dev/null || exit 1
 
 ENTRYPOINT ["dumb-init", "--", "/usr/local/bin/server-entrypoint.sh"]
 CMD ["node", "apps/server/dist/apps/server/src/main.js"]

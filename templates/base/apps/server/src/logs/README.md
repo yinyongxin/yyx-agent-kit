@@ -23,9 +23,9 @@
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| GET | `/api/logs` | 日志检索，返回 `{ items, total, page, pageSize, hasMore }` |
-| GET | `/api/logs/stats?range=15m` | 按 level 统计窗口条数 |
-| GET | `/api/logs/trace/:traceId` | 同一 traceId 的时间线 |
+| GET | `/starter/api/logs` | 日志检索，返回 `{ items, total, page, pageSize, hasMore }` |
+| GET | `/starter/api/logs/stats?range=15m` | 按 level 统计窗口条数 |
+| GET | `/starter/api/logs/trace/:traceId` | 同一 traceId 的时间线 |
 
 `range`：`5m` / `15m` / `1h` / `6h` / `24h` / `7d`，也可传 `start` / `end`（ISO 8601，窗口 ≤ 7 天）。
 

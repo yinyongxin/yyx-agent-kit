@@ -39,15 +39,16 @@ const bootstrap = async () => {
   // 默认开发开、生产关；生产确实需要时用 SWAGGER_ENABLED=true 显式开启。
   if (config.getOrThrow<boolean>("app.swaggerEnabled")) {
     const document = buildOpenApiDocument(app);
-    SwaggerModule.setup("api/docs", app, document, {
-      jsonDocumentUrl: "api/docs-json",
+    const docsPath = `${API_PREFIX.replace(/^\//, "")}/docs`;
+    SwaggerModule.setup(docsPath, app, document, {
+      jsonDocumentUrl: `${docsPath}-json`,
     });
   }
 
   await app.listen(port);
 
   if (config.getOrThrow<string>("app.nodeEnv") !== "production") {
-    Logger.log(`开发导航页：http://localhost:${port}/api/dev`, "Bootstrap");
+    Logger.log(`开发导航页：http://localhost:${port}${API_PREFIX}/dev`, "Bootstrap");
   }
 };
 

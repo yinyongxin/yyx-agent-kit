@@ -1,7 +1,7 @@
 import { client } from "@starter/api/generated";
 import { authStore } from "./auth";
 
-// 生成路径已含 /api，baseUrl 留空走 Vite 代理（/api → localhost:47100）
+// 生成路径已含 API_PREFIX，baseUrl 留空走 Vite 代理（API_PREFIX → localhost:47100）
 client.setConfig({ baseUrl: "" });
 
 // 请求拦截：统一注入 Bearer token

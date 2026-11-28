@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import { API_PREFIX } from "@starter/shared";
 
 export default defineConfig({
   // @ 别名指向 src，与 tsconfig paths 一致（Vite 8 官方推荐双配置）
@@ -27,7 +28,7 @@ export default defineConfig({
     port: 47174,
     strictPort: true,
     proxy: {
-      "/api": "http://localhost:47100",
+      [API_PREFIX]: "http://localhost:47100",
     },
   },
 });

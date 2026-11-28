@@ -2,7 +2,7 @@
 
 ## 职责
 
-管理端登录入口，调用 `POST /api/auth/sign-in`，把 token 存入 `lib/auth`。
+管理端登录入口，调用 `POST /starter/starter/api/auth/sign-in`，把 token 存入 `lib/auth`。
 
 ## 文件索引
 
@@ -20,5 +20,5 @@
 
 ## 同步要求
 
-- 改登录端点/字段时同步 `LoginContent` 与 `@starter/api/generated`。
+- 改登录端点/字段时同步 `LoginContent` 与 `@starter/starter/api/generated`。
 - 退出登录调用 `authStore.clear()` 后跳 `/login`。

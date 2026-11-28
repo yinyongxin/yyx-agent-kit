@@ -2,7 +2,7 @@
 
 ## 职责
 
-- 校验 `GET /api/logs` 查询参数（range / level / traceId / userId / tenantId / path / keyword / 分页）
+- 校验 `GET /starter/starter/api/logs` 查询参数（range / level / traceId / userId / tenantId / path / keyword / 分页）
 - 定义统一的日志条目、列表响应、级别统计结构
 - `LOG_RANGES` / `LOG_LEVELS` 来自 `packages/shared`，与后端 DTO、管理端筛选共用
 

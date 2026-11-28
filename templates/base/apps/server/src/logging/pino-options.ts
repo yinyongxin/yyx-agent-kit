@@ -1,8 +1,11 @@
 import type { ConfigService } from "@nestjs/config";
 import { randomUUID } from "node:crypto";
 import pino, { stdTimeFunctions } from "pino";
+import { API_PREFIX } from "../shared";
 import { RequestContext } from "./request-context";
 import type { TracedRequest } from "./trace.middleware";
+
+const DEV_PREFIX = `${API_PREFIX}/dev`;
 
 /**
  * 构建 nestjs-pino 的 pinoHttp 配置。
@@ -52,7 +55,7 @@ export const createPinoHttpOptions = (config: ConfigService) => {
       ignore: (req: {
         headers: Record<string, string | string[] | undefined>;
         url?: string;
-      }) => (req.url ?? "").startsWith("/api/dev"),
+      }) => (req.url ?? "").startsWith(DEV_PREFIX),
     },
     genReqId: (req: { headers: Record<string, string | string[] | undefined> }) => {
       const header = req.headers["x-request-id"];

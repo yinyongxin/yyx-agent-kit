@@ -8,7 +8,7 @@
 
 | 文件 | 作用 |
 | --- | --- |
-| `health.dto.ts` | `HealthDto`：`GET /api/health` 的响应 |
+| `health.dto.ts` | `HealthDto`：`GET /starter/starter/api/health` 的响应 |
 
 ## 注意事项
 

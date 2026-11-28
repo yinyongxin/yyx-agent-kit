@@ -65,7 +65,7 @@ export class QueryLogsDto {
   @MaxLength(64)
   tenantId?: string;
 
-  @ApiPropertyOptional({ description: "按路径包含过滤，如 /api/tenants" })
+  @ApiPropertyOptional({ description: "按路径包含过滤，如 /starter/api/tenants" })
   @IsOptional()
   @IsString()
   @MaxLength(200)

@@ -2,7 +2,7 @@
 
 ## 职责
 
-- 校验 `GET /api/audit-logs` 查询参数（action / resource / result / actorUserId / tenantId / traceId / keyword / 时间范围 / 分页）
+- 校验 `GET /starter/starter/api/audit-logs` 查询参数（action / resource / result / actorUserId / tenantId / traceId / keyword / 时间范围 / 分页）
 - 定义审计日志条目与列表响应结构（含 before / after）
 
 ## 文件索引

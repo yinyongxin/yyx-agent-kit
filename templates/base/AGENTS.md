@@ -10,9 +10,9 @@
 - 端口统一使用 **47xxx 段**，禁止用 `3000` / `5173` / `8080` 等框架默认端口，避免与本机其他项目冲突。Vite 必须开 `strictPort`，端口被占时直接失败而不是静默换端口。
 - 接口调用统一走 `@starter/api`，业务代码不自己写 `fetch`、不自己拼 URL。
 - **日志与 traceId 统一由 `apps/server/src/logging/` 处理**：所有响应头带 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；新接口不要手动加 traceId，也不要另起 logger。业务打印规范见 [`docs/guides/logging-conventions.md`](docs/guides/logging-conventions.md)，架构/运维见 [`docs/guides/logging-and-tracing.md`](docs/guides/logging-and-tracing.md)。
-- **本地凭据**：数据库 / Redis / Penpot / Grafana / 测试账号统一在开发导航页 `http://localhost:47100/api/dev#services` 的「本地凭据」卡片查看（仅开发环境，生产 404）；新增有账号密码的本地服务时同步 `src/dev/dev.service.ts` 的 `credentials`。
+- **本地凭据**：数据库 / Redis / Penpot / Grafana / 测试账号统一在开发导航页 `http://localhost:47100/starter/starter/api/dev#services` 的「本地凭据」卡片查看（仅开发环境，生产 404）；新增有账号密码的本地服务时同步 `src/dev/dev.service.ts` 的 `credentials`。
 - **日志检索**：管理端 `/observability/logs`，后端 `apps/server/src/logs/`（只读 Loki）。本地需 `docker compose --profile observability up -d` 起 Loki（47110）/ Grafana（47111）/ Alloy（47112）；日志写入 `logs/app.log` 供 Alloy 采集。
-- **审计日志**：关键写操作（登录、租户/角色/成员变更）在 controller 加 `@Audit({ action, resource })`；表 `audit_logs` 为 append-only（RLS 禁止改删），查询走 `/api/audit-logs`，管理端 `/observability/audit-logs`。规范见 `apps/server/src/audit/README.md`。
+- **审计日志**：关键写操作（登录、租户/角色/成员变更）在 controller 加 `@Audit({ action, resource })`；表 `audit_logs` 为 append-only（RLS 禁止改删），查询走 `/starter/api/audit-logs`，管理端 `/observability/audit-logs`。规范见 `apps/server/src/audit/README.md`。
 - **链路追踪**：`apps/server/src/tracing.ts` 初始化 OTel → Tempo（`OTEL_ENABLED=true` 时生效）；入站 server span 由 `TraceMiddleware` 创建（NodeAdapter 下 HTTP 插桩的 context 传不进 middleware），不要重复建 span，也不要改响应头 traceId 来源。
 - 开发期接口统一用 `/api` 相对路径，由 Vite 代理到后端，**不写死后端域名**。
 - 业务接口按领域命名（如 `/orders`、`/patients`），`health` 只做运维探活，不承载业务逻辑。
@@ -50,11 +50,11 @@
 | --- | --- | --- |
 | `pnpm build` | 全部子项目构建 + 全量 typecheck | 不通过 |
 | `pnpm lint` | oxlint 静态检查（apps + packages） | 不通过 |
-| `GET /api/health` | 后端能启动并返回 `{"status":"ok"}` | 不通过 |
+| `GET /starter/starter/api/health` | 后端能启动并返回 `{"status":"ok"}` | 不通过 |
 
 单测、接口测试在第一轮需求时再引入，届时补充对应脚本。
 
-启动全部应用用根目录 `pnpm dev`：并发起 server / client / admin / portal + Penpot MCP（`@penpot/mcp`），并自动打开 `http://localhost:47100/api/dev` 开发导航页（端口与在线状态、Swagger 入口、依赖服务、未启动服务的启动命令）。该页仅在非生产环境注册。
+启动全部应用用根目录 `pnpm dev`：并发起 server / client / admin / portal + Penpot MCP（`@penpot/mcp`），并自动打开 `http://localhost:47100/starter/starter/api/dev` 开发导航页（端口与在线状态、Swagger 入口、依赖服务、未启动服务的启动命令）。该页仅在非生产环境注册。
 
 Windows 下也可以直接双击 `start-dev.cmd` / `stop-dev.cmd`：启动会检查 Docker、`docker compose up -d`、等 PostgreSQL 就绪后运行 `pnpm dev`；停止会结束应用进程并 `docker compose down`（保留数据卷）。
 

@@ -24,8 +24,8 @@
 - 每个请求 **一条 completion log**：`req`（method/url/headers）、`res.statusCode`、`responseTime`、
   `traceId`、`requestId`、`userId`、`tenantId`、`reqBody`、`resBody`
 - 4xx → `warn`，5xx / 异常 → `error`（`LoggerErrorInterceptor` 在 `main.ts` 注册，带堆栈）
-- `/api/dev` 的轮询不写 completion log（避免导航页刷屏）
-- multipart、SSE、`/api/dev` 不记录 body
+- `/starter/api/dev` 的轮询不写 completion log（避免导航页刷屏）
+- multipart、SSE、`/starter/api/dev` 不记录 body
 - `LOG_HTTP_BODY=false` 可关闭 body 日志；`LOG_BODY_LIMIT` 控制单条上限
 
 ## 环境变量

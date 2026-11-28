@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api/health": {
+    "/starter/api/health": {
       "get": {
         "operationId": "AppController_getHealth",
         "parameters": [],
@@ -23,7 +23,7 @@
         ]
       }
     },
-    "/api/me/tenants": {
+    "/starter/api/me/tenants": {
       "get": {
         "operationId": "MeController_tenants",
         "parameters": [],
@@ -63,7 +63,7 @@
         ]
       }
     },
-    "/api/logs": {
+    "/starter/api/logs": {
       "get": {
         "operationId": "LogsController_list",
         "parameters": [
@@ -262,7 +262,7 @@
         ]
       }
     },
-    "/api/logs/stats": {
+    "/starter/api/logs/stats": {
       "get": {
         "operationId": "LogsController_stats",
         "parameters": [
@@ -338,7 +338,7 @@
         ]
       }
     },
-    "/api/logs/trace/{traceId}": {
+    "/starter/api/logs/trace/{traceId}": {
       "get": {
         "operationId": "LogsController_trace",
         "parameters": [
@@ -417,7 +417,7 @@
         ]
       }
     },
-    "/api/audit-logs": {
+    "/starter/api/audit-logs": {
       "get": {
         "operationId": "AuditController_list",
         "parameters": [
@@ -568,7 +568,7 @@
         ]
       }
     },
-    "/api/audit-logs/{id}": {
+    "/starter/api/audit-logs/{id}": {
       "get": {
         "operationId": "AuditController_get",
         "parameters": [
@@ -634,7 +634,7 @@
         ]
       }
     },
-    "/api/auth/sign-in": {
+    "/starter/api/auth/sign-in": {
       "post": {
         "operationId": "AuthController_signIn",
         "parameters": [],
@@ -676,7 +676,7 @@
         ]
       }
     },
-    "/api/t/{tenantId}/membership": {
+    "/starter/api/t/{tenantId}/membership": {
       "get": {
         "operationId": "TenantController_membership",
         "parameters": [
@@ -742,7 +742,7 @@
         ]
       }
     },
-    "/api/t/{tenantId}/roles": {
+    "/starter/api/t/{tenantId}/roles": {
       "get": {
         "operationId": "TenantController_roles",
         "parameters": [
@@ -811,7 +811,7 @@
         ]
       }
     },
-    "/api/tenants": {
+    "/starter/api/tenants": {
       "get": {
         "operationId": "TenantsController_list",
         "parameters": [
@@ -966,7 +966,7 @@
         ]
       }
     },
-    "/api/tenants/{id}": {
+    "/starter/api/tenants/{id}": {
       "get": {
         "operationId": "TenantsController_get",
         "parameters": [
@@ -1176,7 +1176,7 @@
   },
   "info": {
     "title": "starter API",
-    "description": "starter 模板后端接口（Bearer JWT，多租户路由 /api/t/:tenantId/...）",
+    "description": "starter 模板后端接口（Bearer JWT，多租户路由 /starter/api/t/:tenantId/...）",
     "version": "1.0",
     "contact": {}
   },

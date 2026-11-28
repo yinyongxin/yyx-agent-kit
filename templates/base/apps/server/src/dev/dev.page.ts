@@ -5,7 +5,7 @@ import { API_PREFIX } from "../shared";
  *
  * 视觉：Bento Grid + 深色玻璃拟态（CSS backdrop-filter）。
  * 三个视图（概览 / 服务 / 工具）在客户端切换，轮询不中断；数据全部来自
- * `/api/dev/services`，无演示数据：
+ * `/starter/api/dev/services`，无演示数据：
  * - KPI / 仪表盘 / 表格由探测结果实时计算
  * - 最近事件由状态变化生成（首次加载记录“开始监控”）
  * - 探测耗时为浏览器侧 fetch 往返时间
@@ -747,7 +747,7 @@ export const renderDevPage = (): string => `<!doctype html>
       ["端口基址", server ? String(server.port) : "47100"],
       ["刷新间隔", "5s"],
       ["探测超时", "1200ms"],
-      ["页面", "/api/dev"]
+      ["页面", API_PREFIX + "/dev"]
     ];
     document.getElementById("tool-env").innerHTML = env.map(function (e) {
       return '<div class="item"><span>' + esc(e[0]) + "</span><code>" + esc(e[1]) + "</code></div>";
