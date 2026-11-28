@@ -40,7 +40,11 @@ export class UsersRepository {
   /** 当前用户所属的活跃租户，供租户切换器使用。UserTenant 是 UNSCOPED 授权关系表。 */
   async findTenants(userId: string) {
     const rows = await this.prisma.scoped.userTenant.findMany({
-      where: { userId, status: "active", tenant: { status: "active" } },
+      where: {
+        userId,
+        status: "active",
+        tenant: { status: "active", deletedAt: null },
+      },
       select: {
         joinedAt: true,
         tenant: { select: { id: true, name: true, slug: true } },

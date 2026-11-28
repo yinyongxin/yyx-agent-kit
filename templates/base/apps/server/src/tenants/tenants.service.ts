@@ -83,6 +83,6 @@ export class TenantsService {
       );
     }
 
-    await this.tenants.delete(id);
+    await this.tenants.softDelete(id);
   }
 }

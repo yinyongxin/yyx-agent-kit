@@ -13,6 +13,7 @@ export class TenantsRepository {
     keyword?: string;
   }) {
     const where: Prisma.TenantWhereInput = {
+      deletedAt: null,
       ...(params.status ? { status: params.status } : {}),
       ...(params.keyword
         ? {
@@ -36,11 +37,15 @@ export class TenantsRepository {
   }
 
   findById(id: string) {
-    return this.prisma.scoped.tenant.findUnique({ where: { id } });
+    return this.prisma.scoped.tenant.findFirst({
+      where: { id, deletedAt: null },
+    });
   }
 
   findBySlug(slug: string) {
-    return this.prisma.scoped.tenant.findUnique({ where: { slug } });
+    return this.prisma.scoped.tenant.findFirst({
+      where: { slug, deletedAt: null },
+    });
   }
 
   create(data: { name: string; slug: string }) {
@@ -54,8 +59,12 @@ export class TenantsRepository {
     return this.prisma.scoped.tenant.update({ where: { id }, data });
   }
 
-  delete(id: string) {
-    return this.prisma.scoped.tenant.delete({ where: { id } });
+  /** 软删除：保留数据，slug 释放（partial unique index 只约束 deletedAt IS NULL） */
+  softDelete(id: string) {
+    return this.prisma.scoped.tenant.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
   }
 
   countMembers(tenantId: string) {

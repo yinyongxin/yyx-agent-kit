@@ -103,8 +103,8 @@ async function main() {
       await tx.$executeRaw`SELECT set_config('app.tenant_id', ${DEFAULT_TENANT_ID}, true)`;
       // 默认租户
       const tenant = await tx.tenant.upsert({
-        where: { slug: DEFAULT_TENANT_SLUG },
-        update: {},
+        where: { id: DEFAULT_TENANT_ID },
+        update: { deletedAt: null },
         create: { id: DEFAULT_TENANT_ID, slug: DEFAULT_TENANT_SLUG, name: "默认租户" },
       });
 

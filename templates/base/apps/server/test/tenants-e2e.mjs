@@ -138,6 +138,31 @@ if (token) {
       token,
     );
     check("删除空租户 204", removed.status === 204, `HTTP ${removed.status}`);
+
+    const afterDelete = await request("GET", `/tenants/${createdId}`, null, token);
+    check("软删除后详情 404", afterDelete.status === 404, `HTTP ${afterDelete.status}`);
+
+    const reused = await request(
+      "POST",
+      "/tenants",
+      { name: "Reused Tenant", slug },
+      token,
+    );
+    check("软删除后 slug 可复用", reused.status === 201, `HTTP ${reused.status}`);
+    if (reused.json?.id) {
+      const removedReused = await request(
+        "DELETE",
+        `/tenants/${reused.json.id}`,
+        null,
+        token,
+      );
+      check(
+        "复用租户可再次删除 204",
+        removedReused.status === 204,
+        `HTTP ${removedReused.status}`,
+      );
+    }
+
     createdId = undefined;
   } finally {
     if (createdId) {

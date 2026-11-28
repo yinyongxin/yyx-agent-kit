@@ -74,15 +74,43 @@ model PlatformAdmin {
 **默认不加**。只有明确需要「回收站 / 可恢复 / 审计」的实体才加，并且必须同时满足：
 
 1. 所有查询过滤 `deletedAt: null`（在 Repository 层统一处理，不靠每个调用方自觉）
-2. 唯一索引改成 partial unique index，否则删除后无法重建同名：
-   ```sql
-   CREATE UNIQUE INDEX "orders_code_key" ON "orders"("code") WHERE "deleted_at" IS NULL;
-   ```
-   Prisma 不支持声明 partial index，需在迁移 SQL 里手写
+2. 唯一索引改成 **partial unique index**，否则删除后无法重建同名
 3. 记录 `deletedBy`（谁删的），必要时提供恢复接口
 4. 不要用 `deletedAt` 代替业务状态：停用/禁用继续用 `status`（如 `Tenant.status`、`User.status`），两者语义不同
 
-关联表、日志表、流水表通常**不需要**软删除。
+### 已启用：Tenant
+
+`Tenant.slug` 使用 Prisma 7 的 `partialIndexes` preview：
+
+```prisma
+generator client {
+  previewFeatures = ["partialIndexes"]
+}
+
+model Tenant {
+  slug      String    @unique(where: raw("\"deletedAt\" IS NULL"))
+  deletedAt DateTime? @db.Timestamptz(3)
+}
+```
+
+生成：
+
+```sql
+CREATE UNIQUE INDEX "tenants_slug_key" ON "tenants"("slug") WHERE ("deletedAt" IS NULL);
+```
+
+行为：
+
+- 删除租户 = `update({ deletedAt: new Date() })`，不物理删除
+- 列表/详情/成员守卫全部过滤 `deletedAt: null`；软删除后访问返回 404
+- slug 可以复用（唯一索引只约束未删除行）
+- `findUnique({ slug })` 仍能查到已删除行，**业务查询必须用 `findFirst({ where: { slug, deletedAt: null } })`**
+- seed 按固定 id upsert，并 `update: { deletedAt: null }` 恢复默认租户
+
+### 后续候选
+
+- `User`：需要同时改登录查询与 seed，且目前没有用户删除接口，单独评估后再做
+- 关联表、日志表、流水表通常**不需要**软删除
 
 ## 5. 索引与约束
 
@@ -103,6 +131,8 @@ model PlatformAdmin {
 - 迁移文件必须 review SQL 后提交；已应用的迁移禁止手改
 - 新增非空列要带默认值（如 `DEFAULT CURRENT_TIMESTAMP`），否则已有数据会失败
 - 时间字段改类型时确认时区假设（当前统一按 UTC 转换）
+- 非交互环境（AI/CI）遇到 `migrate dev` 的数据丢失警告会拒绝执行：用 `prisma migrate diff --from-config-datasource --to-schema prisma --script` 生成 SQL，手写迁移目录后 `migrate deploy`
+- 软删除改用 partial unique index 时，迁移会先 `DROP INDEX` 再重建；确认没有重复的活跃值
 
 ## 7. 校验
 
@@ -131,3 +161,5 @@ pnpm schema:check
 | OAuthConnection | 业务实体 | UUID | ✅ | ✅ |
 | PlatformAdmin | 1:1 扩展 | userId | ✅ | ✅ |
 | UserTenant / UserRole / RolePermission | 关联表 | 联合主键 | joinedAt / — | — |
+
+软删除：`Tenant.deletedAt` 已启用（slug 可复用）；`User` 暂未启用。
