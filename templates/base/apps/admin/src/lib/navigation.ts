@@ -17,6 +17,7 @@ import {
 import { PERMISSIONS } from "@starter/shared";
 import { useMe } from "./me";
 import { usePermissions } from "./permissions";
+import { useTenant } from "./tenant";
 
 /**
  * 管理端导航唯一数据源。
@@ -150,8 +151,10 @@ const canSeeNode = (
   node: NavNode,
   isPlatformAdmin: boolean,
   can: (permission: string) => boolean,
+  hasTenant: boolean,
 ): boolean => {
   if (node.platformOnly && !isPlatformAdmin) return false;
+  if (node.permission && !hasTenant) return false;
   if (node.permission && !isPlatformAdmin && !can(node.permission)) return false;
   return true;
 };
@@ -160,15 +163,16 @@ const filterNode = (
   node: NavNode,
   isPlatformAdmin: boolean,
   can: (permission: string) => boolean,
+  hasTenant: boolean,
 ): NavNode | null => {
-  if (!canSeeNode(node, isPlatformAdmin, can)) return null;
+  if (!canSeeNode(node, isPlatformAdmin, can, hasTenant)) return null;
 
   if (!node.children?.length) {
     return node.to ? node : null;
   }
 
   const children = node.children
-    .map((child) => filterNode(child, isPlatformAdmin, can))
+    .map((child) => filterNode(child, isPlatformAdmin, can, hasTenant))
     .filter((child): child is NavNode => Boolean(child));
 
   return children.length > 0 ? { ...node, children } : null;
@@ -178,10 +182,12 @@ const filterNode = (
 export const useNavigation = () => {
   const { me } = useMe();
   const { can } = usePermissions();
+  const { tenantId } = useTenant();
   const isPlatformAdmin = me?.isPlatformAdmin ?? false;
+  const hasTenant = Boolean(tenantId);
 
   const tree = NAV_TREE.map((node) =>
-    filterNode(node, isPlatformAdmin, can),
+    filterNode(node, isPlatformAdmin, can, hasTenant),
   ).filter((node): node is NavNode => Boolean(node));
 
   return { tree, isPlatformAdmin };
