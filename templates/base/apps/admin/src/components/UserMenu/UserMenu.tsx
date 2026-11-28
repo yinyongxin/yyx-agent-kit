@@ -20,6 +20,8 @@ import {
 } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { LAYOUT_MODES, useOptionalLayoutMode } from "@/components/LayoutMode";
+import { TenantSwitcher } from "@/components/TenantSwitcher";
+import { useTenant } from "@/lib/tenant";
 import classes from "./UserMenu.module.css";
 import type { UserInfo, UserMenuProps } from "./types";
 
@@ -46,12 +48,13 @@ export const UserMenu = ({
 }: UserMenuProps) => {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const layoutMode = useOptionalLayoutMode();
+  const { tenants, tenantId } = useTenant();
   const compact = variant === "header";
   const iconOnly = variant === "icon";
   const initial = user.name.slice(0, 1);
 
   return (
-    <Menu width={240} position="bottom-end" shadow="md" withinPortal>
+    <Menu width={280} position="bottom-end" shadow="md" withinPortal>
       <Menu.Target>
         <UnstyledButton className={classes[variant]} aria-label={`用户菜单：${user.name}`}>
           <Group gap="sm" wrap="nowrap" justify={iconOnly ? "center" : undefined}>
@@ -100,6 +103,15 @@ export const UserMenu = ({
         </div>
 
         <Menu.Divider />
+
+        {tenantId && tenants.length > 0 && (
+          <>
+            <div style={{ padding: "4px 12px 8px" }}>
+              <TenantSwitcher withLabel />
+            </div>
+            <Menu.Divider />
+          </>
+        )}
 
         {extraItems}
 

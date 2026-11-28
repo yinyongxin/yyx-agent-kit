@@ -28,7 +28,7 @@ const ACCOUNTS: DemoSeedAccount[] = [
   {
     scenario: "平台运维",
     email: "demo.ops@example.com",
-    note: "平台只读，租户成员写操作受限",
+    note: "平台只读；租户、用户、权限点写操作受限",
   },
   {
     scenario: "租户管理员",

@@ -8,9 +8,7 @@ import {
   IconGauge,
   IconHistory,
   IconLock,
-  IconPlugConnected,
   IconSettings,
-  IconUserCircle,
   IconUsers,
   type TablerIcon,
 } from "@tabler/icons-react";
@@ -114,13 +112,6 @@ export const NAV_TREE: NavNode[] = [
         permission: PERMISSIONS.fileRead,
       },
       {
-        key: "settings",
-        label: "账号设置",
-        icon: IconUserCircle,
-        to: "/settings",
-        description: "个人资料与密码",
-      },
-      {
         key: "logs",
         label: "日志",
         icon: IconFileText,
@@ -135,13 +126,6 @@ export const NAV_TREE: NavNode[] = [
         to: "/observability/audit-logs",
         description: "关键操作审计",
         platformOnly: true,
-      },
-      {
-        key: "integration",
-        label: "接口联调",
-        icon: IconPlugConnected,
-        to: "/integration",
-        description: "OpenAPI 客户端联调",
       },
     ],
   },

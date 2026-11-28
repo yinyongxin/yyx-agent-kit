@@ -19,7 +19,7 @@
 | 场景 | 邮箱 | 说明 |
 | --- | --- | --- |
 | 平台超管 | `demo.platform@example.com` | 平台管理，不加入租户 |
-| 平台运维 | `demo.ops@example.com` | 平台只读，租户成员写操作受限 |
+| 平台运维 | `demo.ops@example.com` | 平台只读；租户、用户、权限点的写操作受限 |
 | 租户管理员 | `demo.tenantadmin@example.com` | 演示租户 A `admin` |
 | 普通成员 | `demo.member@example.com` | 演示租户 A `member`（只读） |
 | 文件管理员 | `demo.files@example.com` | 演示租户 A 自定义角色，仅文件读写 |

@@ -2,6 +2,7 @@ import { IconEdit, IconPlus, IconTrash, IconUsers } from "@tabler/icons-react";
 import { ActionIcon, Alert, Badge, Button, Group, Modal, Select, Stack, TextInput, Tooltip } from "@mantine/core";
 import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useMe } from "@/lib/me";
 import {
   tenantsControllerCreate,
   tenantsControllerList,
@@ -84,6 +85,8 @@ const filterFields = [
  */
 export const TenantsContent = () => {
   const navigate = useNavigate();
+  const { me } = useMe();
+  const canWrite = me?.platformAdminLevel === "super";
   const apiRef = useRef<DataTableApi<TenantRow> | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -212,16 +215,20 @@ export const TenantsContent = () => {
               <IconUsers size={16} />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label="编辑">
-            <ActionIcon variant="subtle" onClick={() => openEdit(row)}>
-              <IconEdit size={16} />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label="删除">
-            <ActionIcon variant="subtle" color="red" onClick={() => void remove(row)}>
-              <IconTrash size={16} />
-            </ActionIcon>
-          </Tooltip>
+          {canWrite && (
+            <>
+              <Tooltip label="编辑">
+                <ActionIcon variant="subtle" onClick={() => openEdit(row)}>
+                  <IconEdit size={16} />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label="删除">
+                <ActionIcon variant="subtle" color="red" onClick={() => void remove(row)}>
+                  <IconTrash size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </>
+          )}
         </Group>
       ),
     },
@@ -276,9 +283,11 @@ export const TenantsContent = () => {
       <DataTableProvider table={table}>
         <DataTableFilterBar />
         <DataTableToolbar>
-          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
-            {labels.create}
-          </Button>
+          {canWrite && (
+            <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+              {labels.create}
+            </Button>
+          )}
         </DataTableToolbar>
         <DataTableContent>
           <DataTableTable />

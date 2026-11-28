@@ -41,6 +41,7 @@ import {
   type DataTableLabels,
   type QueryContext,
 } from "@/components/DataTable";
+import { useMe } from "@/lib/me";
 
 type UserStatus = "active" | "disabled";
 
@@ -110,6 +111,8 @@ const emptyForm: UserForm = {
 
 /** 用户管理：服务端模式，搜索/筛选/分页走后端 */
 export const UsersContent = () => {
+  const { me } = useMe();
+  const canWrite = me?.platformAdminLevel === "super";
   const apiRef = useRef<DataTableApi<UserRow> | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -233,20 +236,23 @@ export const UsersContent = () => {
       key: "key",
       title: "操作",
       width: 110,
-      render: (row) => (
-        <Group gap={4} wrap="nowrap">
-          <Tooltip label="编辑">
-            <ActionIcon variant="subtle" onClick={() => openEdit(row)}>
-              <IconEdit size={16} />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label="删除">
-            <ActionIcon variant="subtle" color="red" onClick={() => void remove(row)}>
-              <IconTrash size={16} />
-            </ActionIcon>
-          </Tooltip>
-        </Group>
-      ),
+      render: (row) =>
+        canWrite ? (
+          <Group gap={4} wrap="nowrap">
+            <Tooltip label="编辑">
+              <ActionIcon variant="subtle" onClick={() => openEdit(row)}>
+                <IconEdit size={16} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="删除">
+              <ActionIcon variant="subtle" color="red" onClick={() => void remove(row)}>
+                <IconTrash size={16} />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
+        ) : (
+          <Text size="sm" c="dimmed">—</Text>
+        ),
     },
   ];
 
@@ -349,9 +355,11 @@ export const UsersContent = () => {
       <DataTableProvider table={table}>
         <DataTableFilterBar />
         <DataTableToolbar>
-          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
-            {labels.create}
-          </Button>
+          {canWrite && (
+            <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+              {labels.create}
+            </Button>
+          )}
         </DataTableToolbar>
         <DataTableContent>
           <DataTableTable />
@@ -360,7 +368,7 @@ export const UsersContent = () => {
         <DataTablePagination />
       </DataTableProvider>
 
-      <DataTableBatchBar table={table} actions={batchActions} />
+      {canWrite && <DataTableBatchBar table={table} actions={batchActions} />}
 
       <Modal
         opened={creating || Boolean(editing)}

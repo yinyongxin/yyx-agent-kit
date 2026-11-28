@@ -9,6 +9,7 @@ export const TEST_TENANT_PREFIXES = [
   "ui-",
   "test-",
   "ego-",
+  "qa-",
 ] as const;
 
 export type TestTenant = {

@@ -90,6 +90,8 @@ const emptyForm: PermissionForm = {
 
 /** 权限点管理：全局定义，服务端 DataTable */
 export const PermissionsContent = () => {
+  // 权限点是后端契约（@RequirePermission / seed / 迁移），前端只读查看
+  const canWrite = false;
   const apiRef = useRef<DataTableApi<PermissionRow> | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -207,28 +209,31 @@ export const PermissionsContent = () => {
       key: "key",
       title: "操作",
       width: 110,
-      render: (row) => (
-        <Group gap={4} wrap="nowrap">
-          <Tooltip label="编辑">
-            <ActionIcon variant="subtle" onClick={() => openEdit(row)}>
-              <IconEdit size={16} />
-            </ActionIcon>
-          </Tooltip>
-          {row.roleCount > 0 ? (
-            <Tooltip label={`被 ${row.roleCount} 个角色引用，不能删除`}>
-              <ActionIcon variant="subtle" color="red" disabled>
-                <IconTrash size={16} />
+      render: (row) =>
+        canWrite ? (
+          <Group gap={4} wrap="nowrap">
+            <Tooltip label="编辑">
+              <ActionIcon variant="subtle" onClick={() => openEdit(row)}>
+                <IconEdit size={16} />
               </ActionIcon>
             </Tooltip>
-          ) : (
-            <Tooltip label="删除">
-              <ActionIcon variant="subtle" color="red" onClick={() => void remove(row)}>
-                <IconTrash size={16} />
-              </ActionIcon>
-            </Tooltip>
-          )}
-        </Group>
-      ),
+            {row.roleCount > 0 ? (
+              <Tooltip label={`被 ${row.roleCount} 个角色引用，不能删除`}>
+                <ActionIcon variant="subtle" color="red" disabled>
+                  <IconTrash size={16} />
+                </ActionIcon>
+              </Tooltip>
+            ) : (
+              <Tooltip label="删除">
+                <ActionIcon variant="subtle" color="red" onClick={() => void remove(row)}>
+                  <IconTrash size={16} />
+                </ActionIcon>
+              </Tooltip>
+            )}
+          </Group>
+        ) : (
+          <Text size="sm" c="dimmed">—</Text>
+        ),
     },
   ];
 
@@ -277,9 +282,11 @@ export const PermissionsContent = () => {
       <DataTableProvider table={table}>
         <DataTableFilterBar />
         <DataTableToolbar>
-          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
-            {labels.create}
-          </Button>
+          {canWrite && (
+            <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+              {labels.create}
+            </Button>
+          )}
         </DataTableToolbar>
         <DataTableContent>
           <DataTableTable />

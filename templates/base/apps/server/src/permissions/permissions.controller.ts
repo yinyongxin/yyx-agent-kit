@@ -28,6 +28,7 @@ import { Can } from "@nestjs/authorization";
 import { API_ROUTES, asRoute } from "../shared";
 import { Audit } from "../audit/audit.decorator";
 import { PlatformAdminGuard } from "../auth/guards/platform-admin.guard";
+import { RequirePlatformAdminLevel } from "../auth/decorators/platform-admin.decorator";
 import { ErrorResponseDto } from "../dto/error-response.dto";
 import { CreatePermissionDto } from "./dto/create-permission.dto";
 import {
@@ -75,6 +76,7 @@ export class PermissionsController {
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiConflictResponse({ type: ErrorResponseDto })
   @Post()
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "permission.create", resource: "permission" })
   create(@Body() dto: CreatePermissionDto): Promise<PermissionResponseDto> {
@@ -86,6 +88,7 @@ export class PermissionsController {
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @Patch(":id")
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "permission.update", resource: "permission" })
   update(
@@ -101,6 +104,7 @@ export class PermissionsController {
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @HttpCode(204)
   @Delete(":id")
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "permission.delete", resource: "permission" })
   remove(@Param("id", ParseUUIDPipe) id: string): Promise<void> {

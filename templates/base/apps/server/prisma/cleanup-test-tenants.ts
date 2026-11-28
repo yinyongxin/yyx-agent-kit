@@ -2,7 +2,7 @@
  * 清理本地软删除的测试租户（默认 dry-run）。
  *
  * 只删除 `deletedAt IS NOT NULL` 且 slug 命中测试前缀的租户：
- * e2e-* / audit-* / prov-* / ui-* / test-* / ego-* / test
+ * e2e-* / audit-* / prov-* / ui-* / test-* / ego-* / qa-* / test
  *
  * 外键级联会删除 roles / user_tenants / files / subscriptions。
  * 默认保留 audit_logs；加 `--purge-audit` 时用 MIGRATE_DATABASE_URL

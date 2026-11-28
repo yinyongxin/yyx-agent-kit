@@ -3,7 +3,6 @@ import { Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
-import { TenantSwitcher } from "@/components/TenantSwitcher";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthUser } from "@/lib/use-auth-user";
 import { useNavigation, type NavNode } from "@/lib/navigation";
@@ -82,9 +81,6 @@ export const DoubleNavbar = () => {
           <UserMenu variant="icon" user={user} onLogout={onLogout} />
         </div>
         <div className={classes.main}>
-          <div style={{ padding: "var(--mantine-spacing-md)", paddingBottom: 0 }}>
-            <TenantSwitcher />
-          </div>
           <Title order={4} className={classes.title}>
             {group.label}
           </Title>

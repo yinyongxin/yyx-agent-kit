@@ -27,6 +27,7 @@ import { Can } from "@nestjs/authorization";
 import { API_ROUTES, asRoute } from "../shared";
 import { Audit } from "../audit/audit.decorator";
 import { PlatformAdminGuard } from "../auth/guards/platform-admin.guard";
+import { RequirePlatformAdminLevel } from "../auth/decorators/platform-admin.decorator";
 import { ErrorResponseDto } from "../dto/error-response.dto";
 import { CreateTenantDto } from "./dto/create-tenant.dto";
 import { QueryTenantsDto } from "./dto/query-tenants.dto";
@@ -70,6 +71,7 @@ export class TenantsController {
   @ApiCreatedResponse({ type: TenantResponseDto })
   @ApiConflictResponse({ type: ErrorResponseDto })
   @Post()
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "tenant.create", resource: "tenant" })
   create(@Body() dto: CreateTenantDto): Promise<TenantResponseDto> {
@@ -80,6 +82,7 @@ export class TenantsController {
   @ApiOkResponse({ type: TenantResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @Patch(":id")
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "tenant.update", resource: "tenant" })
   update(
@@ -95,6 +98,7 @@ export class TenantsController {
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @HttpCode(204)
   @Delete(":id")
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "tenant.delete", resource: "tenant" })
   remove(@Param("id", ParseUUIDPipe) id: string): Promise<void> {

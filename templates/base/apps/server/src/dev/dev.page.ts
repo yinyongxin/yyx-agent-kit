@@ -496,7 +496,7 @@ export const renderDevPage = (): string => `<!doctype html>
       <article class="tile">
         <div class="tile-head"><h2>数据库维护</h2><span>仅本地</span></div>
         <p class="seed-note">
-          清理软删除测试租户（e2e / audit / prov / ui / ego / test）及其角色、成员、文件、订阅。
+          清理软删除测试租户（e2e / audit / prov / ui / ego / qa / test）及其角色、成员、文件、订阅。
           清空审计日志需要 <code>MIGRATE_DATABASE_URL</code>，会绕过 append-only RLS。
         </p>
         <div class="cleanup-actions">

@@ -14,6 +14,7 @@
 - **日志检索**：管理端 `/observability/logs`，后端 `apps/server/src/logs/`（只读 Loki）。本地 `docker compose up -d` 默认启动 Loki（47110）/ Grafana（47111）/ Alloy（47112）/ Tempo（47113）；只想要最小依赖时用 `docker compose up -d postgres redis`。日志写入 `logs/app.log` 供 Alloy 采集。
 - **租户接口授权按权限点**：租户内业务接口用 `@RequirePermission(PERMISSIONS.xxx)` 声明所需权限（可传多个，全部满足）；权限来自当前租户角色并集，`owner` / `admin` 视为拥有全部权限（`["*"]`）。不要只靠 `@MinRole` 做业务授权，权限点才对应角色配置。
 - **跨租户成员操作**：平台级引导/恢复走 `/tenants/:tenantId/members`（写操作要求 `super`），不要为了让平台管理员通过 `TenantMembershipGuard` 而伪造租户成员关系。
+- **平台写操作按级别**：`ops` 平台管理员只读；创建/修改/删除租户、用户、权限点等敏感写接口必须加 `@RequirePlatformAdminLevel("super")`，管理端同步按 `platformAdminLevel` 隐藏写按钮。
 - **管理端前端权限**：按钮 / 操作项显隐用 `<Can permission="user:write">`，租户页面级门禁用 `<PermissionGate>`，平台页面用 `<PlatformAdminGate>`；导航菜单统一由 `src/lib/navigation.ts` 的 `NAV_TREE` + `useNavigation()` 过滤（平台专属 `platformOnly`、租户菜单 `permission`），三种布局只渲染同一棵树；前端只做展示收口，后端仍必须用 `@RequirePermission` / `PlatformAdminGuard` 拦截。
 - **全站 API 限流**：`RateLimitGuard` 通过 `APP_GUARD` 默认开启（Redis，IP + Controller.method，默认 120 次/分钟）；健康检查/探针用 `@SkipRateLimit()`；高成本或敏感接口用 `@RateLimit({ limit, windowSeconds })` 覆盖；反向代理部署配置 `TRUST_PROXY`。
 - **审计日志**：关键写操作（登录、租户/角色/成员/权限点变更）在 controller 加 `@Audit({ action, resource })`；表 `audit_logs` 为 append-only（RLS 禁止改删），查询走 `/starter/api/audit-logs`，管理端 `/observability/audit-logs`。规范见 `apps/server/src/audit/README.md`。

@@ -28,6 +28,7 @@ import { Can } from "@nestjs/authorization";
 import { API_ROUTES, asRoute } from "../shared";
 import { Audit } from "../audit/audit.decorator";
 import { PlatformAdminGuard } from "../auth/guards/platform-admin.guard";
+import { RequirePlatformAdminLevel } from "../auth/decorators/platform-admin.decorator";
 import { ErrorResponseDto } from "../dto/error-response.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { QueryUsersDto } from "./dto/query-users.dto";
@@ -71,6 +72,7 @@ export class UsersController {
   @ApiCreatedResponse({ type: UserResponseDto })
   @ApiConflictResponse({ type: ErrorResponseDto })
   @Post()
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "user.create", resource: "user" })
   create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
@@ -82,6 +84,7 @@ export class UsersController {
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @ApiConflictResponse({ type: ErrorResponseDto })
   @Patch(":id")
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "user.update", resource: "user" })
   update(
@@ -97,6 +100,7 @@ export class UsersController {
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @HttpCode(204)
   @Delete(":id")
+  @RequirePlatformAdminLevel("super")
   @Can.Anyone()
   @Audit({ action: "user.delete", resource: "user" })
   remove(
