@@ -11,6 +11,7 @@
 | `tenancy.module.ts` | 模块装配：controller + service + interceptor |
 | `tenant.controller.ts` | 示例路由：`GET /t/:tenantId/membership`（成员信息）、`GET /t/:tenantId/roles`（租户表查询示例） |
 | `tenancy.service.ts` | 租户表查询业务（角色列表），接收调用方的 tx |
+| `members/` | 租户成员管理：列表 / 添加 / 更新角色与状态 / 移除，详见该目录 README |
 | `interceptors/` | `tenant-transaction.interceptor.ts`：开事务并 `set_config('app.tenant_id', ..., true)`，tx 挂到 `req.tenantTx` |
 | `decorators/` | `tenant-tx.decorator.ts`：`@TenantTx()` 取当前请求的事务客户端 |
 | `dto/` | `RoleDto` 等租户路由出参，详见该目录 README |

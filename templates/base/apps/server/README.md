@@ -18,8 +18,9 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/prisma/` | Prisma Client、`scoped` 守卫、RLS 事务入口 |
 | `src/logging/` | pino 请求日志、traceId/响应头、请求响应体脱敏、全局异常过滤器 |
 | `src/auth/` | 登录、JWT、租户成员 guard、租户上下文 |
-| `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户事务拦截器、`@TenantTx()` |
+| `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户成员管理、租户事务拦截器、`@TenantTx()` |
 | `src/tenants/` | 平台级租户 CRUD（`/starter/api/tenants`），`PlatformAdminGuard` 保护 |
+| `src/users/` | 平台级用户管理（`/starter/api/users`），`PlatformAdminGuard` 保护 |
 | `prisma/` | schema、models、migrations、seed |
 | `scripts/` | 一次性脚本（`export-openapi.ts`） |
 | `test/` | 接口与数据库验收脚本 |

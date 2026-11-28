@@ -1,6 +1,7 @@
-import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconPlus, IconTrash, IconUsers } from "@tabler/icons-react";
 import { ActionIcon, Alert, Badge, Button, Group, Modal, Select, Stack, TextInput, Tooltip } from "@mantine/core";
 import { useCallback, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import {
   tenantsControllerCreate,
   tenantsControllerList,
@@ -77,6 +78,7 @@ const filterFields = [
  * 搜索/筛选/排序/分页变化都会触发 queryOptions，重新请求后端（搜索=刷新，不做前端过滤）。
  */
 export const TenantsContent = () => {
+  const navigate = useNavigate();
   const apiRef = useRef<DataTableApi<TenantRow> | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -176,6 +178,19 @@ export const TenantsContent = () => {
       width: 110,
       render: (row) => (
         <Group gap={4} wrap="nowrap">
+          <Tooltip label="成员">
+            <ActionIcon
+              variant="subtle"
+              onClick={() =>
+                navigate({
+                  to: "/access/tenant-members/$tenantId",
+                  params: { tenantId: row.id },
+                })
+              }
+            >
+              <IconUsers size={16} />
+            </ActionIcon>
+          </Tooltip>
           <Tooltip label="编辑">
             <ActionIcon variant="subtle" onClick={() => openEdit(row)}>
               <IconEdit size={16} />
