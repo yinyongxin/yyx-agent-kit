@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **Grafana 概览与本地凭据**：Grafana 固定 12.4.16（13.x 的 Loki/Tempo bundled 插件在 Explore 加载失败）；默认账号 `admin` / `starter_grafana_2026`，开发导航页新增「本地凭据」卡片（可点击复制）；新增预置 Dashboard「Starter 概览」（日志量 / 错误数 / 按 level 曲线 / 告警日志），dev 页 Grafana 入口指向该概览
 - **链路追踪（OTel + Tempo）**：`src/tracing.ts` 初始化 `@opentelemetry/sdk-node`，OTLP → Tempo（47113 查询 / 47114 OTLP HTTP）；NodeAdapter 下 HTTP 插桩的 context 传不进 middleware，改由 `TraceMiddleware` 创建 server span 并用 `context.with` 包裹请求链，日志 traceId 与 Tempo 一致；关闭 `instrumentation-nestjs-core`（不支持 Nest 12）/ `fs`，logs/metrics 不重复导出；新增 Tempo compose 服务、Grafana 数据源与 `test:traces` 验收
 - **慢查询采集**：Prisma 7 + driver adapter 下 `$on("query")` 不可用（实测 `_engineConfig` undefined），改用 `scoped` extension 计时 + 租户事务整体计时；`SLOW_SQL_MS`（默认 100ms）/ `SLOW_SQL_LOG_PARAMS`（默认关闭），日志带 traceId / model / operation
 - **审计日志**：新增 `audit_logs`（append-only，RLS 禁止改删）与 `apps/server/src/audit/`；`@Audit({ action, resource })` 自动记录租户 CRUD，登录成功/失败在 `CredentialsService` 显式记录（含 traceId / ip / userAgent）；新增 `GET /api/audit-logs`、`/api/audit-logs/:id` 与管理端「审计日志」页 `/observability/audit-logs`；`test:audit` 验收

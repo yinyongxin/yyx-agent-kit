@@ -258,7 +258,7 @@ services:
       - starter-net
 
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION:-13.2.7}
+    image: grafana/grafana:${GRAFANA_VERSION:-12.4.16}
     container_name: starter-grafana
     profiles: ["observability"]
     restart: unless-stopped

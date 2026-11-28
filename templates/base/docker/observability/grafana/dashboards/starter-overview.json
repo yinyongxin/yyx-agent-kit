@@ -1,0 +1,99 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 0,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "近 1 小时日志",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "loki", "uid": "loki" },
+      "targets": [
+        { "refId": "A", "expr": "sum(count_over_time({service=\"starter-api\"}[1h]))" }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+    },
+    {
+      "type": "stat",
+      "title": "近 1 小时错误",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "loki", "uid": "loki" },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(count_over_time({service=\"starter-api\", level=\"error\"}[1h])) or vector(0)"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "日志量（按 level）",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "loki", "uid": "loki" },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (level) (count_over_time({service=\"starter-api\"}[1m]))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "lineWidth": 2, "fillOpacity": 12 } },
+        "overrides": []
+      }
+    },
+    {
+      "type": "logs",
+      "title": "警告 / 错误日志",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 8 },
+      "datasource": { "type": "loki", "uid": "loki" },
+      "targets": [
+        { "refId": "A", "expr": "{service=\"starter-api\", level=~\"warn|error\"}" }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": true,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["starter", "observability"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timezone": "browser",
+  "title": "Starter 概览",
+  "uid": "starter-overview",
+  "version": 1
+}

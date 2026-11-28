@@ -45,6 +45,9 @@ export const devConfig = registerAs("dev", () => {
     lokiPort: Number(process.env.LOKI_PORT ?? 47110),
     grafanaPort: Number(process.env.GRAFANA_PORT ?? 47111),
     tempoPort: Number(process.env.TEMPO_PORT ?? 47113),
+    /** 开发导航页展示的 Grafana 凭据（仅开发环境） */
+    grafanaUser: process.env.GRAFANA_USER ?? "admin",
+    grafanaPassword: process.env.GRAFANA_PASSWORD ?? "starter_grafana_2026",
   };
 });
 

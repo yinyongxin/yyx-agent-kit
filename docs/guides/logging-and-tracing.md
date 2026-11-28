@@ -112,11 +112,19 @@ docker compose --profile observability up -d
 | 服务 | 端口 | 入口 |
 | --- | --- | --- |
 | Loki | 47110 | `http://localhost:47110/ready` |
-| Grafana | 47111 | `http://localhost:47111`（匿名可看，管理员 admin/admin） |
+| Grafana | 47111 | `http://localhost:47111`（admin / `starter_grafana_2026`，匿名可看） |
 | Alloy | 47112 | `http://localhost:47112`（组件状态 / live debugging） |
 | Tempo（查询 UI/API） | 47113 | `http://localhost:47113/ready` |
 | Tempo OTLP HTTP | 47114 | 应用 `OTEL_EXPORTER_OTLP_ENDPOINT` |
 | Tempo OTLP gRPC | 47115 | 可选，gRPC exporter 用 |
+
+Grafana 固定 **12.x**：13.x 的 Loki/Tempo bundled 插件在 Explore 里加载失败（`Could not load plugin`），12.4 稳定。
+
+首次打开建议：
+
+1. 登录 `http://localhost:47111`（账号密码见 `.env` 的 `GRAFANA_USER` / `GRAFANA_PASSWORD`，开发导航页「本地凭据」也会显示）
+2. 打开 `Dashboards → Starter 概览`（`/d/starter-overview`）：日志量、错误数、按 level 曲线、告警/错误日志
+3. Explore → 选 `Loki` 查 `{service="starter-api"}`；选 `Tempo` 查 traceId 看 span 瀑布
 
 配置位置：`docker/observability/`
 

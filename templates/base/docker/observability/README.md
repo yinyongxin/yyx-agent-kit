@@ -23,6 +23,16 @@
 | Tempo（OTLP HTTP） | 47114 | 应用 `OTEL_EXPORTER_OTLP_ENDPOINT` |
 | Tempo（OTLP gRPC） | 47115 | gRPC exporter 用 |
 
+## 本地凭据
+
+| 服务 | 账号 | 密码 |
+| --- | --- | --- |
+| Grafana | `admin` | `starter_grafana_2026` |
+
+- 由 `.env` 的 `GRAFANA_USER` / `GRAFANA_PASSWORD` 控制（首次创建数据卷时写入）
+- 开发导航页 `http://localhost:47100/api/dev#services` 的「本地凭据」卡片会显示，点击可复制
+- 预置 Dashboard：`Starter 概览`（`/d/starter-overview`），包含日志量、错误数、按 level 曲线与告警日志
+
 ## 数据流
 
 ```text

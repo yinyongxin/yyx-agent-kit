@@ -21,6 +21,8 @@ export interface DevServiceInfo {
   url?: string;
   /** 常用子入口：健康检查、Swagger、OpenAPI JSON 等 */
   links: DevServiceLink[];
+  /** 本地开发凭据（只由 DevModule 返回，生产不注册） */
+  credentials?: { label: string; value: string }[];
   /** 未启动时提示的启动命令 */
   command: string;
   /** 探测方式，展示在卡片上（HTTP / TCP / SELECT 1 / 当前进程） */
@@ -85,6 +87,8 @@ export class DevService {
     const lokiPort = this.config.getOrThrow<number>("dev.lokiPort");
     const grafanaPort = this.config.getOrThrow<number>("dev.grafanaPort");
     const tempoPort = this.config.getOrThrow<number>("dev.tempoPort");
+    const grafanaUser = this.config.getOrThrow<string>("dev.grafanaUser");
+    const grafanaPassword = this.config.getOrThrow<string>("dev.grafanaPassword");
     const swaggerEnabled = this.config.getOrThrow<boolean>("app.swaggerEnabled");
 
     const [
@@ -248,7 +252,15 @@ export class DevService {
         port: grafanaPort,
         status: grafanaUp ? "online" : "offline",
         url: base(grafanaPort),
-        links: [{ label: "health", href: `${base(grafanaPort)}/api/health` }],
+        links: [
+          { label: "概览", href: `${base(grafanaPort)}/d/starter-overview` },
+          { label: "Explore", href: `${base(grafanaPort)}/explore` },
+          { label: "登录", href: base(grafanaPort) },
+        ],
+        credentials: [
+          { label: "账号", value: grafanaUser },
+          { label: "密码", value: grafanaPassword },
+        ],
         command: "docker compose --profile observability up -d grafana",
         probe: "HTTP",
       },

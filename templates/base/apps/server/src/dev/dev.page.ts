@@ -200,6 +200,16 @@ export const renderDevPage = (): string => `<!doctype html>
   .trow a:hover { text-decoration: underline; }
   .trow .none { color: var(--faint); font-size: 9.5px; }
 
+  .cred-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, 0.055); font-size: 11px; flex-wrap: wrap; }
+  .cred-row:first-of-type { border-top: 0; }
+  .cred-name { min-width: 70px; color: var(--muted); }
+  .cred-item { display: inline-flex; align-items: center; gap: 6px; }
+  .cred-label { font-size: 9.5px; color: var(--faint); }
+  .cred-value { font-family: var(--mono); font-size: 11px; color: var(--accent-2); background: rgba(255, 255, 255, 0.06); padding: 3px 7px; border-radius: 5px; cursor: copy; }
+  .cred-value:hover, .cred-value.copied { background: rgba(255, 255, 255, 0.16); }
+  .cred-open { margin-left: auto; color: var(--accent-2); text-decoration: none; font-size: 10px; }
+  .cred-open:hover { text-decoration: underline; }
+
   .gtag { font-size: 9px; padding: 3px 8px; border-radius: 999px; justify-self: start; }
   .gtag.app { background: #123326; color: var(--green-text); }
   .gtag.tool { background: #102a36; color: var(--blue); }
@@ -397,6 +407,7 @@ export const renderDevPage = (): string => `<!doctype html>
       <div class="tile-head"><h2>服务明细</h2><span id="svc-table-meta"></span></div>
       <div class="tbl tbl-full" id="svc-table"></div>
     </div>
+    <div class="tile" style="margin-top:14px" id="svc-cred" hidden></div>
   </section>
 
   <!-- 工具 -->
@@ -661,6 +672,31 @@ export const renderDevPage = (): string => `<!doctype html>
         + '<span class="cmdtext" title="' + esc(s.command) + '">' + esc(s.command) + "</span></div>";
     }).join("");
     document.getElementById("svc-table").innerHTML = thead + trows;
+
+    renderCredentials();
+  }
+
+  function renderCredentials() {
+    var box = document.getElementById("svc-cred");
+    if (!box) return;
+    var items = state.services.filter(function (s) {
+      return s.credentials && s.credentials.length;
+    });
+    if (!items.length) {
+      box.hidden = true;
+      return;
+    }
+    box.hidden = false;
+    box.innerHTML = '<div class="tile-head"><h2>本地凭据</h2><span>点击值复制</span></div>'
+      + items.map(function (s) {
+          return '<div class="cred-row"><span class="cred-name">' + esc(s.name) + "</span>"
+            + s.credentials.map(function (c) {
+                return '<span class="cred-item"><span class="cred-label">' + esc(c.label) + "</span>"
+                  + '<code class="cred-value" data-copy="' + esc(c.value) + '" title="点击复制">' + esc(c.value) + "</code></span>";
+              }).join("")
+            + (s.url ? '<a class="cred-open" href="' + esc(s.url) + '" target="_blank" rel="noreferrer">打开 ' + esc(s.name) + " ↗</a>" : "")
+            + "</div>";
+        }).join("");
   }
 
   function renderTools() {
@@ -688,6 +724,10 @@ export const renderDevPage = (): string => `<!doctype html>
     if (penpot && penpot.url) links.push({ label: "Penpot", href: penpot.url });
     var mailpit = state.services.filter(function (s) { return s.id === "mailpit"; })[0];
     if (mailpit && mailpit.url) links.push({ label: "Mailpit", href: mailpit.url });
+    var grafana = state.services.filter(function (s) { return s.id === "grafana"; })[0];
+    if (grafana && grafana.url) links.push({ label: "Grafana", href: grafana.url });
+    var tempo = state.services.filter(function (s) { return s.id === "tempo"; })[0];
+    if (tempo && tempo.url) links.push({ label: "Tempo", href: tempo.url });
     if (mcp && mcp.links && mcp.links.length) links.push({ label: "插件 manifest", href: mcp.links[0].href });
 
     document.getElementById("tool-links").innerHTML = links.map(function (l) {
@@ -779,6 +819,21 @@ export const renderDevPage = (): string => `<!doctype html>
   });
 
   document.addEventListener("click", function (event) {
+    var cred = event.target.closest(".cred-value[data-copy]");
+    if (cred) {
+      var credText = cred.getAttribute("data-copy");
+      var credDone = function () {
+        cred.classList.add("copied");
+        setTimeout(function () { cred.classList.remove("copied"); }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(credText).then(credDone, credDone);
+      } else {
+        credDone();
+      }
+      return;
+    }
+
     var btn = event.target.closest(".cmd[data-copy]");
     if (!btn) return;
     var text = btn.getAttribute("data-copy");
