@@ -15,13 +15,13 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
-import { API_ROUTES, asRoute } from "@/shared";
-import type { Prisma } from "@/generated/prisma/client";
-import { CurrentMembership } from "@/auth/decorators/membership.decorator";
-import type { Membership } from "@/auth/membership.types";
-import { TenantMembershipGuard } from "@/auth/guards/tenant-membership.guard";
-import { MembershipDto } from "@/auth/dto/membership.dto";
-import { ErrorResponseDto } from "@/dto/error-response.dto";
+import { API_ROUTES, asRoute } from "../shared";
+import type { Prisma } from "../generated/prisma/client";
+import { CurrentMembership } from "../auth/decorators/membership.decorator";
+import type { Membership } from "../auth/membership.types";
+import { TenantMembershipGuard } from "../auth/guards/tenant-membership.guard";
+import { MembershipDto } from "../auth/dto/membership.dto";
+import { ErrorResponseDto } from "../dto/error-response.dto";
 import { RoleDto } from "./dto/role.dto";
 import { TenancyService } from "./tenancy.service";
 import { TenantTransactionInterceptor } from "./interceptors/tenant-transaction.interceptor";

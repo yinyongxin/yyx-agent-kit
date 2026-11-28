@@ -1,20 +1,21 @@
-# scripts — 后端脚本
+# scripts — 一次性/构建期脚本
+
+## 职责
+
+放不进入运行时的脚本（导出契约、数据修复等）。不在这里写业务逻辑。
 
 ## 文件索引
 
 | 文件 | 作用 |
 | --- | --- |
-| `dev.mjs` | 开发模式编排：`tsc -w` + `tsc-alias -w` + `node --watch`；`pnpm dev:server` 调用 |
-| `check-schema.mjs` | 校验 Prisma 模型字段约定（`schema:check`，已并入根 `build`） |
-| `export-openapi.ts` | 导出 OpenAPI JSON（`swagger:export`，供前端生成客户端） |
+| `export-openapi.ts` | 离线导出 `packages/api/openapi.json`（从 dist 加载 AppModule，避免 tsx 丢失 decorator metadata） |
 
-## 为什么 dev 不用 nest start
+## 关联
 
-server 用 `@/` 路径别名，`tsc` 编译后不会重写；`tsc-alias` 负责把 `dist` 里的 `@/...` 改成相对路径。
-`nest start --watch` 不会跑 `tsc-alias`，运行时会出现 `Cannot find module '@/...'`。
-因此 `dev.mjs` 自己编排三个进程：编译、重写别名、`node --watch` 重启。
+- 由根脚本 `api:generate` 调用（先 build server 再导出）。
+- 产出被 `packages/api/openapi-ts.config.ts` 消费。
 
-## 注意
+## 同步要求
 
-- 修改 `tsconfig.json` 的 `paths` 后，同步 `tsc-alias`（构建脚本已带 `-p tsconfig.json`）
-- 生产/验收统一用 `pnpm build` + `node dist/apps/server/src/main.js`，不要在 dev watch 运行期间跑 e2e（文件变化会触发重启）
+- 脚本依赖 `dist` 时，必须在入口检查产物是否存在并给出明确报错。
+- 新增脚本同步本文件与 `../README.md` 的目录说明。

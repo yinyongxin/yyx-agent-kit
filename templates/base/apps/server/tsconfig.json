@@ -11,10 +11,7 @@
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "sourceMap": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "sourceMap": true
   },
   "include": ["src/**/*.ts", "../../packages/shared/src/**/*.ts"]
 }

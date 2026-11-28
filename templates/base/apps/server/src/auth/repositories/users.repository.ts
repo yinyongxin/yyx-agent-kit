@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "@/prisma/prisma.service";
-import type { User } from "@/auth/user.types";
+import { PrismaService } from "../../prisma/prisma.service";
+import type { User } from "../user.types";
 
 /**
  * 官方 @nestjs/authentication 不读用户表，只通过本类拿用户。

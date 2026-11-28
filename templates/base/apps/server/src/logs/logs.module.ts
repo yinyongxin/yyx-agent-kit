@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { AppConfigModule } from "@/config/config.module";
+import { AppConfigModule } from "../config/config.module";
 import { LokiClient } from "./loki.client";
 import { LogsController } from "./logs.controller";
 import { LogsService } from "./logs.service";

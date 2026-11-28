@@ -1,8 +1,8 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { truncateForLog } from "@/logging/sanitize";
-import { PrismaClient } from "@/generated/prisma/client";
+import { truncateForLog } from "../logging/sanitize";
+import { PrismaClient } from "../generated/prisma/client";
 
 /**
  * 全局表：自身没有 tenantId 列，scoped 允许直接查询。

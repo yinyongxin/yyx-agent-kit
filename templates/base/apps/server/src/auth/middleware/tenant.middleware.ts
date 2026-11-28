@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import type { NodeRequest, NodeResponse } from "@nestjs/platform-node";
-import { TenantContext } from "@/auth/tenant-context.util";
+import { TenantContext } from "../tenant-context.util";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

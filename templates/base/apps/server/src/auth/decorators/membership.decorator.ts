@@ -1,6 +1,6 @@
 import { createParamDecorator, type ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import type { Membership } from "@/auth/membership.types";
+import type { Membership } from "../membership.types";
 
 /** 路由最低角色：@MinRole("admin") 允许 admin / owner */
 export const MinRole = Reflector.createDecorator<string>();

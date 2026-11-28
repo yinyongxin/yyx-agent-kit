@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import type { AuditLog } from "@/generated/prisma/client";
+import type { AuditLog } from "../generated/prisma/client";
 import { AuditRepository } from "./audit.repository";
 import type { AuditLogDto, AuditLogListResponseDto } from "./dto/audit-log.dto";
 import type { QueryAuditLogsDto } from "./dto/query-audit-logs.dto";

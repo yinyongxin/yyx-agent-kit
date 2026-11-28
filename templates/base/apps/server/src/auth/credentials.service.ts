@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PasswordHasher, TokenService } from "@nestjs/authentication";
-import { AuditService } from "@/audit/audit.service";
+import { AuditService } from "../audit/audit.service";
 import { UsersRepository } from "./repositories/users.repository";
 
 /**

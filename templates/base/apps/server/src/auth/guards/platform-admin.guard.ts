@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   Injectable,
 } from "@nestjs/common";
-import { PrismaService } from "@/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 
 /**
  * 平台管理员校验：只有 PlatformAdmin（super/ops）能访问平台级资源（如租户 CRUD）。
