@@ -16,6 +16,7 @@
     "test:rls": "node test/rls-concurrency.mjs",
     "test:generated": "tsx test/generated-client.ts",
     "test:tenants": "node test/tenants-e2e.mjs",
+    "test:users": "node test/users-e2e.mjs",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "db:migrate": "prisma migrate dev",

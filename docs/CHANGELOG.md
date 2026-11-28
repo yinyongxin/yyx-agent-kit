@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **用户管理模块**：新增 `src/users/`（`/users` 平台管理员 CRUD：分页 / 状态 / email、displayName 搜索 / 邮箱唯一 / 密码哈希 / 删除保护）；管理端「用户」页接真实接口（服务端 DataTable、新建 / 编辑 / 禁用 / 批量启用禁用删除）；新增 `test:users` 并纳入 CI
 - **前端镜像与网关**：admin / client 用 nginx 静态镜像（内置 `API_PREFIX` 反代），portal 用 Next 镜像；新增 Caddy 网关按 Host 路由与 compose 的 admin/client/portal/gateway；本地默认 `admin.localhost:47180` / `client.localhost:47180` / `portal.localhost:47180`
 - **API 前缀按应用名**：`API_PREFIX` 改为 `/<APP_NAME>/api`（模板默认 `/starter/api`，CLI 生成项目自动替换为项目名）；server 路由 / Swagger / Vite & Next 代理 / dev 页 / 测试 / CI 与容器健康检查同步更新，避免单域多项目时 `/api` 冲突
 - **构建产物目录统一**：admin / client 输出到 `dist/admin`、`dist/client`，portal 用 `distDir: dist/portal`；server 保留 `apps/server/dist`（tsc/生产镜像入口绑定）
