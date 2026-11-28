@@ -267,6 +267,7 @@ export const renderDevPage = (): string => `<!doctype html>
   .mcp-open.off { background: rgba(255, 255, 255, 0.08); color: var(--faint); box-shadow: none; }
 
   .seed-note { margin: 8px 0 12px; color: var(--muted); font-size: 10.5px; line-height: 1.6; }
+  .seed-band { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; }
   .seed-btn {
     border: 0; cursor: pointer; padding: 10px 16px; border-radius: 999px;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -274,6 +275,16 @@ export const renderDevPage = (): string => `<!doctype html>
     box-shadow: 0 8px 18px rgba(255, 107, 61, 0.18);
   }
   .seed-btn:disabled { opacity: 0.6; cursor: wait; }
+  .cleanup-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .cleanup-btn {
+    cursor: pointer; padding: 9px 13px; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05); color: #d7d1c8;
+    font: 500 10px/1 var(--sans);
+  }
+  .cleanup-btn:hover { background: rgba(255, 255, 255, 0.1); }
+  .cleanup-btn.danger { color: #ffc1a6; border-color: rgba(255, 107, 61, 0.28); }
+  .cleanup-btn:disabled { opacity: 0.5; cursor: wait; }
   .seed-status { min-height: 16px; margin-top: 10px; font-size: 10px; color: var(--green-text); }
   .seed-status.err { color: #ffc1a6; }
   .seed-list {
@@ -287,6 +298,9 @@ export const renderDevPage = (): string => `<!doctype html>
   }
   .seed-item span { color: var(--muted); white-space: nowrap; }
   .seed-item code { font-family: var(--mono); font-size: 9px; color: var(--faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 900px) {
+    .seed-band { grid-template-columns: 1fr; }
+  }
   @media (max-width: 760px) {
     .seed-list { grid-template-columns: 1fr; }
   }
@@ -468,7 +482,7 @@ export const renderDevPage = (): string => `<!doctype html>
     </div>
 
     <div class="band-label"><span>演示 / DEMO</span><i></i></div>
-    <div class="band" style="grid-template-columns:1fr">
+    <div class="seed-band">
       <article class="tile">
         <div class="tile-head"><h2>演示账号</h2><span>可重复执行</span></div>
         <p class="seed-note">
@@ -478,6 +492,19 @@ export const renderDevPage = (): string => `<!doctype html>
         <button id="seed-demo" class="seed-btn" type="button">重置演示账号</button>
         <div id="seed-status" class="seed-status"></div>
         <div class="seed-list" id="seed-list"></div>
+      </article>
+      <article class="tile">
+        <div class="tile-head"><h2>数据库维护</h2><span>仅本地</span></div>
+        <p class="seed-note">
+          清理软删除测试租户（e2e / audit / prov / ui / ego / test）及其角色、成员、文件、订阅。
+          清空审计日志需要 <code>MIGRATE_DATABASE_URL</code>，会绕过 append-only RLS。
+        </p>
+        <div class="cleanup-actions">
+          <button id="cleanup-preview" class="cleanup-btn" type="button">预览清理</button>
+          <button id="cleanup-tenants" class="cleanup-btn danger" type="button">清理测试租户</button>
+          <button id="cleanup-audit" class="cleanup-btn danger" type="button">清空审计日志</button>
+        </div>
+        <div id="cleanup-status" class="seed-status"></div>
       </article>
     </div>
   </section>
@@ -497,6 +524,7 @@ export const renderDevPage = (): string => `<!doctype html>
   var API = "${API_PREFIX}/dev/services";
   var PAGE = "${API_PREFIX}/dev";
   var SEED_API = "${API_PREFIX}/dev/seed-demo";
+  var CLEANUP_API = "${API_PREFIX}/dev/cleanup";
   var REFRESH_MS = 5000;
   var state = { services: [], prev: null, events: [], ms: null, filter: "all", view: "overview" };
 
@@ -851,6 +879,64 @@ export const renderDevPage = (): string => `<!doctype html>
     });
   }
 
+  function bindCleanup() {
+    var status = document.getElementById("cleanup-status");
+    var preview = document.getElementById("cleanup-preview");
+    var tenants = document.getElementById("cleanup-tenants");
+    var audit = document.getElementById("cleanup-audit");
+    if (!status || !preview || !tenants || !audit) return;
+    var buttons = [preview, tenants, audit];
+
+    function setBusy(busy) {
+      buttons.forEach(function (button) {
+        button.disabled = busy;
+      });
+    }
+
+    function run(action, confirmText) {
+      if (confirmText && !window.confirm(confirmText)) return;
+      setBusy(true);
+      status.className = "seed-status";
+      status.textContent = "执行中…";
+      fetch(CLEANUP_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: action })
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            if (!res.ok) throw new Error(data.message || "HTTP " + res.status);
+            return data;
+          });
+        })
+        .then(function (data) {
+          if (action === "preview") {
+            status.textContent = "待清理 " + data.tenants.length + " 个测试租户 · " + data.auditLogs + " 条审计日志";
+          } else if (action === "test-tenants") {
+            status.textContent = "已删除 " + data.removedTenants + " 个测试租户";
+          } else {
+            status.textContent = "已清空 " + data.purgedAuditLogs + " 条审计日志";
+          }
+          load();
+        })
+        .catch(function (err) {
+          status.className = "seed-status err";
+          status.textContent = "执行失败：" + err.message;
+        })
+        .finally(function () {
+          setBusy(false);
+        });
+    }
+
+    preview.addEventListener("click", function () { run("preview"); });
+    tenants.addEventListener("click", function () {
+      run("test-tenants", "将硬删除所有软删除测试租户及其角色/成员/文件/订阅，确定继续？");
+    });
+    audit.addEventListener("click", function () {
+      run("audit-logs", "将清空全部本地审计日志，确定继续？");
+    });
+  }
+
   function renderAll() {
     if (!state.services.length) return;
     renderOverview();
@@ -943,6 +1029,7 @@ export const renderDevPage = (): string => `<!doctype html>
   renderCommands();
   renderDemoAccounts();
   bindSeedDemo();
+  bindCleanup();
   setView(initial === "services" || initial === "tools" ? initial : "overview");
   load();
   setInterval(load, REFRESH_MS);

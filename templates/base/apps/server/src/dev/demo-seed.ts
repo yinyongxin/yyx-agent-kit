@@ -33,27 +33,27 @@ const ACCOUNTS: DemoSeedAccount[] = [
   {
     scenario: "租户管理员",
     email: "demo.tenantadmin@example.com",
-    note: "默认租户 admin",
+    note: "演示租户 A admin",
   },
   {
     scenario: "普通成员",
     email: "demo.member@example.com",
-    note: "默认租户 member（只读）",
+    note: "演示租户 A member（只读）",
   },
   {
     scenario: "文件管理员",
     email: "demo.files@example.com",
-    note: "默认租户自定义角色，仅文件读写",
+    note: "演示租户 A 自定义角色，仅文件读写",
   },
   {
     scenario: "多租户用户",
     email: "demo.multi@example.com",
-    note: "默认租户 member + 演示租户 B admin",
+    note: "演示租户 A member + 演示租户 B admin",
   },
   {
     scenario: "已停用成员",
     email: "demo.suspended@example.com",
-    note: "登录成功但没有可用租户",
+    note: "演示租户 A 成员已停用",
   },
   {
     scenario: "禁用账号",
@@ -75,8 +75,8 @@ export async function seedDemoAccounts(
 
   await prisma.tenant.upsert({
     where: { id: DEFAULT_TENANT_ID },
-    update: { status: "active", deletedAt: null },
-    create: { id: DEFAULT_TENANT_ID, slug: "default", name: "默认租户" },
+    update: { name: "演示租户 A", status: "active", deletedAt: null },
+    create: { id: DEFAULT_TENANT_ID, slug: "default", name: "演示租户 A" },
   });
   await prisma.tenant.upsert({
     where: { id: DEMO_TENANT_B_ID },

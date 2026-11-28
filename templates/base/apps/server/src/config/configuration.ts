@@ -19,6 +19,8 @@ export const appConfig = registerAs("app", () => ({
 /** 数据访问配置（运行时连接串；迁移用 MIGRATE_DATABASE_URL 在 prisma7.config.ts 单独读） */
 export const databaseConfig = registerAs("database", () => ({
   url: process.env.DATABASE_URL ?? "",
+  /** bootstrap 管理员连接，仅迁移/本地维护（审计表清理）使用 */
+  migrateUrl: process.env.MIGRATE_DATABASE_URL ?? "",
 }));
 
 /**

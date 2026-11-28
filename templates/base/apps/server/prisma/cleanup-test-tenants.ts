@@ -17,6 +17,13 @@ import { config } from "dotenv";
 import { resolve } from "node:path";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
+import {
+  countAuditLogs,
+  createAuditAdminClient,
+  deleteTestTenants,
+  findTestTenants,
+  purgeAuditLogs,
+} from "../src/dev/db-cleanup";
 
 config({ path: resolve(__dirname, "../../../.env") });
 
@@ -28,20 +35,9 @@ const prisma = new PrismaClient({
 
 const APPLY = process.argv.includes("--apply");
 const PURGE_AUDIT = process.argv.includes("--purge-audit");
-const PREFIXES = ["e2e-", "audit-", "prov-", "ui-", "test-", "ego-"];
 
 async function main() {
-  const tenants = await prisma.tenant.findMany({
-    where: {
-      deletedAt: { not: null },
-      OR: [
-        ...PREFIXES.map((prefix) => ({ slug: { startsWith: prefix } })),
-        { slug: "test" },
-      ],
-    },
-    select: { id: true, name: true, slug: true, deletedAt: true },
-    orderBy: { deletedAt: "asc" },
-  });
+  const tenants = await findTestTenants(prisma);
 
   if (tenants.length === 0) {
     console.log("没有需要清理的软删除测试租户。");
@@ -50,56 +46,37 @@ async function main() {
     for (const tenant of tenants) {
       console.log(`- ${tenant.slug} · ${tenant.name} · ${tenant.id}`);
     }
-
     if (APPLY) {
-      let removed = 0;
-      for (const tenant of tenants) {
-        await prisma.tenant.delete({ where: { id: tenant.id } });
-        removed += 1;
-      }
+      const removed = await deleteTestTenants(prisma, tenants);
       console.log(`\n已删除 ${removed} 个测试租户。`);
     }
   }
 
   if (PURGE_AUDIT) {
-    await purgeAuditLogs();
+    const adminUrl = process.env.MIGRATE_DATABASE_URL;
+    if (!adminUrl) {
+      throw new Error(
+        "清空 audit_logs 需要 MIGRATE_DATABASE_URL（bootstrap 管理员账号）",
+      );
+    }
+    const admin = createAuditAdminClient(adminUrl);
+    try {
+      if (!APPLY) {
+        const count = await countAuditLogs(admin);
+        console.log(`audit_logs 当前 ${count} 条；加 \`--apply\` 后清空。`);
+      } else {
+        const purged = await purgeAuditLogs(admin);
+        console.log(`已清空 ${purged} 条 audit_logs。`);
+      }
+    } finally {
+      await admin.$disconnect();
+    }
   } else if (APPLY && tenants.length > 0) {
     console.log("audit_logs 保留；需要清空时加 `--purge-audit`。");
   }
 
   if (!APPLY) {
     console.log("\n当前是 dry-run。确认后加 `-- --apply` 执行删除。");
-  }
-}
-
-async function purgeAuditLogs(): Promise<void> {
-  const adminUrl = process.env.MIGRATE_DATABASE_URL;
-  if (!adminUrl) {
-    throw new Error(
-      "清空 audit_logs 需要 MIGRATE_DATABASE_URL（bootstrap 管理员账号）",
-    );
-  }
-
-  const admin = new PrismaClient({
-    adapter: new PrismaPg({ connectionString: adminUrl }),
-  });
-  try {
-    const rows = await admin.$queryRawUnsafe<{ count: bigint }[]>(
-      'SELECT count(*)::bigint AS count FROM "audit_logs"',
-    );
-    const count = Number(rows[0]?.count ?? 0);
-    if (count === 0) {
-      console.log("audit_logs 已经为空。");
-      return;
-    }
-    if (!APPLY) {
-      console.log(`audit_logs 当前 ${count} 条；加 \`--apply\` 后清空。`);
-      return;
-    }
-    await admin.$executeRawUnsafe('TRUNCATE TABLE "audit_logs"');
-    console.log(`已清空 ${count} 条 audit_logs。`);
-  } finally {
-    await admin.$disconnect();
   }
 }
 

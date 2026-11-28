@@ -20,11 +20,11 @@
 | --- | --- | --- |
 | 平台超管 | `demo.platform@example.com` | 平台管理，不加入租户 |
 | 平台运维 | `demo.ops@example.com` | 平台只读，租户成员写操作受限 |
-| 租户管理员 | `demo.tenantadmin@example.com` | 默认租户 `admin` |
-| 普通成员 | `demo.member@example.com` | 默认租户 `member`（只读） |
-| 文件管理员 | `demo.files@example.com` | 默认租户自定义角色，仅文件读写 |
-| 多租户用户 | `demo.multi@example.com` | 默认租户 `member` + 演示租户 B `admin` |
-| 已停用成员 | `demo.suspended@example.com` | 登录成功但没有可用租户 |
+| 租户管理员 | `demo.tenantadmin@example.com` | 演示租户 A `admin` |
+| 普通成员 | `demo.member@example.com` | 演示租户 A `member`（只读） |
+| 文件管理员 | `demo.files@example.com` | 演示租户 A 自定义角色，仅文件读写 |
+| 多租户用户 | `demo.multi@example.com` | 演示租户 A `member` + 演示租户 B `admin` |
+| 已停用成员 | `demo.suspended@example.com` | 演示租户 A 成员已停用，登录后没有可用租户 |
 | 禁用账号 | `demo.disabled@example.com` | 登录直接 401 |
 
 演示账号统一密码 `demo_pwd_2026`（可用 `DEMO_USER_PASSWORD` 覆盖）。
@@ -42,6 +42,8 @@ pnpm --filter @starter/server db:cleanup:test-tenants -- --apply --purge-audit
 ```
 
 只删除软删除测试租户及其角色/成员/文件/订阅；默认保留 `default`、`demo-b` 和审计日志。加 `--purge-audit` 会通过 `MIGRATE_DATABASE_URL` 清空 `audit_logs`（仅本地维护使用）。
+
+同样的操作也可以在开发导航页 `#tools` 的「数据库维护」卡片点击：预览清理 / 清理测试租户 / 清空审计日志。
 
 > 以上账号密码会在开发导航页 `http://localhost:47100/starter/api/dev#services` 的「本地凭据」卡片统一展示（点击值可复制）；该页仅开发环境注册，生产返回 404。
 

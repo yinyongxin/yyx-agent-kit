@@ -65,6 +65,7 @@ export const API_ROUTES = {
   dev: "/dev",
   devServices: "/dev/services",
   devSeedDemo: "/dev/seed-demo",
+  devCleanup: "/dev/cleanup",
   devRateLimitProbe: "/dev/rate-limit-probe",
 } as const;
 

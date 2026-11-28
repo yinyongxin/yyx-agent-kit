@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Header,
@@ -14,6 +15,7 @@ import { RateLimit } from "../common/decorators/rate-limit.decorator";
 import { DevService, type DevServiceInfo } from "./dev.service";
 import { DemoSeedService } from "./demo-seed.service";
 import type { DemoSeedResult } from "./demo-seed";
+import { DbCleanupService, type CleanupAction, type CleanupResult } from "./db-cleanup.service";
 import { renderDevPage } from "./dev.page";
 
 export interface DevServicesResponse {
@@ -37,6 +39,7 @@ export class DevController {
   constructor(
     private readonly devService: DevService,
     private readonly demoSeed: DemoSeedService,
+    private readonly dbCleanup: DbCleanupService,
     private readonly config: ConfigService,
   ) {}
 
@@ -72,6 +75,17 @@ export class DevController {
   seedDemo(): Promise<DemoSeedResult> {
     this.assertDev();
     return this.demoSeed.run();
+  }
+
+  /** 数据库维护：预览/清理测试租户、清空审计日志；仅开发环境 */
+  @Public()
+  @Post(asRoute(API_ROUTES.devCleanup))
+  @RateLimit({ limit: 1, windowSeconds: 3 })
+  cleanup(
+    @Body() body: { action?: CleanupAction },
+  ): Promise<CleanupResult> {
+    this.assertDev();
+    return this.dbCleanup.run(body.action ?? "preview");
   }
 
   /** 全局限流验收探针：3 次/分钟，仅开发环境注册 */
