@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **文件上传**：新增租户文件模块 `/t/:tenantId/files`（列表 / multipart 上传 / 下载 / 删除）；元数据表 `files`（RLS）与 `FileStorage` 抽象，默认本地磁盘 `FILES_DIR`；限制 20MB 与图片/PDF/文本/Office/ZIP 白名单，拒绝 HTML/SVG；下载强制 attachment + nosniff；权限点 `file:read` / `file:write`；管理端新增「文件」页（搜索、类型筛选、上传、下载、删除）；新增 `test:files`
 - **全站 API 限流**：新增 `common/guards/rate-limit.guard.ts`（`APP_GUARD`，IP + Controller.method 固定窗口，默认 120 次/60 秒）；`@RateLimit()` 覆盖单路由、`@SkipRateLimit()` 跳过（健康检查）；`TRUST_PROXY` 支持反向代理真实 IP；新增开发探针与 `test:rate-limit`
 - **登录设备 / 服务端会话**：新增 `user_sessions` 表与 Prisma `SessionStore`；登录创建会话并把 `sid` 写入 JWT，`JwtAuth` 每次校验会话（撤销立即生效）；新增 `/me/sessions` 列表 / 撤销 / 退出其他设备；管理端「账号设置」增加登录设备卡片；改密后 `revokeAll` 所有会话；新增 `test:sessions`
 - **登录失败锁定**：新增 `RedisModule` / `LoginThrottleService`，按「邮箱+IP」和「IP」双维度计数（默认 5 次 / 5 分钟，锁 15 分钟，IP 阈值 30）；登录成功清零邮箱+IP；Redis 不可用时 fail-open；登录页展示 429 文案；新增 `test:throttle` 并纳入 CI

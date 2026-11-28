@@ -15,6 +15,7 @@ model User {
   oauthConnections OAuthConnection[]
   platformAdmin    PlatformAdmin?
   sessions         UserSession[]
+  uploadedFiles    StoredFile[]    @relation("FileUploads")
 
   @@map("users")
 }

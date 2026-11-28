@@ -15,6 +15,7 @@ import { TenancyModule } from "./tenancy/tenancy.module";
 import { TenantsModule } from "./tenants/tenants.module";
 import { UsersModule } from "./users/users.module";
 import { PermissionsModule } from "./permissions/permissions.module";
+import { FilesModule } from "./files/files.module";
 import { DevModule } from "./dev/dev.module";
 
 // 开发导航页只在非生产注册；main.ts 已先加载 .env，这里能拿到 NODE_ENV
@@ -33,6 +34,7 @@ const isProduction = process.env.NODE_ENV === "production";
     TenantsModule,
     UsersModule,
     PermissionsModule,
+    FilesModule,
     ...(isProduction ? [] : [DevModule]),
   ],
   controllers: [AppController],

@@ -9,6 +9,9 @@ packages/*/src/**/*.js
 apps/server/prisma/*.js
 *.log
 /logs/
+# 文件上传默认目录（FILES_DIR）；不入库
+/storage/
+/apps/server/storage/
 .DS_Store
 .env
 .env.local

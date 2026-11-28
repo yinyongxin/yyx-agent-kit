@@ -127,3 +127,9 @@ export const authConfig = registerAs("auth", () => ({
 export const redisConfig = registerAs("redis", () => ({
   url: process.env.REDIS_URL ?? "",
 }));
+
+/** 文件上传：本地磁盘目录与单文件大小上限 */
+export const filesConfig = registerAs("files", () => ({
+  dir: process.env.FILES_DIR ?? "./storage/files",
+  maxSizeMb: Number(process.env.FILES_MAX_SIZE_MB ?? 20),
+}));

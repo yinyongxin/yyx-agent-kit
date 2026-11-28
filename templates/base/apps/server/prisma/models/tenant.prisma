@@ -12,6 +12,7 @@ model Tenant {
   userTenants   UserTenant[]
   roles         Role[]
   subscriptions Subscription[]
+  files         StoredFile[]
 
   @@map("tenants")
 }

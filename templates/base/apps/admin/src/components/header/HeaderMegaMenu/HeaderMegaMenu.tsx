@@ -4,6 +4,7 @@ import {
   IconChevronDown,
   IconCoin,
   IconFingerprint,
+  IconFiles,
   IconGauge,
   IconHome2,
   IconSettings,
@@ -29,6 +30,7 @@ import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuthUser } from "@/lib/use-auth-user";
 import { useMenuAccess, type MenuLinkMeta } from "@/lib/menu-access";
+import { PERMISSIONS as PERMISSION_CODES } from "@starter/shared";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import classes from "./HeaderMegaMenu.module.css";
@@ -143,6 +145,11 @@ export const HeaderMegaMenu = () => {
             <Link to="/settings" className={classes.link}>
               <Center inline><IconSettings size={16} /><Box component="span" ml={5}>账号设置</Box></Center>
             </Link>
+            {canSee({ permission: PERMISSION_CODES.fileRead }) && (
+              <Link to="/files" className={classes.link}>
+                <Center inline><IconFiles size={16} /><Box component="span" ml={5}>文件</Box></Center>
+              </Link>
+            )}
             {isPlatformAdmin && (
               <>
                 <Link to="/observability/logs" className={classes.link}>日志</Link>
@@ -185,6 +192,9 @@ export const HeaderMegaMenu = () => {
             </>
           )}
           <Link to="/settings" className={classes.link}>账号设置</Link>
+          {canSee({ permission: PERMISSION_CODES.fileRead }) && (
+            <Link to="/files" className={classes.link}>文件</Link>
+          )}
           {isPlatformAdmin && (
             <>
               <Link to="/observability/logs" className={classes.link}>日志</Link>

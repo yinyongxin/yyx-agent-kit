@@ -55,6 +55,7 @@ export const API_ROUTES = {
   tenantRoles: "/roles",
   tenantRoleOptions: "/options",
   tenantPermissions: "/permissions",
+  tenantFiles: "/files",
   /** 平台日志查询（Loki），平台管理员专用 */
   logs: "/logs",
   logsStats: "/logs/stats",
@@ -84,6 +85,8 @@ export const PERMISSIONS = {
   userWrite: "user:write",
   roleRead: "role:read",
   roleWrite: "role:write",
+  fileRead: "file:read",
+  fileWrite: "file:write",
   knowledgeRead: "knowledge:read",
   knowledgeWrite: "knowledge:write",
   replayRead: "replay:read",

@@ -7,6 +7,8 @@ export const PERMISSION_TEMPLATES = [
   { code: "user:write", name: "管理用户" },
   { code: "role:read", name: "查看角色" },
   { code: "role:write", name: "管理角色" },
+  { code: "file:read", name: "查看文件" },
+  { code: "file:write", name: "上传/删除文件" },
   { code: "knowledge:read", name: "查看知识库" },
   { code: "knowledge:write", name: "管理知识库" },
   { code: "replay:read", name: "查看动线回放" },

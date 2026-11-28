@@ -23,6 +23,7 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/tenants/` | 平台级租户 CRUD（`/starter/api/tenants`），`PlatformAdminGuard` 保护 |
 | `src/users/` | 平台级用户管理（`/starter/api/users`），`PlatformAdminGuard` 保护 |
 | `src/permissions/` | 平台级权限点管理（`/starter/api/permissions`），`PlatformAdminGuard` 保护 |
+| `src/files/` | 租户文件上传 / 下载 / 删除（`/t/:tenantId/files`），元数据 + `FileStorage` |
 | `prisma/` | schema、models、migrations、seed |
 | `scripts/` | 一次性脚本（`export-openapi.ts`） |
 | `test/` | 接口与数据库验收脚本 |
@@ -50,6 +51,7 @@ pnpm --filter @starter/server test:profile # 账号资料与修改密码
 pnpm --filter @starter/server test:throttle # 登录失败锁定
 pnpm --filter @starter/server test:rate-limit # 全站 API 限流
 pnpm --filter @starter/server test:sessions # 登录设备 / 会话
+pnpm --filter @starter/server test:files    # 文件上传 / 下载 / 权限
 pnpm --filter @starter/server test:provisioning # 租户引导 + 平台级成员管理
 pnpm --filter @starter/server test:rls       # RLS 并发
 pnpm --filter @starter/server test:generated # OpenAPI 生成客户端联动

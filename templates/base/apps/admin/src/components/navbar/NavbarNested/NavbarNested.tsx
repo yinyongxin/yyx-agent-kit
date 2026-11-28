@@ -44,6 +44,7 @@ const MENU: {
     icon: IconAdjustments,
     initiallyOpened: true,
     links: [
+      { label: "文件", link: "/files", permission: "file:read" },
       { label: "账号设置", link: "/settings" },
       { label: "日志", link: "/observability/logs", platformOnly: true },
       { label: "审计日志", link: "/observability/audit-logs", platformOnly: true },

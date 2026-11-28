@@ -40,6 +40,7 @@ const GROUPS: {
     label: "系统",
     icon: IconSettings,
     links: [
+      { label: "文件", to: "/files", permission: "file:read" },
       { label: "账号设置", to: "/settings" },
       { label: "日志", to: "/observability/logs", platformOnly: true },
       { label: "审计日志", to: "/observability/audit-logs", platformOnly: true },

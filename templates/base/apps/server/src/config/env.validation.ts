@@ -51,6 +51,14 @@ class EnvironmentVariables {
   AUTH_LOGIN_IP_MAX_ATTEMPTS?: number;
 
   @IsOptional()
+  @IsString()
+  FILES_DIR?: string;
+
+  @IsOptional()
+  @IsInt()
+  FILES_MAX_SIZE_MB?: number;
+
+  @IsOptional()
   @IsInt()
   PORT?: number;
 
