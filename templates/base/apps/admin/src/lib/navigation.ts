@@ -11,6 +11,7 @@ import {
   IconPlugConnected,
   IconSettings,
   IconUserCircle,
+  IconUsers,
   type TablerIcon,
 } from "@tabler/icons-react";
 import { PERMISSIONS } from "@starter/shared";
@@ -55,6 +56,14 @@ export const NAV_TREE: NavNode[] = [
     icon: IconLock,
     initiallyOpened: true,
     children: [
+      {
+        key: "members",
+        label: "成员",
+        icon: IconUsers,
+        to: "/members",
+        description: "当前租户成员与角色分配",
+        permission: PERMISSIONS.userRead,
+      },
       {
         key: "users",
         label: "用户",

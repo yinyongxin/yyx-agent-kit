@@ -41,6 +41,7 @@ pnpm --filter @starter/server schema:check   # 模型字段约定（id / 时间�
 pnpm --filter @starter/server prisma:generate
 pnpm --filter @starter/server db:deploy      # 应用迁移（MIGRATE_DATABASE_URL）
 pnpm --filter @starter/server db:seed
+pnpm --filter @starter/server db:seed:demo   # 本地演示账号（平台/租户/成员/多租户/停用/禁用）
 pnpm --filter @starter/server test:e2e       # 登录 + 租户边界
 pnpm --filter @starter/server test:users     # 平台用户 CRUD
 pnpm --filter @starter/server test:members   # 租户成员管理

@@ -74,6 +74,7 @@ export const devConfig = registerAs("dev", () => {
     penpotPassword: process.env.PENPOT_DEV_PASSWORD ?? "penpot_dev_pwd_2026",
     seedUserEmail: process.env.SEED_USER_EMAIL ?? "admin@example.com",
     seedUserPassword: process.env.SEED_USER_PASSWORD ?? "seed_pwd_2026",
+    demoUserPassword: process.env.DEMO_USER_PASSWORD ?? "demo_pwd_2026",
   };
 });
 

@@ -32,6 +32,18 @@ export interface DevServiceInfo {
 
 const PROBE_TIMEOUT_MS = 1200;
 
+/** 与 `prisma/seed-demo.ts` 保持一致；仅开发导航页展示 */
+const DEMO_ACCOUNTS = [
+  { label: "演示超管", value: "demo.platform@example.com" },
+  { label: "演示运维", value: "demo.ops@example.com" },
+  { label: "租户管理员", value: "demo.tenantadmin@example.com" },
+  { label: "普通成员", value: "demo.member@example.com" },
+  { label: "文件角色", value: "demo.files@example.com" },
+  { label: "多租户", value: "demo.multi@example.com" },
+  { label: "停用成员", value: "demo.suspended@example.com" },
+  { label: "禁用账号", value: "demo.disabled@example.com" },
+] as const;
+
 const probeHttp = async (url: string, timeoutMs = PROBE_TIMEOUT_MS): Promise<boolean> => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -99,6 +111,7 @@ export class DevService {
     const penpotPassword = this.config.getOrThrow<string>("dev.penpotPassword");
     const seedUserEmail = this.config.getOrThrow<string>("dev.seedUserEmail");
     const seedUserPassword = this.config.getOrThrow<string>("dev.seedUserPassword");
+    const demoUserPassword = this.config.getOrThrow<string>("dev.demoUserPassword");
     const swaggerEnabled = this.config.getOrThrow<boolean>("app.swaggerEnabled");
 
     const [
@@ -152,6 +165,11 @@ export class DevService {
         credentials: [
           { label: "测试账号", value: seedUserEmail },
           { label: "密码", value: seedUserPassword },
+          ...DEMO_ACCOUNTS.map((account) => ({
+            label: account.label,
+            value: account.value,
+          })),
+          { label: "演示密码", value: demoUserPassword },
         ],
         command: "pnpm dev:server",
         probe: "当前进程",

@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **租户自助成员管理 + 演示账号**：管理端新增「权限管理 → 成员」，跟随全局租户切换器，复用 `TenantMembersContent`，租户管理员可添加已存在账号、分配角色、停用/移除成员；新增 `db:seed:demo`，创建平台超管/运维、租户管理员、普通成员、文件角色、多租户、停用成员、禁用账号，统一密码 `demo_pwd_2026`；开发导航页与凭据文档同步
 - **SaaS 账号模型说明**：新增 `docs/guides/identity-tenant-model.md`，用 ER 图、管理员建账号流程图和鉴权链路图说明 `User` / `Tenant` / `UserTenant` / `Role` / `Permission` 的关系与当前边界
 - **管理端导航统一为单棵菜单树**：新增 `lib/navigation.ts` 的 `NAV_TREE` + `useNavigation()`，嵌套侧栏 / 双栏侧栏 / 顶部大菜单只渲染同一棵树；`platformOnly` / `permission` 过滤与空分组隐藏集中处理；工作台提升为一级菜单，文件/日志/审计等统一归入「系统」
 - **租户暂停立即生效**：`TenantMembershipGuard` 现在要求租户 `status=active` 且未软删除；租户被平台暂停后，成员已签发的 token 访问 `/t/:tenantId/*` 直接 404；补充 `test:tenants` 暂停/恢复回归

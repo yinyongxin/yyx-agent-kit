@@ -12,6 +12,22 @@
 | Penpot（独立 `tools/penpot`） | `http://localhost:9001` | `dev@penpot.local` | `penpot_dev_pwd_2026` |
 | Grafana（可观测性，可选 profile） | `http://localhost:47111` | `admin` | `starter_grafana_2026` |
 | 应用登录（seed 用户） | `POST http://localhost:47100/starter/api/auth/sign-in` | `admin@example.com` | `seed_pwd_2026` |
+| 应用登录（演示账号） | 同上 | 见下方演示账号表 | `demo_pwd_2026` |
+
+### 演示账号（`pnpm --filter @starter/server db:seed:demo`）
+
+| 场景 | 邮箱 | 说明 |
+| --- | --- | --- |
+| 平台超管 | `demo.platform@example.com` | 平台管理，不加入租户 |
+| 平台运维 | `demo.ops@example.com` | 平台只读，租户成员写操作受限 |
+| 租户管理员 | `demo.tenantadmin@example.com` | 默认租户 `admin` |
+| 普通成员 | `demo.member@example.com` | 默认租户 `member`（只读） |
+| 文件管理员 | `demo.files@example.com` | 默认租户自定义角色，仅文件读写 |
+| 多租户用户 | `demo.multi@example.com` | 默认租户 `member` + 演示租户 B `admin` |
+| 已停用成员 | `demo.suspended@example.com` | 登录成功但没有可用租户 |
+| 禁用账号 | `demo.disabled@example.com` | 登录直接 401 |
+
+演示账号统一密码 `demo_pwd_2026`（可用 `DEMO_USER_PASSWORD` 覆盖）。
 
 > 以上账号密码会在开发导航页 `http://localhost:47100/starter/api/dev#services` 的「本地凭据」卡片统一展示（点击值可复制）；该页仅开发环境注册，生产返回 404。
 
@@ -23,7 +39,7 @@
 
 1. `cp .env.example .env`（模板仓库里 `.env` 不提交）；`DATABASE_URL` 用 `app_rw`——superuser 带 `BYPASSRLS`，会让 RLS 多租户兜底失效；`MIGRATE_DATABASE_URL` 用 bootstrap 账号（迁移/`migrate dev` 影子库需要）（见 `docs/deliverables/20261127-base-infra-rls/02-tech-design.md`）
 2. `docker compose up -d`（PostgreSQL + pgvector + Redis）；Penpot 单独启动：`pwsh -NoProfile -File tools/penpot/start.ps1`
-3. `pnpm --filter @starter/server prisma:generate`、`db:deploy`（按迁移文件建表）、`db:seed`（默认租户/角色/权限/套餐）
+3. `pnpm --filter @starter/server prisma:generate`、`db:deploy`（按迁移文件建表）、`db:seed`（默认租户/角色/权限/套餐）；需要体验多场景账号时再跑 `db:seed:demo`
 4. `pnpm dev:server` / `pnpm dev:admin` 启动
 5. `pnpm --filter @starter/server test:e2e`（服务在跑时验证登录与租户边界；seed 密码可用 `SEED_USER_PASSWORD` 覆盖）
 
