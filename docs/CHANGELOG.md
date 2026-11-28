@@ -5,8 +5,9 @@
 ## [Unreleased]
 
 - **全站 API 限流**：新增 `common/guards/rate-limit.guard.ts`（`APP_GUARD`，IP + Controller.method 固定窗口，默认 120 次/60 秒）；`@RateLimit()` 覆盖单路由、`@SkipRateLimit()` 跳过（健康检查）；`TRUST_PROXY` 支持反向代理真实 IP；新增开发探针与 `test:rate-limit`
+- **登录设备 / 服务端会话**：新增 `user_sessions` 表与 Prisma `SessionStore`；登录创建会话并把 `sid` 写入 JWT，`JwtAuth` 每次校验会话（撤销立即生效）；新增 `/me/sessions` 列表 / 撤销 / 退出其他设备；管理端「账号设置」增加登录设备卡片；改密后 `revokeAll` 所有会话；新增 `test:sessions`
 - **登录失败锁定**：新增 `RedisModule` / `LoginThrottleService`，按「邮箱+IP」和「IP」双维度计数（默认 5 次 / 5 分钟，锁 15 分钟，IP 阈值 30）；登录成功清零邮箱+IP；Redis 不可用时 fail-open；登录页展示 429 文案；新增 `test:throttle` 并纳入 CI
-- **账号自助与安全**：新增 `PATCH /me`（显示名）与 `POST /me/password`（校验旧密码、至少 8 位、新旧不能相同）；管理端「账号设置」页接入个人资料与修改密码；审计 `user.profile.update` / `user.password.change`；新增 `test:profile` 并纳入 CI。当前无 session store，修改密码不会立即使已签发 JWT 失效
+- **账号自助与安全**：新增 `PATCH /me`（显示名）与 `POST /me/password`（校验旧密码、至少 8 位、新旧不能相同）；管理端「账号设置」页接入个人资料与修改密码；审计 `user.profile.update` / `user.password.change`；新增 `test:profile` 并纳入 CI
 - **管理端导航一致性**：HeaderMegaMenu 接入 `useMenuAccess`，平台菜单与日志菜单按 `isPlatformAdmin` 过滤，角色菜单按当前租户 `role:read` 过滤；设置入口统一改为「账号设置」
 - **Penpot 独立化 + 通用 skill**：Penpot 从 `templates/base/docker-compose.yml` 拆到仓库级 `tools/penpot`（独立 compose、`start.ps1` / `stop.ps1` / `start-mcp.ps1`，可被多个项目共用）；模板 compose 只保留 PostgreSQL/Redis，`pnpm dev` 不再启动 Penpot MCP；数据卷迁移到 `yyx-penpot-*`（验证 1 profile / 1 project / 7 files / 916 个资源文件）；Penpot skill 改为项目无关，支持 `install-skill.ps1` 安装到全局 OpenCode skills；同步 dev 导航页、凭据、conventions 与 README
 - **server 目录规范统一**：`audit` / `permissions` / `users` 的 Repository 移到 `repositories/`；`/me` 从 `auth` 迁到 `users/me.controller.ts`，profile/tenants 查询下沉到 users repository；auth 仓储改名 `AuthUsersRepository`，消除与平台 `UsersRepository` 重名；补齐 `users/dto`、`tenants/members`、`tenants/roles` 等缺失 README；架构文档补充基础设施模块例外

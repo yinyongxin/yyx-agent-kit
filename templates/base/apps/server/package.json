@@ -24,6 +24,7 @@
     "test:profile": "node test/profile-e2e.mjs",
     "test:throttle": "node test/throttle-e2e.mjs",
     "test:rate-limit": "node test/rate-limit-e2e.mjs",
+    "test:sessions": "node test/sessions-e2e.mjs",
     "test:provisioning": "node test/provisioning-e2e.mjs",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",

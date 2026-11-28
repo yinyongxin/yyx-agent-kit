@@ -134,6 +134,7 @@ jobs:
           pnpm --filter @starter/server test:profile
           pnpm --filter @starter/server test:throttle
           pnpm --filter @starter/server test:rate-limit
+          pnpm --filter @starter/server test:sessions
           pnpm --filter @starter/server test:provisioning
           pnpm --filter @starter/server test:rls
           pnpm --filter @starter/server test:generated

@@ -1,4 +1,5 @@
-import { Body, Controller, Ip, Post } from "@nestjs/common";
+import { Body, Controller, Ip, Post, Req } from "@nestjs/common";
+import type { Request } from "express";
 import {
   ApiCreatedResponse,
   ApiOperation,
@@ -27,7 +28,9 @@ export class AuthController {
   signIn(
     @Body() dto: SignInDto,
     @Ip() ip: string,
+    @Req() req: Request,
   ): Promise<SignInResponseDto> {
-    return this.credentials.signIn(dto.email, dto.password, ip);
+    const userAgent = req.headers["user-agent"] ?? "";
+    return this.credentials.signIn(dto.email, dto.password, ip, userAgent);
   }
 }

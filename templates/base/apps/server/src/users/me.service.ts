@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { PasswordHasher } from "@nestjs/authentication";
+import { PasswordHasher, SessionService } from "@nestjs/authentication";
 import { AuditContext } from "../audit/audit-context";
 import type { ChangePasswordDto } from "./dto/change-password.dto";
 import type { MeResponseDto } from "./dto/me-response.dto";
@@ -23,6 +23,7 @@ export class MeService {
   constructor(
     private readonly users: UsersRepository,
     private readonly hasher: PasswordHasher,
+    private readonly sessions: SessionService,
   ) {}
 
   async getProfile(userId: string): Promise<MeResponseDto> {
@@ -76,5 +77,7 @@ export class MeService {
     await this.users.update(userId, {
       passwordHash: await this.hasher.hash(input.newPassword),
     });
+    // 改密后吊销所有服务端会话，旧 JWT 立即失效（需重新登录）
+    await this.sessions.revokeAll(userId);
   }
 }

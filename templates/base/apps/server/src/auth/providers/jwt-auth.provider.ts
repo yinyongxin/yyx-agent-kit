@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   AuthenticationRegistry,
   JwtBearerProvider,
+  SessionService,
   type JwtClaims,
 } from "@nestjs/authentication";
 import { AuthUsersRepository } from "../repositories/auth-users.repository";
@@ -16,14 +17,25 @@ import type { User } from "../user.types";
 export class JwtAuth extends JwtBearerProvider<User> {
   constructor(
     private readonly users: AuthUsersRepository,
+    private readonly sessions: SessionService,
     registry: AuthenticationRegistry,
   ) {
     super();
     registry.registerProvider(this);
   }
 
-  validate({ sub }: JwtClaims) {
-    return sub ? this.users.findById(sub) : null;
+  async validate({ sub, sid }: JwtClaims) {
+    if (!sub || typeof sid !== "string") return null;
+
+    const session = await this.sessions.validate(sid);
+    if (!session || session.userId !== sub) return null;
+
+    const user = await this.users.findById(sub);
+    if (!user) {
+      await this.sessions.discard(session.id);
+      return null;
+    }
+    return { ...user, sessionId: session.id };
   }
 }
 

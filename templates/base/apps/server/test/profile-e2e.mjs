@@ -107,6 +107,13 @@ const changed = await request(
 );
 check("修改密码 204", changed.status === 204, `HTTP ${changed.status}`);
 
+const oldTokenAfterChange = await request("GET", "/me", undefined, token);
+check(
+  "改密后旧 token 立即失效 401",
+  oldTokenAfterChange.status === 401,
+  `HTTP ${oldTokenAfterChange.status}`,
+);
+
 const oldLogin = await request("POST", "/auth/sign-in", {
   email,
   password: oldPassword,

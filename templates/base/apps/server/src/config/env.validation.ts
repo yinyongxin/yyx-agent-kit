@@ -20,6 +20,18 @@ class EnvironmentVariables {
 
   @IsOptional()
   @IsString()
+  AUTH_SESSION_ABSOLUTE_TTL?: string;
+
+  @IsOptional()
+  @IsString()
+  AUTH_SESSION_IDLE_TTL?: string;
+
+  @IsOptional()
+  @IsString()
+  AUTH_SESSION_TOUCH_INTERVAL?: string;
+
+  @IsOptional()
+  @IsString()
   REDIS_URL?: string;
 
   @IsOptional()

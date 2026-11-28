@@ -44,6 +44,7 @@ export const API_ROUTES = {
   authSignIn: "/sign-in",
   me: "/me",
   meTenants: "/tenants",
+  meSessions: "/sessions",
   mePassword: "/password",
   users: "/users",
   tenants: "/tenants",

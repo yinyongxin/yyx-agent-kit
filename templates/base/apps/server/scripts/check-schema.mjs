@@ -24,6 +24,9 @@ const JOIN_MODELS = new Set(["UserTenant", "UserRole", "RolePermission"]);
 /** 使用自然主键、没有 id 列的模型 */
 const NATURAL_ID_MODELS = new Set(["PlatformAdmin"]);
 
+/** 使用外部/哈希主键的模型：不要求 uuid 默认值 */
+const EXTERNAL_ID_MODELS = new Set(["UserSession"]);
+
 /** 追加型模型：只需要 createdAt，不要求 updatedAt（审计表禁止原地更新） */
 const APPEND_ONLY_MODELS = new Set(["AuditLog"]);
 
@@ -111,6 +114,7 @@ for (const model of models) {
     continue;
   }
   if (!idLine.includes("@id")) errors.push(`${name}.id: 缺少 @id`);
+  if (EXTERNAL_ID_MODELS.has(name)) continue;
   if (!idLine.includes("@default(uuid())")) errors.push(`${name}.id: 缺少 @default(uuid())`);
   if (!idLine.includes("@db.Uuid")) errors.push(`${name}.id: 缺少 @db.Uuid`);
 }

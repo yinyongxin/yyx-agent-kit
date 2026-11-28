@@ -8,4 +8,6 @@ export interface User {
   email: string | null;
   displayName: string | null;
   status: string;
+  /** 当前 Bearer JWT 对应的服务端会话 id（JwtAuth 注入） */
+  sessionId?: string;
 }

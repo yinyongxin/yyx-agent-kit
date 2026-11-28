@@ -176,6 +176,7 @@ pnpm schema:check
 | Plan / Permission | 字典 | UUID | ✅ | ✅ |
 | OAuthConnection | 业务实体 | UUID | ✅ | ✅ |
 | PlatformAdmin | 1:1 扩展 | userId | ✅ | ✅ |
+| UserSession | 服务端会话 | SHA-256（非 UUID，官方 SessionStore 约定） | ✅ | ✅ |
 | UserTenant / UserRole / RolePermission | 关联表 | 联合主键 | joinedAt / — | — |
 
 软删除：`Tenant.deletedAt` 已启用（slug 可复用）；`User` 暂未启用。

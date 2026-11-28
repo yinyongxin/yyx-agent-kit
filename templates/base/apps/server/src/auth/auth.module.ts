@@ -7,6 +7,7 @@ import {
 import { AuthorizationModule } from "@nestjs/authorization";
 import { JwtAuth } from "./providers/jwt-auth.provider";
 import { AuthUsersRepository } from "./repositories/auth-users.repository";
+import { PrismaSessionStore } from "./sessions/prisma-session.store";
 import { TenantMembershipGuard } from "./guards/tenant-membership.guard";
 import { AuthController } from "./auth.controller";
 import { CredentialsService } from "./credentials.service";
@@ -42,7 +43,12 @@ import { LoginThrottleService } from "./login-throttle.service";
           ttl: config.getOrThrow<string>("auth.ttl") as Duration,
         },
         refreshToken: false,
-        allowInMemoryStorage: true, // 仅开发；生产注册实际用到的 store 后去掉
+        session: {
+          absoluteTtl: config.getOrThrow<string>("auth.sessionAbsoluteTtl") as Duration,
+          idleTtl: config.getOrThrow<string>("auth.sessionIdleTtl") as Duration,
+          touchInterval: config.getOrThrow<string>("auth.sessionTouchInterval") as Duration,
+        },
+        allowInMemoryStorage: true, // 会话走 Prisma；其余 store 仍是内存实现，生产按需补齐
       }),
     }),
     AuthorizationModule.forRoot(),
@@ -51,6 +57,7 @@ import { LoginThrottleService } from "./login-throttle.service";
   // PasswordHasher 由 AuthenticationModule 导出，复用它的实例（不要在此重复注册）
   providers: [
     AuthUsersRepository,
+    PrismaSessionStore,
     JwtAuth,
     TenantMembershipGuard,
     CredentialsService,

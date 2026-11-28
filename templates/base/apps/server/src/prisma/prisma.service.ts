@@ -12,6 +12,7 @@ const GLOBAL_MODELS = new Set([
   "Tenant",
   "User",
   "UserTenant",
+  "UserSession",
   "Permission",
   "PlatformAdmin",
   "Plan",

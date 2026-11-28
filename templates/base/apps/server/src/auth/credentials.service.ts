@@ -1,5 +1,9 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { PasswordHasher, TokenService } from "@nestjs/authentication";
+import {
+  PasswordHasher,
+  SessionService,
+  TokenService,
+} from "@nestjs/authentication";
 import { AuditService } from "../audit/audit.service";
 import { AuthUsersRepository } from "./repositories/auth-users.repository";
 import { LoginThrottleService } from "./login-throttle.service";
@@ -17,11 +21,12 @@ export class CredentialsService {
     private readonly users: AuthUsersRepository,
     private readonly hasher: PasswordHasher,
     private readonly tokens: TokenService,
+    private readonly sessions: SessionService,
     private readonly audit: AuditService,
     private readonly throttle: LoginThrottleService,
   ) {}
 
-  async signIn(email: string, password: string, ip: string) {
+  async signIn(email: string, password: string, ip: string, userAgent: string) {
     await this.throttle.assertAllowed(email, ip);
 
     const found = await this.users.findCredentials(email);
@@ -39,10 +44,16 @@ export class CredentialsService {
     }
 
     await this.throttle.recordSuccess(email, ip);
-    const issued = await this.tokens.issue(found.user.id);
+    const session = await this.sessions.create(found.user.id, {
+      metadata: { ip, userAgent },
+    });
+    const issued = await this.tokens.issue(found.user.id, {
+      claims: { sid: session.token },
+    });
     await this.audit.record({
       action: "auth.sign_in",
       resource: "session",
+      resourceId: session.session.id,
       actorUserId: found.user.id,
       actorLabel: email,
       result: "success",

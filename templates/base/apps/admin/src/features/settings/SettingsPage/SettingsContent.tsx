@@ -18,6 +18,7 @@ import {
 } from "@starter/api/generated";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { useMe } from "@/lib/me";
+import { SessionsCard } from "./SessionsCard";
 
 /** 账号设置：个人资料 + 修改密码（任何登录用户可用） */
 export const SettingsContent = () => {
@@ -112,7 +113,8 @@ export const SettingsContent = () => {
   }
 
   return (
-    <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+    <Stack gap="md">
+      <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
       <Card withBorder padding="lg">
         <Stack gap="md">
           <Group justify="space-between">
@@ -146,7 +148,7 @@ export const SettingsContent = () => {
 
           {passwordError && <Alert color="red">{passwordError}</Alert>}
           {passwordSaved && (
-            <Alert color="green">密码已修改，下次登录请使用新密码</Alert>
+            <Alert color="green">密码已修改，所有登录已失效，请重新登录</Alert>
           )}
 
           <PasswordInput
@@ -176,5 +178,7 @@ export const SettingsContent = () => {
         </Stack>
       </Card>
     </SimpleGrid>
+      <SessionsCard />
+    </Stack>
   );
 };

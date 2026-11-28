@@ -628,6 +628,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "邮箱密码登录，返回 Bearer access token（公开）",
@@ -2961,6 +2971,125 @@
         ]
       }
     },
+    "/starter/api/me/sessions": {
+      "get": {
+        "operationId": "MeSessionsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "我的登录设备（服务端会话）",
+        "tags": [
+          "me"
+        ]
+      }
+    },
+    "/starter/api/me/sessions/revoke-others": {
+      "post": {
+        "operationId": "MeSessionsController_revokeOthers",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "退出其他设备（保留当前会话）",
+        "tags": [
+          "me"
+        ]
+      }
+    },
+    "/starter/api/me/sessions/{id}": {
+      "delete": {
+        "operationId": "MeSessionsController_revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "撤销指定会话（不能撤销自己时前端隐藏入口）",
+        "tags": [
+          "me"
+        ]
+      }
+    },
     "/starter/api/permissions": {
       "get": {
         "operationId": "PermissionsController_list",
@@ -4344,6 +4473,55 @@
           "name",
           "slug",
           "joinedAt"
+        ]
+      },
+      "SessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "会话 id（SHA-256），用于撤销"
+          },
+          "current": {
+            "type": "boolean",
+            "description": "是否为当前请求使用的会话"
+          },
+          "device": {
+            "type": "string",
+            "example": "Chrome / Windows",
+            "nullable": true
+          },
+          "ip": {
+            "type": "string",
+            "example": "127.0.0.1",
+            "nullable": true
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastActiveAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "current",
+          "device",
+          "ip",
+          "userAgent",
+          "createdAt",
+          "lastActiveAt",
+          "expiresAt"
         ]
       },
       "PermissionResponseDto": {

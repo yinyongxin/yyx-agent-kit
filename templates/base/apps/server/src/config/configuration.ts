@@ -111,6 +111,10 @@ export const authConfig = registerAs("auth", () => ({
   issuer: process.env.JWT_ISSUER ?? "starter-api",
   audience: process.env.JWT_AUDIENCE ?? "starter-web",
   ttl: process.env.JWT_TTL ?? "15m",
+  /** 服务端会话（Bearer JWT 中的 sid） */
+  sessionAbsoluteTtl: process.env.AUTH_SESSION_ABSOLUTE_TTL ?? "7d",
+  sessionIdleTtl: process.env.AUTH_SESSION_IDLE_TTL ?? "1d",
+  sessionTouchInterval: process.env.AUTH_SESSION_TOUCH_INTERVAL ?? "1m",
   /** 登录失败锁定：同邮箱+IP 窗口内失败次数上限 */
   loginMaxAttempts: Number(process.env.AUTH_LOGIN_MAX_ATTEMPTS ?? 5),
   loginWindowSeconds: Number(process.env.AUTH_LOGIN_WINDOW_SECONDS ?? 300),
