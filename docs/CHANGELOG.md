@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-- **导航菜单权限收敛 + 全局当前租户**：新增 `TenantProvider` / `useTenant()`（当前租户持久化，角色页与导航共用）与 `useMenuAccess()`；平台菜单按 `isPlatformAdmin` 隐藏，角色菜单按当前租户 `role:read` 隐藏；租户成员页打开时同步当前租户；无权限菜单项不再显示
+- **导航菜单权限收敛 + 全局当前租户**：新增 `TenantProvider` / `useTenant()`（当前租户持久化，角色页与导航共用）、`TenantSwitcher` 导航栏切换器与 `useMenuAccess()`；平台菜单按 `isPlatformAdmin` 隐藏，角色菜单按当前租户 `role:read` 隐藏；角色页移除独立租户下拉，跟随全局切换器；租户成员页同步当前租户并隐藏切换器；无权限菜单项不再显示
 - **管理端前端权限消费**：新增 `TenantPermissionsProvider` / `usePermissions()`、`<Can>`、`<PermissionGate>`、`<PlatformAdminGate>` 与统一 403 内容；成员页按 `user:write`、角色页按 `role:write` 隐藏新建 / 编辑 / 删除 / 批量操作；用户、租户、权限、日志、审计页统一平台管理员门禁；新增 `GET /me` 返回 `isPlatformAdmin`；`test:authz` 增加 `/me` 断言
 - **接口级权限校验**：新增 `@RequirePermission(...codes)` 与 `TenantMembershipGuard` 权限检查（权限来自当前租户角色并集，`owner`/`admin` 视为 `["*"]`）；租户成员 / 角色 / 权限目录接口改用权限点授权（`user:read`/`user:write`、`role:read`/`role:write`）；`/membership` 返回 `permissions`；新增 `test:authz` 验证“同一 token 授权后即时生效”，并纳入 CI
 - **权限点管理模块**：新增 `src/permissions/`（`/permissions` 平台管理员 CRUD：分页 / 搜索、code 唯一且创建后不可改、被角色引用时禁止删除、审计 before/after）；租户权限目录控制器改为 `TenantPermissionsController`，避免与平台接口生成客户端重名；管理端「权限」页接入真实接口（服务端 DataTable、新建 / 编辑 / 删除、按 code 前缀分组、引用数保护）；新增 `test:permissions` 并纳入 CI

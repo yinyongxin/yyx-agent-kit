@@ -8,6 +8,7 @@ import { Group, Text } from "@mantine/core";
 import { AdminScrollArea } from "@/components/AdminScrollArea";
 import { Brand } from "@/components/Brand";
 import { UserMenu } from "@/components/UserMenu";
+import { TenantSwitcher } from "@/components/TenantSwitcher";
 import { LinksGroup } from "@/components/navbar/NavbarLinksGroup";
 import { useAuthUser } from "@/lib/use-auth-user";
 import { useMenuAccess, type MenuLinkMeta } from "@/lib/menu-access";
@@ -69,6 +70,7 @@ export const NavbarNested = () => {
             管理菜单
           </Text>
         </Group>
+        <TenantSwitcher withLabel />
       </div>
       <AdminScrollArea className={classes.links}>
         <div className={classes.linksInner}>
