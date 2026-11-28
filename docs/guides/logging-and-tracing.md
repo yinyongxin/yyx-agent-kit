@@ -136,11 +136,16 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 - 顶部按 level 统计徽章
 - 行详情抽屉：完整 JSON（已脱敏）+ 同 traceId 时间线
 
-## 7. 审计日志（后续）
+## 7. 审计日志
 
-- 独立表 `audit_logs`：actor / tenant / action / target / before / after / traceId / ip
-- 关键写操作（登录、改密、租户/角色/成员变更）落库，长期保留
-- 与请求日志分开：请求日志是排障数据（短保留），审计是合规数据（长保留）
+已落地，见 `apps/server/src/audit/`：
+
+- 表 `audit_logs`（append-only）：`actorUserId` / `actorLabel` / `tenantId` / `action` / `resource` / `result` / `before` / `after` / `traceId` / `ip` / `userAgent`
+- 数据库层 RLS 禁止 UPDATE / DELETE（不建 policy），写入用 `createMany`
+- 关键写操作在 controller 加 `@Audit({ action, resource })`；登录在 `CredentialsService` 手动记录成功 / 失败
+- 查询：`GET /api/audit-logs`、`GET /api/audit-logs/:id`（平台管理员）
+- 管理端 `/observability/audit-logs`
+- 与请求日志分开：请求日志是排障数据（Loki，短保留），审计是合规数据（PostgreSQL，长保留）
 
 ## 8. 性能与容量
 
@@ -157,4 +162,5 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 - 登录请求日志中 `password` / `accessToken` 为 `[REDACTED]`
 - 401/500 响应体带 `traceId`，日志级别 warn/error
 - 日志页能按 level / 时间范围 / traceId 查到对应请求
-- `pnpm --filter @starter/server test:e2e`、`test:tenants`、`test:rls`、`test:generated` 全过
+- 审计页能查到登录成功/失败与租户 CRUD，`after` 不含密码
+- `pnpm --filter @starter/server test:e2e`、`test:tenants`、`test:rls`、`test:generated`、`test:logs`、`test:audit` 全过

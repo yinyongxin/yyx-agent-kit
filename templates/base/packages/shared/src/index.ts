@@ -33,6 +33,8 @@ export const API_ROUTES = {
   /** 平台日志查询（Loki），平台管理员专用 */
   logs: "/logs",
   logsStats: "/logs/stats",
+  /** 审计日志（PostgreSQL，append-only） */
+  auditLogs: "/audit-logs",
   /** 本地开发导航页（仅开发环境注册，生产 404） */
   dev: "/dev",
   devServices: "/dev/services",

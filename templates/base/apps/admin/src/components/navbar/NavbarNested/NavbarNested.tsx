@@ -42,6 +42,7 @@ const MENU: {
     links: [
       { label: "设置", link: "/settings" },
       { label: "日志", link: "/observability/logs" },
+      { label: "审计日志", link: "/observability/audit-logs" },
       { label: "接口联调", link: "/integration" },
     ],
   },

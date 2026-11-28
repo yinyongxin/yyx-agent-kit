@@ -27,6 +27,22 @@ model Order {
 
 时间字段一律 `@db.Timestamptz(3)`（带时区，存 UTC）。不要用裸 `DateTime`（PostgreSQL 会映射成不带时区的 `timestamp`）。
 
+### 追加型表（只增不改）
+
+审计日志这类 append-only 表只保留 `createdAt`，不要求 `updatedAt`：
+
+```prisma
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  // ...业务字段
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+}
+```
+
+- `pnpm schema:check` 用白名单 `APPEND_ONLY_MODELS` 放行（当前只有 `AuditLog`）
+- 数据库层用 RLS 禁止 UPDATE / DELETE（不建 policy 即拒绝），保证不可篡改
+- 不要用这种表存需要原地更新的业务数据
+
 ### 关联表（多对多中间表）
 
 ```prisma

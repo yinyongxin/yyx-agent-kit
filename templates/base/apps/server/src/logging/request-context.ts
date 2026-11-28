@@ -7,6 +7,10 @@ export interface RequestContextValue {
   spanId: string;
   /** 单次请求 id（应用内唯一，用于排查） */
   requestId: string;
+  /** 客户端 IP（优先 X-Forwarded-For 第一段）；审计日志用 */
+  ip?: string;
+  /** User-Agent；审计日志用 */
+  userAgent?: string;
 }
 
 const storage = new AsyncLocalStorage<RequestContextValue>();

@@ -43,3 +43,9 @@ enum PlatformAdminLevel {
   super
   ops
 }
+
+/// 审计日志结果：成功 / 被拒绝或失败。
+enum AuditResult {
+  success
+  failure
+}

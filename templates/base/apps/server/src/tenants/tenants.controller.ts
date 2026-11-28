@@ -25,6 +25,7 @@ import {
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
 import { API_ROUTES, asRoute } from "../../../../packages/shared/src/index";
+import { Audit } from "../audit/audit.decorator";
 import { PlatformAdminGuard } from "../auth/guards/platform-admin.guard";
 import { ErrorResponseDto } from "../dto/error-response.dto";
 import { CreateTenantDto } from "./dto/create-tenant.dto";
@@ -70,6 +71,7 @@ export class TenantsController {
   @ApiConflictResponse({ type: ErrorResponseDto })
   @Post()
   @Can.Anyone()
+  @Audit({ action: "tenant.create", resource: "tenant" })
   create(@Body() dto: CreateTenantDto): Promise<TenantResponseDto> {
     return this.tenants.create(dto);
   }
@@ -79,6 +81,7 @@ export class TenantsController {
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @Patch(":id")
   @Can.Anyone()
+  @Audit({ action: "tenant.update", resource: "tenant" })
   update(
     @Param("id", ParseUUIDPipe) id: string,
     @Body() dto: UpdateTenantDto,
@@ -93,6 +96,7 @@ export class TenantsController {
   @HttpCode(204)
   @Delete(":id")
   @Can.Anyone()
+  @Audit({ action: "tenant.delete", resource: "tenant" })
   remove(@Param("id", ParseUUIDPipe) id: string): Promise<void> {
     return this.tenants.remove(id);
   }

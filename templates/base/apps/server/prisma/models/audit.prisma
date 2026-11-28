@@ -1,0 +1,39 @@
+/// 审计日志（append-only）：关键写操作与登录事件。
+///
+/// - 请求日志进 Loki（短保留，用于排障）；审计日志落 PostgreSQL（长期保留，用于合规）
+/// - 只有 createdAt，没有 updatedAt / deletedAt；数据库层用 RLS 禁止 UPDATE / DELETE
+/// - tenantId 为 null 表示平台级操作（如创建租户）
+/// - before / after 只放业务关键字段，写入前需脱敏（token / 密码等）
+model AuditLog {
+  id          String      @id @default(uuid()) @db.Uuid
+  /// 所属租户；平台级操作为 null
+  tenantId    String?     @db.Uuid
+  /// 操作者用户 id；匿名（登录失败）为 null
+  actorUserId String?     @db.Uuid
+  /// 操作者标识：登录失败时记录尝试的邮箱，便于排查
+  actorLabel  String?
+  /// 动作：tenant.create / tenant.update / auth.sign_in ...
+  action      String
+  /// 资源类型：tenant / session ...
+  resource    String
+  /// 资源 id（create/update 取返回对象 id，delete 取路由参数）
+  resourceId  String?
+  result      AuditResult @default(success)
+  /// 失败原因或补充说明（不放敏感信息）
+  summary     String?
+  /// 变更前快照（更新/删除时可选）
+  before      Json?
+  /// 变更后快照（创建/更新时可选）
+  after       Json?
+  ip          String?
+  userAgent   String?
+  traceId     String?
+  createdAt   DateTime    @default(now()) @db.Timestamptz(3)
+
+  @@index([tenantId, createdAt])
+  @@index([actorUserId, createdAt])
+  @@index([action, createdAt])
+  @@index([createdAt])
+  @@index([traceId])
+  @@map("audit_logs")
+}

@@ -11,6 +11,7 @@
     "swagger:export": "tsx scripts/export-openapi.ts",
     "test:e2e": "node test/tenancy-e2e.mjs",
     "test:logs": "node test/logs-e2e.mjs",
+    "test:audit": "node test/audit-e2e.mjs",
     "test:rls": "node test/rls-concurrency.mjs",
     "test:generated": "tsx test/generated-client.ts",
     "test:tenants": "node test/tenants-e2e.mjs",

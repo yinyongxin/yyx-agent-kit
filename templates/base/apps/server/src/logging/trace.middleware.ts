@@ -48,7 +48,11 @@ export class TraceMiddleware implements NestMiddleware {
     res.setHeader("X-Trace-Id", traceId);
     res.setHeader("traceparent", `00-${traceId}-${spanId}-01`);
 
-    RequestContext.run({ traceId, spanId, requestId }, next);
+    const forwarded = this.header(req, "x-forwarded-for");
+    const ip = forwarded?.split(",")[0]?.trim() || req.socket?.remoteAddress;
+    const userAgent = this.header(req, "user-agent");
+
+    RequestContext.run({ traceId, spanId, requestId, ip, userAgent }, next);
   }
 
   private header(req: TracedRequest, name: string): string | undefined {

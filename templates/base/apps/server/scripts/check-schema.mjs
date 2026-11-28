@@ -24,6 +24,9 @@ const JOIN_MODELS = new Set(["UserTenant", "UserRole", "RolePermission"]);
 /** 使用自然主键、没有 id 列的模型 */
 const NATURAL_ID_MODELS = new Set(["PlatformAdmin"]);
 
+/** 追加型模型：只需要 createdAt，不要求 updatedAt（审计表禁止原地更新） */
+const APPEND_ONLY_MODELS = new Set(["AuditLog"]);
+
 const files = [
   join(prismaDir, "schema.prisma"),
   ...readdirSync(join(prismaDir, "models"))
@@ -60,6 +63,7 @@ for (const model of models) {
   const { name, fields, body } = model;
   const isJoin = JOIN_MODELS.has(name);
   const hasNaturalId = NATURAL_ID_MODELS.has(name);
+  const isAppendOnly = APPEND_ONLY_MODELS.has(name);
 
   for (const [field, line] of fields) {
     if (/^(createAt|updateAt|deleteAt)$/.test(field)) {
@@ -75,6 +79,7 @@ for (const model of models) {
   }
 
   for (const required of ["createdAt", "updatedAt"]) {
+    if (required === "updatedAt" && isAppendOnly) continue;
     const line = fields.get(required);
     if (!line) {
       if (!isJoin) errors.push(`${name}: 缺少 ${required}`);
