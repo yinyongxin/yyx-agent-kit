@@ -53,6 +53,14 @@ class EnvironmentVariables {
   @IsOptional()
   @IsString()
   LOG_SERVICE_NAME?: string;
+
+  @IsOptional()
+  @IsInt()
+  SLOW_SQL_MS?: number;
+
+  @IsOptional()
+  @IsIn(["true", "false"])
+  SLOW_SQL_LOG_PARAMS?: string;
 }
 
 export const validateEnv = (config: Record<string, unknown>) => {

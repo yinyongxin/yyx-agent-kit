@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **慢查询采集**：Prisma 7 + driver adapter 下 `$on("query")` 不可用（实测 `_engineConfig` undefined），改用 `scoped` extension 计时 + 租户事务整体计时；`SLOW_SQL_MS`（默认 100ms）/ `SLOW_SQL_LOG_PARAMS`（默认关闭），日志带 traceId / model / operation
 - **审计日志**：新增 `audit_logs`（append-only，RLS 禁止改删）与 `apps/server/src/audit/`；`@Audit({ action, resource })` 自动记录租户 CRUD，登录成功/失败在 `CredentialsService` 显式记录（含 traceId / ip / userAgent）；新增 `GET /api/audit-logs`、`/api/audit-logs/:id` 与管理端「审计日志」页 `/observability/audit-logs`；`test:audit` 验收
 - **可观测性（Loki）**：compose 新增 `observability` profile（Loki 47110 / Grafana 47111 / Alloy 47112），Alloy 采集 `logs/app.log`；pino 输出字符串 level 并支持 `LOG_FILE` 双写。新增 `/api/logs`、`/api/logs/stats`、`/api/logs/trace/:traceId`（平台管理员，Loki 只读）与管理端「日志」页 `/observability/logs`（DataTable 服务端模式 + 详情抽屉 + trace 时间线）
 - **日志与 traceId**：接入 pino + nestjs-pino（NodeAdapter 实测通过），每个响应返回 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；请求/响应日志含 userId/tenantId、脱敏与 16KB 截断，4xx warn / 5xx error；`/api/dev` 不写 completion log。新增 `src/logging/`、`docs/guides/logging-and-tracing.md` 与 `LOG_*` 环境变量

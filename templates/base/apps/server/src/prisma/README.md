@@ -33,6 +33,18 @@ RLS `ENABLE + FORCE` 后会被过滤成 0 行。因此它对租户表 fail-close
 - `scoped` 上访问租户表 / 关联表
 - `scoped` 上的 raw SQL（`$queryRaw` / `$executeRaw` 及 Unsafe 版本）
 
+## 慢查询
+
+| 变量 | 默认 | 说明 |
+| --- | --- | --- |
+| `SLOW_SQL_MS` | `100` | 超过阈值记 `warn` 日志；`<=0` 关闭 |
+| `SLOW_SQL_LOG_PARAMS` | `false` | 是否记录 `args`（可能含业务数据） |
+
+- `scoped` 的 `$allOperations` 用 `performance.now()` 计时，日志：`{ msg: "slow query", duration, model, operation, args? }`
+- 租户事务整体耗时在 `TenantTransactionInterceptor` 记录：`{ msg: "slow transaction", duration, tenantId, path }`
+- traceId / requestId 由 pino 自动补，可在 Loki 与请求日志串联
+- **为什么不用 `$on("query")`**：Prisma 7 + driver adapter + `prisma-client` 生成器下运行时抛 `_engineConfig` undefined（已实测），因此改用 extension 计时；代价是事务内单条 SQL 不单独计时，只记录事务总耗时
+
 ## 同步要求
 
 新增带 `tenantId` 的业务表时：

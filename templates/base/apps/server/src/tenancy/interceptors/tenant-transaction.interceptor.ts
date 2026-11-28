@@ -2,8 +2,10 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
+  Logger,
   NestInterceptor,
 } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { lastValueFrom, of, type Observable } from "rxjs";
 import type { Prisma } from "../../generated/prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
@@ -23,7 +25,15 @@ import { PrismaService } from "../../prisma/prisma.service";
  */
 @Injectable()
 export class TenantTransactionInterceptor implements NestInterceptor {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(TenantTransactionInterceptor.name);
+  private readonly slowMs: number;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    config: ConfigService,
+  ) {
+    this.slowMs = config.getOrThrow<number>("logging.slowSqlMs");
+  }
 
   async intercept(
     context: ExecutionContext,
@@ -32,11 +42,13 @@ export class TenantTransactionInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest<{
       params?: { tenantId?: string };
       tenantTx?: Prisma.TransactionClient;
+      url?: string;
     }>();
     // 直接从路由参数取：middleware 的 AsyncLocalStorage 上下文不保证传播到 Interceptor
     const tenantId = req.params?.tenantId;
     if (!tenantId) return next.handle(); // health / auth / me 等非租户路由不需要事务
 
+    const started = performance.now();
     const result = await this.prisma.$transaction(
       async (tx) => {
         await tx.$executeRaw`SELECT set_config('app.tenant_id', ${tenantId}, true)`;
@@ -45,6 +57,17 @@ export class TenantTransactionInterceptor implements NestInterceptor {
       },
       { maxWait: 2_000, timeout: 5_000 },
     );
+
+    // 事务内的查询无法逐个计时（tx 不经过 scoped extension），这里记录整条租户事务
+    const duration = performance.now() - started;
+    if (this.slowMs > 0 && duration >= this.slowMs) {
+      this.logger.warn({
+        msg: "slow transaction",
+        duration: Math.round(duration),
+        tenantId,
+        path: req.url,
+      });
+    }
 
     return of(result);
   }

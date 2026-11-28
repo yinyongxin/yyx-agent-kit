@@ -38,7 +38,7 @@ pino + nestjs-pino 在这些点成熟，NodeAdapter 实测通过（健康检查�
 
 - **应用/请求日志**：pino JSON 写 stdout；开发同时写 `logs/app.log` 供本地 Alloy 采集
 - **审计日志**：PostgreSQL 独立表（后续），不混入请求日志
-- **慢 SQL**：Prisma `$on("query")`，只记 >100ms（待接入）
+- **慢查询**：`scoped` extension 计时（`SLOW_SQL_MS`，默认 100ms）+ 租户事务整体耗时；日志 `msg: "slow query" / "slow transaction"`
 - **不要**：把完整请求日志写进业务库；Loki label 不要放 traceId（高基数）
 
 ## 3. traceId
@@ -151,6 +151,7 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 
 - pino overhead 低；成本主要来自 body 序列化与日志量
 - 成功请求 body 日志生产默认关闭；错误 / 慢请求可 100%
+- 慢查询：阈值 `SLOW_SQL_MS` 默认 100ms；`SLOW_SQL_LOG_PARAMS` 默认关闭（参数可能含业务数据）
 - Loki 查询必须限制时间范围，按 label（service/env/level）过滤
 - label 基数：只放 service/env/level；traceId/userId/tenantId 用 structured metadata
 - OTel 若接入：关闭 `@opentelemetry/instrumentation-nestjs-core`（不支持 Nest 12），只保留 HTTP/pg 等基础插桩
@@ -163,4 +164,5 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 - 401/500 响应体带 `traceId`，日志级别 warn/error
 - 日志页能按 level / 时间范围 / traceId 查到对应请求
 - 审计页能查到登录成功/失败与租户 CRUD，`after` 不含密码
+- 慢查询日志：`SLOW_SQL_MS=1` 时日志出现 `msg:"slow query"`（带 traceId / model / operation）
 - `pnpm --filter @starter/server test:e2e`、`test:tenants`、`test:rls`、`test:generated`、`test:logs`、`test:audit` 全过

@@ -63,6 +63,10 @@ export const loggingConfig = registerAs("logging", () => {
     lokiUrl: process.env.LOKI_URL ?? "http://localhost:47110",
     /** Loki 里的 service label，需与 Alloy 配置一致 */
     serviceName: process.env.LOG_SERVICE_NAME ?? "starter-api",
+    /** 慢 SQL 阈值（ms）；<=0 关闭 */
+    slowSqlMs: Number(process.env.SLOW_SQL_MS ?? 100),
+    /** 是否在慢 SQL 日志里带参数（默认关闭，参数可能含业务数据） */
+    slowSqlParams: process.env.SLOW_SQL_LOG_PARAMS === "true",
   };
 });
 
