@@ -37,6 +37,7 @@ const GROUPS: {
     icon: IconSettings,
     links: [
       { label: "设置", to: "/settings" },
+      { label: "日志", to: "/observability/logs" },
       { label: "接口联调", to: "/integration" },
     ],
   },

@@ -8,6 +8,7 @@ packages/*/src/*.js
 packages/*/src/**/*.js
 apps/server/prisma/*.js
 *.log
+/logs/
 .DS_Store
 .env
 .env.local

@@ -1,0 +1,49 @@
+# Loki 单进程配置（本地开发 / 小规模部署）
+# 生产建议换成对象存储（S3/MinIO）+ 独立 compactor，见 https://grafana.com/docs/loki/latest/configure/
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+  log_level: warn
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+limits_config:
+  # 本地保留 7 天；按磁盘与合规要求调整
+  retention_period: 168h
+  reject_old_samples: false
+  # traceId / userId / tenantId 走 structured metadata，不做 label（避免高基数）
+  allow_structured_metadata: true
+
+compactor:
+  working_directory: /loki/compactor
+  retention_enabled: true
+  delete_request_store: filesystem
+  compaction_interval: 10m
+
+ruler:
+  storage:
+    type: local
+    local:
+      directory: /loki/rules

@@ -1,0 +1,63 @@
+// Grafana Alloy：采集应用 JSON 日志 → Loki
+// 本地开发从挂载目录读（应用同时写 stdout 与 logs/app.log）；
+// 生产可直接用 discovery.docker / discovery.kubernetes 采集容器 stdout。
+//
+// label 只保留低基数字段：service / env / level
+// traceId / requestId / userId / tenantId 放 structured metadata，可过滤但不建索引
+
+local.file_match "api" {
+  path_targets = [{
+    __path__  = "/var/log/starter/*.log",
+    service   = sys.env("LOG_SERVICE_NAME"),
+    env       = sys.env("APP_ENV"),
+  }]
+}
+
+loki.source.file "api" {
+  targets       = local.file_match.api.targets
+  forward_to    = [loki.process.api.receiver]
+  tail_from_end = true
+}
+
+loki.process "api" {
+  stage.json {
+    expressions = {
+      level     = "level",
+      time      = "time",
+      msg       = "msg",
+      traceId   = "traceId",
+      requestId = "requestId",
+      userId    = "userId",
+      tenantId  = "tenantId",
+    }
+  }
+
+  // 用日志自带的 ISO 时间，避免采集延迟影响时间线
+  stage.timestamp {
+    source = "time"
+    format = "RFC3339Nano"
+  }
+
+  stage.labels {
+    values = {
+      level = "",
+    }
+  }
+
+  stage.structured_metadata {
+    values = {
+      traceId   = "",
+      requestId = "",
+      userId    = "",
+      tenantId  = "",
+    }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

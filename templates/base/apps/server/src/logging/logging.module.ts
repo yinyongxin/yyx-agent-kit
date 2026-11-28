@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { LoggerModule } from "nestjs-pino";
 import { randomUUID } from "node:crypto";
-import { stdTimeFunctions } from "pino";
+import pino, { stdTimeFunctions } from "pino";
 import { AppConfigModule } from "../config/config.module";
 import { LoggingInterceptor } from "./logging.interceptor";
 import { AllExceptionsFilter } from "./http-exception.filter";
@@ -28,11 +28,32 @@ import { TraceMiddleware, type TracedRequest } from "./trace.middleware";
       useFactory: (config: ConfigService) => {
         const level = config.getOrThrow<string>("logging.level");
         const httpBody = config.getOrThrow<boolean>("logging.httpBody");
+        const file = config.getOrThrow<string>("logging.file");
+
+        // 开发把 JSON 同时写文件，供本地 Alloy 采集；生产只写 stdout 交给容器日志
+        const stream = file
+          ? pino.multistream([
+              { level, stream: process.stdout },
+              {
+                level,
+                stream: pino.destination({
+                  dest: file,
+                  mkdir: true,
+                  sync: false,
+                }),
+              },
+            ])
+          : undefined;
 
         return {
           pinoHttp: {
             level,
+            ...(stream ? { stream } : {}),
             timestamp: stdTimeFunctions.isoTime,
+            // level 输出字符串（info/warn/error…），Alloy 才能直接当 label
+            formatters: {
+              level: (label) => ({ level: label }),
+            },
             autoLogging: {
               ignore: (req) => (req.url ?? "").startsWith("/api/dev"),
             },

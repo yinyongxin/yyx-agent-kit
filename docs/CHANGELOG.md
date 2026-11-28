@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **可观测性（Loki）**：compose 新增 `observability` profile（Loki 47110 / Grafana 47111 / Alloy 47112），Alloy 采集 `logs/app.log`；pino 输出字符串 level 并支持 `LOG_FILE` 双写。新增 `/api/logs`、`/api/logs/stats`、`/api/logs/trace/:traceId`（平台管理员，Loki 只读）与管理端「日志」页 `/observability/logs`（DataTable 服务端模式 + 详情抽屉 + trace 时间线）
 - **日志与 traceId**：接入 pino + nestjs-pino（NodeAdapter 实测通过），每个响应返回 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；请求/响应日志含 userId/tenantId、脱敏与 16KB 截断，4xx warn / 5xx error；`/api/dev` 不写 completion log。新增 `src/logging/`、`docs/guides/logging-and-tracing.md` 与 `LOG_*` 环境变量
 
 - **数据库字段规范**：业务表统一 UUID `id` + `createdAt`/`updatedAt` + `@db.Timestamptz(3)`；关联表保持联合主键、不加 `id`；`deletedAt` 按需。新增 `pnpm schema:check`（已并入 `pnpm build`）与 `docs/guides/database-conventions.md`；迁移 `20261128030929_standardize_timestamps` 补齐 Plan/Permission/OAuthConnection/PlatformAdmin 时间字段

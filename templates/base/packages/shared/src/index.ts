@@ -30,6 +30,9 @@ export const API_ROUTES = {
   tenant: "/t/:tenantId",
   tenantMembership: "/membership",
   tenantRoles: "/roles",
+  /** 平台日志查询（Loki），平台管理员专用 */
+  logs: "/logs",
+  logsStats: "/logs/stats",
   /** 本地开发导航页（仅开发环境注册，生产 404） */
   dev: "/dev",
   devServices: "/dev/services",

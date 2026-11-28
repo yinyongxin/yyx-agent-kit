@@ -41,10 +41,13 @@ export const devConfig = registerAs("dev", () => {
     /** 本地 Penpot MCP（pnpm penpot:mcp）：4401 MCP、4400 插件 manifest */
     penpotMcpPort: Number(process.env.PENPOT_MCP_PORT ?? 4401),
     penpotPluginPort: Number(process.env.PENPOT_MCP_PLUGIN_PORT ?? 4400),
+    /** 可观测性（docker compose --profile observability） */
+    lokiPort: Number(process.env.LOKI_PORT ?? 47110),
+    grafanaPort: Number(process.env.GRAFANA_PORT ?? 47111),
   };
 });
 
-/** 日志配置（pino / nestjs-pino） */
+/** 日志配置（pino / nestjs-pino / Loki 查询） */
 export const loggingConfig = registerAs("logging", () => {
   const nodeEnv = process.env.NODE_ENV ?? "development";
   return {
@@ -54,6 +57,12 @@ export const loggingConfig = registerAs("logging", () => {
         ? process.env.LOG_HTTP_BODY === "true"
         : nodeEnv !== "production",
     bodyLimit: Number(process.env.LOG_BODY_LIMIT ?? 16384),
+    /** 额外写一份 JSON 日志到文件（相对进程 cwd）；生产不配则只写 stdout */
+    file: process.env.LOG_FILE ?? "",
+    /** 管理端日志页查询用；未配置时日志查询 API 返回 503 */
+    lokiUrl: process.env.LOKI_URL ?? "http://localhost:47110",
+    /** Loki 里的 service label，需与 Alloy 配置一致 */
+    serviceName: process.env.LOG_SERVICE_NAME ?? "starter-api",
   };
 });
 

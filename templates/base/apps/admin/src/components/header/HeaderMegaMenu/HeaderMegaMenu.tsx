@@ -133,6 +133,7 @@ export const HeaderMegaMenu = () => {
             <Link to="/settings" className={classes.link}>
               <Center inline><IconSettings size={16} /><Box component="span" ml={5}>设置</Box></Center>
             </Link>
+            <Link to="/observability/logs" className={classes.link}>日志</Link>
           </Group>
 
           <Group gap="xs">
@@ -165,6 +166,7 @@ export const HeaderMegaMenu = () => {
             <MegaLinks items={PERMISSIONS} />
           </Collapse>
           <Link to="/settings" className={classes.link}>设置</Link>
+          <Link to="/observability/logs" className={classes.link}>日志</Link>
         </AdminScrollArea>
         <UserMenu variant="drawer" user={user} onLogout={onLogout} />
       </Drawer>

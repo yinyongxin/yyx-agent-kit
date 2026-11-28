@@ -41,6 +41,18 @@ class EnvironmentVariables {
   @IsOptional()
   @IsInt()
   LOG_BODY_LIMIT?: number;
+
+  @IsOptional()
+  @IsString()
+  LOG_FILE?: string;
+
+  @IsOptional()
+  @IsString()
+  LOKI_URL?: string;
+
+  @IsOptional()
+  @IsString()
+  LOG_SERVICE_NAME?: string;
 }
 
 export const validateEnv = (config: Record<string, unknown>) => {

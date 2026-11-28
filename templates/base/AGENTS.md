@@ -10,6 +10,7 @@
 - 端口统一使用 **47xxx 段**，禁止用 `3000` / `5173` / `8080` 等框架默认端口，避免与本机其他项目冲突。Vite 必须开 `strictPort`，端口被占时直接失败而不是静默换端口。
 - 接口调用统一走 `@starter/api`，业务代码不自己写 `fetch`、不自己拼 URL。
 - **日志与 traceId 统一由 `apps/server/src/logging/` 处理**：所有响应头带 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；新接口不要手动加 traceId，也不要另起 logger。日志规范见 [`docs/guides/logging-and-tracing.md`](docs/guides/logging-and-tracing.md)。
+- **日志检索**：管理端 `/observability/logs`，后端 `apps/server/src/logs/`（只读 Loki）。本地需 `docker compose --profile observability up -d` 起 Loki（47110）/ Grafana（47111）/ Alloy（47112）；日志写入 `logs/app.log` 供 Alloy 采集。
 - 开发期接口统一用 `/api` 相对路径，由 Vite 代理到后端，**不写死后端域名**。
 - 业务接口按领域命名（如 `/orders`、`/patients`），`health` 只做运维探活，不承载业务逻辑。
 - 跨端共用的常量必须放 `packages/shared`：`API_PREFIX`、`API_ROUTES`、业务枚举、类型。新增接口先加常量，再由 controller 与 api 层引用，不要前后端各写一份字符串。

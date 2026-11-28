@@ -193,6 +193,77 @@ services:
     networks:
       - starter-net
 
+  # ===== 可观测性（默认不启动）=====
+  # docker compose --profile observability up -d
+  # 日志链路：应用 JSON 日志 → logs/app.log → Alloy → Loki → Grafana / 管理端日志页
+  loki:
+    image: grafana/loki:${LOKI_VERSION:-3.7.11}
+    container_name: starter-loki
+    profiles: ["observability"]
+    restart: unless-stopped
+    command: -config.file=/etc/loki/config.yaml
+    ports:
+      - "${LOKI_PORT:-47110}:3100"
+    volumes:
+      - ./docker/observability/loki-config.yaml:/etc/loki/config.yaml:ro
+      - loki-data:/loki
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3100/ready || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+    networks:
+      - starter-net
+
+  alloy:
+    image: grafana/alloy:${ALLOY_VERSION:-v1.22.0}
+    container_name: starter-alloy
+    profiles: ["observability"]
+    restart: unless-stopped
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+    environment:
+      LOG_SERVICE_NAME: ${LOG_SERVICE_NAME:-starter-api}
+      APP_ENV: ${NODE_ENV:-development}
+    ports:
+      - "${ALLOY_PORT:-47112}:12345"
+    volumes:
+      - ./docker/observability/alloy-config.alloy:/etc/alloy/config.alloy:ro
+      - ./logs:/var/log/starter:ro
+      - alloy-data:/var/lib/alloy/data
+    depends_on:
+      loki:
+        condition: service_started
+    networks:
+      - starter-net
+
+  grafana:
+    image: grafana/grafana:${GRAFANA_VERSION:-13.2.7}
+    container_name: starter-grafana
+    profiles: ["observability"]
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    ports:
+      - "${GRAFANA_PORT:-47111}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docker/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      loki:
+        condition: service_started
+    networks:
+      - starter-net
+
 volumes:
   postgres-data:
     name: starter-postgres-data
@@ -202,6 +273,12 @@ volumes:
     name: starter-penpot-postgres-data
   penpot-assets:
     name: starter-penpot-assets
+  loki-data:
+    name: starter-loki-data
+  grafana-data:
+    name: starter-grafana-data
+  alloy-data:
+    name: starter-alloy-data
 
 networks:
   starter-net:

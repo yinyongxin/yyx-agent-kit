@@ -42,7 +42,7 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 
 - **数据库迁移**：改 schema 后用 `db:migrate -- --name <语义名>` 生成 SQL 迁移文件，review 后入库；部署用 `db:deploy`（幂等）；生产禁止 `db push`。结构变更走 migrate、初始数据走 seed，边界见 `docs/guides/conventions.md` 第 5 节。
 - **表字段约定**：业务表 `id`（uuid）+ `createdAt` + `updatedAt`（`@db.Timestamptz(3)`），关联表联合主键不加 `id`，`deletedAt` 按需；`pnpm schema:check` 校验，详见 `docs/guides/database-conventions.md`。
-- **日志/traceId**：统一走 `apps/server/src/logging/`（pino + nestjs-pino）；所有响应头带 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；请求/响应体日志需脱敏与截断（`LOG_HTTP_BODY` 控制），规范见 `docs/guides/logging-and-tracing.md`。
+- **日志/traceId**：统一走 `apps/server/src/logging/`（pino + nestjs-pino）；所有响应头带 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；请求/响应体日志需脱敏与截断（`LOG_HTTP_BODY` 控制），规范见 `docs/guides/logging-and-tracing.md`。查询走 `apps/server/src/logs/`（Loki），管理端日志页 `/observability/logs`。
 
 - **中间件通配路由**：Nest 12 禁用裸 `*`；`forRoutes("*")` 叠加全局前缀会变成 `/api/*`，触发 `LegacyRouteConverter` 警告。用命名通配 `forRoutes("{*splat}")` 覆盖全部路径（官方 Middleware → Route wildcards，见踩坑记录 #25）。
 - 模块按领域拆分：`<feature>/<feature>.module.ts | .controller.ts | .service.ts | dto/ | repositories/`，每个目录有 README；完整目录模板与构件放置见 `docs/guides/server-module-architecture.md`

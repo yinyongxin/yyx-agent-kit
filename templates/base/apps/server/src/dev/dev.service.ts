@@ -82,19 +82,33 @@ export class DevService {
     const penpotMailpitPort = this.config.getOrThrow<number>("dev.penpotMailpitPort");
     const penpotMcpPort = this.config.getOrThrow<number>("dev.penpotMcpPort");
     const penpotPluginPort = this.config.getOrThrow<number>("dev.penpotPluginPort");
+    const lokiPort = this.config.getOrThrow<number>("dev.lokiPort");
+    const grafanaPort = this.config.getOrThrow<number>("dev.grafanaPort");
     const swaggerEnabled = this.config.getOrThrow<boolean>("app.swaggerEnabled");
 
-    const [clientUp, adminUp, portalUp, penpotUp, mailpitUp, penpotMcpUp, postgresUp, redisUp] =
-      await Promise.all([
-        probeHttp(`http://localhost:${clientPort}`),
-        probeHttp(`http://localhost:${adminPort}`),
-        probeHttp(`http://localhost:${portalPort}`),
-        probeHttp(`http://localhost:${penpotPort}`),
-        probeHttp(`http://localhost:${penpotMailpitPort}`),
-        probeHttp(`http://localhost:${penpotPluginPort}/manifest.json`),
-        this.probePostgres(),
-        probeTcp(redisHost, redisPort),
-      ]);
+    const [
+      clientUp,
+      adminUp,
+      portalUp,
+      penpotUp,
+      mailpitUp,
+      penpotMcpUp,
+      postgresUp,
+      redisUp,
+      lokiUp,
+      grafanaUp,
+    ] = await Promise.all([
+      probeHttp(`http://localhost:${clientPort}`),
+      probeHttp(`http://localhost:${adminPort}`),
+      probeHttp(`http://localhost:${portalPort}`),
+      probeHttp(`http://localhost:${penpotPort}`),
+      probeHttp(`http://localhost:${penpotMailpitPort}`),
+      probeHttp(`http://localhost:${penpotPluginPort}/manifest.json`),
+      this.probePostgres(),
+      probeTcp(redisHost, redisPort),
+      probeHttp(`http://localhost:${lokiPort}/ready`),
+      probeHttp(`http://localhost:${grafanaPort}/api/health`),
+    ]);
 
     const base = (p: number) => `http://localhost:${p}`;
     const serverLinks: DevServiceLink[] = [
@@ -208,6 +222,31 @@ export class DevService {
         url: base(penpotMailpitPort),
         links: [],
         command: "docker compose up -d penpot-mailpit",
+        probe: "HTTP",
+      },
+      {
+        id: "loki",
+        name: "Loki",
+        group: "依赖服务",
+        port: lokiPort,
+        status: lokiUp ? "online" : "offline",
+        url: base(lokiPort),
+        links: [
+          { label: "ready", href: `${base(lokiPort)}/ready` },
+          { label: "metrics", href: `${base(lokiPort)}/metrics` },
+        ],
+        command: "docker compose --profile observability up -d loki",
+        probe: "HTTP",
+      },
+      {
+        id: "grafana",
+        name: "Grafana",
+        group: "依赖服务",
+        port: grafanaPort,
+        status: grafanaUp ? "online" : "offline",
+        url: base(grafanaPort),
+        links: [{ label: "health", href: `${base(grafanaPort)}/api/health` }],
+        command: "docker compose --profile observability up -d grafana",
         probe: "HTTP",
       },
     ];

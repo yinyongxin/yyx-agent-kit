@@ -41,6 +41,7 @@ const MENU: {
     initiallyOpened: true,
     links: [
       { label: "设置", link: "/settings" },
+      { label: "日志", link: "/observability/logs" },
       { label: "接口联调", link: "/integration" },
     ],
   },
