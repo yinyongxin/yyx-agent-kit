@@ -4,6 +4,7 @@ import { PasswordHasher } from "@nestjs/authentication";
 import { resolve } from "node:path";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { DEFAULT_TENANT_ID } from "../../../packages/shared/src/index";
+import { ensureTenantRoles } from "../src/tenants/provisioning/ensure-roles";
 
 /**
  * seed 只负责初始业务数据（默认租户/角色/权限点/套餐），不负责表结构，也不负责已有数据演进。
@@ -31,30 +32,7 @@ const SEED_USER = {
   displayName: "示例管理员",
 } as const;
 
-// 内置角色 + 权限。admin 拥有全部权限，member 拥有只读权限。
-const PERMISSIONS = [
-  { code: "tenant:read", name: "查看租户" },
-  { code: "tenant:write", name: "管理租户" },
-  { code: "user:read", name: "查看用户" },
-  { code: "user:write", name: "管理用户" },
-  { code: "role:read", name: "查看角色" },
-  { code: "role:write", name: "管理角色" },
-  { code: "knowledge:read", name: "查看知识库" },
-  { code: "knowledge:write", name: "管理知识库" },
-  { code: "replay:read", name: "查看动线回放" },
-  { code: "replay:write", name: "管理动线回放" },
-  { code: "billing:manage", name: "管理套餐订阅" },
-] as const;
-
-const ROLES = [
-  { code: "admin", name: "管理员", description: "拥有全部权限", all: true },
-  {
-    code: "member",
-    name: "普通成员",
-    description: "只读权限",
-    all: false,
-  },
-] as const;
+// 内置角色 + 权限模板见 src/tenants/provisioning/role-templates.ts，seed 与新建租户共用。
 
 const PLANS = [
   { code: "free", name: "免费版", description: "基础功能" },
@@ -108,50 +86,8 @@ async function main() {
         create: { id: DEFAULT_TENANT_ID, slug: DEFAULT_TENANT_SLUG, name: "默认租户" },
       });
 
-      // 权限点
-      const permissionIds = new Map<string, string>();
-      for (const p of PERMISSIONS) {
-        const record = await tx.permission.upsert({
-          where: { code: p.code },
-          update: { name: p.name },
-          create: { code: p.code, name: p.name },
-        });
-        permissionIds.set(p.code, record.id);
-      }
-
-      // 角色 + 角色权限
-      let adminRoleId: string | undefined;
-      for (const r of ROLES) {
-        const role = await tx.role.upsert({
-          where: { tenantId_code: { tenantId: tenant.id, code: r.code } },
-          update: { name: r.name, description: r.description },
-          create: {
-            tenantId: tenant.id,
-            code: r.code,
-            name: r.name,
-            description: r.description,
-            isSystem: true,
-          },
-        });
-
-        const codes = r.all
-          ? PERMISSIONS.map((p) => p.code)
-          : PERMISSIONS.filter((p) => p.code.endsWith(":read")).map((p) => p.code);
-
-        for (const code of codes) {
-          const permissionId = permissionIds.get(code);
-          if (!permissionId) continue;
-          await tx.rolePermission.upsert({
-            where: {
-              roleId_permissionId: { roleId: role.id, permissionId },
-            },
-            update: {},
-            create: { roleId: role.id, permissionId },
-          });
-        }
-
-        if (r.code === "admin") adminRoleId = role.id;
-      }
+      // 权限点 + 内置角色（与新建租户共用模板）
+      const { adminRoleId } = await ensureTenantRoles(tx, tenant.id);
 
       // 示例用户（全局身份）+ 默认租户成员关系 + admin 角色 + 平台管理员
       // 密码可用 SEED_USER_PASSWORD 覆盖；开发环境默认值记入 docs/guides/credentials.md。

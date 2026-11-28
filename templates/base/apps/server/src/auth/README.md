@@ -16,7 +16,7 @@
 | `me.controller.ts` | `GET /me`（当前用户资料 + `isPlatformAdmin`）、`GET /me/tenants`（所属租户） |
 | `dto/` | `SignInDto` / `SignInResponseDto` / `TenantSummaryDto` / `MembershipDto`，详见该目录 README |
 | `middleware/` | `tenant.middleware.ts`：从 `/t/:tenantId` 解析租户并写 `TenantContext`（不做校验） |
-| `guards/` | `tenant-membership.guard.ts`：校验用户属于该租户（非成员 404 / 角色或权限不足 403） |
+| `guards/` | `tenant-membership.guard.ts`：校验用户属于该租户（非成员 404 / 角色或权限不足 403）；`platform-admin.guard.ts`：平台管理员与级别校验 |
 | `decorators/` | `membership.decorator.ts`：`@CurrentMembership()` / `@MinRole()`；`permission.decorator.ts`：`@RequirePermission()` |
 | `membership.types.ts` | `Membership` 类型（含 `permissions` 并集）与 `ROLE_RANK` 等级表 |
 | `tenant-context.util.ts` | AsyncLocalStorage 租户上下文，fail-closed |

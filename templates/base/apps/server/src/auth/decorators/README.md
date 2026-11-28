@@ -10,6 +10,7 @@
 | --- | --- |
 | `membership.decorator.ts` | `@CurrentMembership()` 注入 guard 挂载的成员信息；`@MinRole("admin")` 声明最低角色 |
 | `permission.decorator.ts` | `@RequirePermission(...codes)` 声明租户接口所需权限点（全部满足） |
+| `platform-admin.decorator.ts` | `@RequirePlatformAdminLevel("super")` 要求平台管理员级别（super / ops） |
 
 ## 注意事项
 

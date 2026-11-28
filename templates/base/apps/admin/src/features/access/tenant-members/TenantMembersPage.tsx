@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { Button } from "@mantine/core";
+import { Button, Center, Loader } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
-import { PermissionGate } from "@/components/Permission";
+import { PermissionGate, PlatformAdminGate } from "@/components/Permission";
 import { useMe } from "@/lib/me";
 import { TenantPermissionsProvider } from "@/lib/permissions";
 import { useTenant } from "@/lib/tenant";
@@ -12,7 +12,7 @@ import { TenantMembersContent } from "./TenantMembersContent";
 /** 租户成员页：页面壳 + 返回入口 + 可复用内容 */
 export const TenantMembersPage = ({ tenantId }: { tenantId: string }) => {
   const navigate = useNavigate();
-  const { me } = useMe();
+  const { me, loading: meLoading } = useMe();
   const { setTenantId } = useTenant();
 
   // 让全局当前租户与正在查看的租户保持一致（导航里的角色菜单据此判断权限）
@@ -36,11 +36,21 @@ export const TenantMembersPage = ({ tenantId }: { tenantId: string }) => {
         ) : undefined
       }
     >
-      <TenantPermissionsProvider tenantId={tenantId}>
-        <PermissionGate permission="user:read">
-          <TenantMembersContent tenantId={tenantId} />
-        </PermissionGate>
-      </TenantPermissionsProvider>
+      {meLoading ? (
+        <Center mih={200}>
+          <Loader size="sm" />
+        </Center>
+      ) : me?.isPlatformAdmin ? (
+        <PlatformAdminGate>
+          <TenantMembersContent tenantId={tenantId} mode="platform" />
+        </PlatformAdminGate>
+      ) : (
+        <TenantPermissionsProvider tenantId={tenantId}>
+          <PermissionGate permission="user:read">
+            <TenantMembersContent tenantId={tenantId} mode="tenant" />
+          </PermissionGate>
+        </TenantPermissionsProvider>
+      )}
     </PageShell>
   );
 };

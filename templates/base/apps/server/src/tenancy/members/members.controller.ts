@@ -113,7 +113,9 @@ export class TenantMembersController {
     @Body() dto: UpdateMemberDto,
     @CurrentMembership() membership: Membership,
   ): Promise<MemberResponseDto> {
-    return this.members.update(tx, tenantId, userId, dto, membership.userId);
+    return this.members.update(tx, tenantId, userId, dto, {
+      actorUserId: membership.userId,
+    });
   }
 
   @ApiOperation({ summary: "移除成员（同时移除其在当前租户的角色；不能移除自己）" })
@@ -135,6 +137,6 @@ export class TenantMembersController {
     @Param("userId", ParseUUIDPipe) userId: string,
     @CurrentUser("id") actorUserId: string,
   ): Promise<void> {
-    return this.members.remove(tx, tenantId, userId, actorUserId);
+    return this.members.remove(tx, tenantId, userId, { actorUserId });
   }
 }

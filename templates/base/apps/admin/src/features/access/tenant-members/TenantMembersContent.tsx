@@ -22,6 +22,11 @@ import {
   Tooltip,
 } from "@mantine/core";
 import {
+  platformTenantMembersControllerAdd,
+  platformTenantMembersControllerList,
+  platformTenantMembersControllerRemove,
+  platformTenantMembersControllerUpdate,
+  platformTenantRolesControllerOptions,
   rolesControllerOptions,
   tenantMembersControllerAdd,
   tenantMembersControllerList,
@@ -32,6 +37,7 @@ import {
 } from "@starter/api/generated";
 import { authStore } from "@/lib/auth";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { useMe } from "@/lib/me";
 import { usePermissions } from "@/lib/permissions";
 import {
   DataTableBatchBar,
@@ -114,10 +120,21 @@ const filterFields = [
 ];
 
 /** 租户成员管理：服务端 DataTable + 添加/编辑/停用/移除 */
-export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
+export const TenantMembersContent = ({
+  tenantId,
+  mode = "tenant",
+}: {
+  tenantId: string;
+  /** platform：平台管理员跨租户管理，走 /tenants/:id/members，不依赖租户成员身份 */
+  mode?: "tenant" | "platform";
+}) => {
   const apiRef = useRef<DataTableApi<MemberRow> | null>(null);
   const { can } = usePermissions();
-  const canWrite = can("user:write");
+  const { me } = useMe();
+  const canWrite =
+    mode === "platform"
+      ? me?.platformAdminLevel === "super"
+      : can("user:write");
   const [actionError, setActionError] = useState<string | null>(null);
   const [roleOptions, setRoleOptions] = useState<{ value: string; label: string }[]>([]);
 
@@ -135,14 +152,18 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
 
   useEffect(() => {
     let alive = true;
-    void rolesControllerOptions({ path: { tenantId } }).then((res) => {
+    const request =
+      mode === "platform"
+        ? platformTenantRolesControllerOptions({ path: { tenantId } })
+        : rolesControllerOptions({ path: { tenantId } });
+    void request.then((res) => {
       if (!alive || res.error || !res.data) return;
       setRoleOptions(res.data.map((role) => ({ value: role.code, label: role.name })));
     });
     return () => {
       alive = false;
     };
-  }, [tenantId]);
+  }, [tenantId, mode]);
 
   const defaultRoleCodes = () => {
     if (roleOptions.some((option) => option.value === "member")) return ["member"];
@@ -180,13 +201,20 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
     setActionError(null);
     try {
       if (creating) {
-        const res = await tenantMembersControllerAdd({
-          path: { tenantId },
-          body: {
-            email: form.email.trim(),
-            roleCodes: form.roleCodes,
-          },
-        });
+        const body = {
+          email: form.email.trim(),
+          roleCodes: form.roleCodes,
+        };
+        const res =
+          mode === "platform"
+            ? await platformTenantMembersControllerAdd({
+                path: { tenantId },
+                body,
+              })
+            : await tenantMembersControllerAdd({
+                path: { tenantId },
+                body,
+              });
         if (res.error || !res.data) {
           setActionError(
             getApiErrorMessage(
@@ -198,13 +226,20 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
         }
         apiRef.current?.applyMutation({ row: toRow(res.data), mode: "create" });
       } else if (editing) {
-        const res = await tenantMembersControllerUpdate({
-          path: { tenantId, userId: editing.userId },
-          body: {
-            roleCodes: form.roleCodes,
-            status: form.status,
-          },
-        });
+        const body = {
+          roleCodes: form.roleCodes,
+          status: form.status,
+        };
+        const res =
+          mode === "platform"
+            ? await platformTenantMembersControllerUpdate({
+                path: { tenantId, userId: editing.userId },
+                body,
+              })
+            : await tenantMembersControllerUpdate({
+                path: { tenantId, userId: editing.userId },
+                body,
+              });
         if (res.error || !res.data) {
           setActionError(getApiErrorMessage(res.error, "更新失败"));
           return;
@@ -227,9 +262,14 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
     if (!window.confirm(`确认移除成员「${row.displayName || row.email}」？`)) return;
     setActionError(null);
     try {
-      const res = await tenantMembersControllerRemove({
-        path: { tenantId, userId: row.userId },
-      });
+      const res =
+        mode === "platform"
+          ? await platformTenantMembersControllerRemove({
+              path: { tenantId, userId: row.userId },
+            })
+          : await tenantMembersControllerRemove({
+              path: { tenantId, userId: row.userId },
+            });
       if (res.error) {
         setActionError(getApiErrorMessage(res.error, "移除失败"));
         return;
@@ -330,17 +370,30 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
       api?.setLoading(true);
       setActionError(null);
       try {
-        const res = await tenantMembersControllerList({
-          path: { tenantId },
-          query: {
-            page: ctx.page,
-            pageSize: ctx.pageSize,
-            ...(ctx.keyword ? { keyword: ctx.keyword } : {}),
-            ...(ctx.filters.status
-              ? { status: ctx.filters.status as MemberStatus }
-              : {}),
-          },
-        });
+        const res =
+          mode === "platform"
+            ? await platformTenantMembersControllerList({
+                path: { tenantId },
+                query: {
+                  page: ctx.page,
+                  pageSize: ctx.pageSize,
+                  ...(ctx.keyword ? { keyword: ctx.keyword } : {}),
+                  ...(ctx.filters.status
+                    ? { status: ctx.filters.status as MemberStatus }
+                    : {}),
+                },
+              })
+            : await tenantMembersControllerList({
+                path: { tenantId },
+                query: {
+                  page: ctx.page,
+                  pageSize: ctx.pageSize,
+                  ...(ctx.keyword ? { keyword: ctx.keyword } : {}),
+                  ...(ctx.filters.status
+                    ? { status: ctx.filters.status as MemberStatus }
+                    : {}),
+                },
+              });
         if (res.error) {
           api?.setError(getApiErrorMessage(res.error, "加载成员失败"));
           return;
@@ -353,7 +406,7 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
         api?.setLoading(false);
       }
     },
-    [tenantId],
+    [tenantId, mode],
   );
 
   const table = useDataTable<MemberRow>({
@@ -373,10 +426,15 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
     setActionError(null);
     const results = await Promise.all(
       keys.map((userId) =>
-        tenantMembersControllerUpdate({
-          path: { tenantId, userId },
-          body: { status },
-        }),
+        mode === "platform"
+          ? platformTenantMembersControllerUpdate({
+              path: { tenantId, userId },
+              body: { status },
+            })
+          : tenantMembersControllerUpdate({
+              path: { tenantId, userId },
+              body: { status },
+            }),
       ),
     );
     if (results.some((res) => res.error)) {
@@ -390,7 +448,9 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
     setActionError(null);
     const results = await Promise.all(
       keys.map((userId) =>
-        tenantMembersControllerRemove({ path: { tenantId, userId } }),
+        mode === "platform"
+          ? platformTenantMembersControllerRemove({ path: { tenantId, userId } })
+          : tenantMembersControllerRemove({ path: { tenantId, userId } }),
       ),
     );
     if (results.some((res) => res.error)) {

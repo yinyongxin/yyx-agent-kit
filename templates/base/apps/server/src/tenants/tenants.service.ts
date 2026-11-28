@@ -5,11 +5,13 @@ import {
 } from "@nestjs/common";
 import type { Tenant } from "../generated/prisma/client";
 import { AuditContext } from "../audit/audit-context";
+import { PrismaService } from "../prisma/prisma.service";
 import type { CreateTenantDto } from "./dto/create-tenant.dto";
 import type { QueryTenantsDto } from "./dto/query-tenants.dto";
 import type { TenantListResponseDto } from "./dto/tenant-list-response.dto";
 import type { TenantResponseDto } from "./dto/tenant-response.dto";
 import type { UpdateTenantDto } from "./dto/update-tenant.dto";
+import { provisionTenant } from "./provisioning/provision-tenant";
 import { TenantsRepository } from "./repositories/tenants.repository";
 
 const toTenantDto = (tenant: Tenant): TenantResponseDto => ({
@@ -23,7 +25,10 @@ const toTenantDto = (tenant: Tenant): TenantResponseDto => ({
 
 @Injectable()
 export class TenantsService {
-  constructor(private readonly tenants: TenantsRepository) {}
+  constructor(
+    private readonly tenants: TenantsRepository,
+    private readonly prisma: PrismaService,
+  ) {}
 
   async list(query: QueryTenantsDto): Promise<TenantListResponseDto> {
     const page = query.page ?? 1;
@@ -49,10 +54,20 @@ export class TenantsService {
     const existing = await this.tenants.findBySlug(input.slug);
     if (existing) throw new ConflictException("slug 已存在");
 
-    const tenant = await this.tenants.create({
-      name: input.name,
-      slug: input.slug,
-    });
+    // 租户 + 内置角色 + 可选初始管理员：同一事务，失败全部回滚
+    const tenant = await this.prisma.$transaction(
+      async (tx) => {
+        const created = await this.tenants.createInTx(tx, {
+          name: input.name,
+          slug: input.slug,
+        });
+        await provisionTenant(tx, created.id, {
+          initialAdminEmail: input.initialAdminEmail,
+        });
+        return created;
+      },
+      { maxWait: 2_000, timeout: 10_000 },
+    );
     return toTenantDto(tenant);
   }
 

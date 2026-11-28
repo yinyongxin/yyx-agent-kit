@@ -78,6 +78,7 @@ export class UsersRepository {
       email: row.email,
       displayName: row.displayName,
       isPlatformAdmin: Boolean(row.platformAdmin),
+      platformAdminLevel: row.platformAdmin?.level ?? null,
     };
   }
 

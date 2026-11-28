@@ -52,6 +52,14 @@ export class TenantsRepository {
     return this.prisma.scoped.tenant.create({ data });
   }
 
+  /** 事务内创建租户：与角色初始化、初始管理员同一事务 */
+  createInTx(
+    tx: Prisma.TransactionClient,
+    data: { name: string; slug: string },
+  ) {
+    return tx.tenant.create({ data });
+  }
+
   update(
     id: string,
     data: { name?: string; status?: "active" | "suspended" },

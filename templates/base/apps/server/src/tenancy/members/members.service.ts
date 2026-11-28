@@ -16,6 +16,13 @@ import { MembersRepository, type MemberRow } from "./members.repository";
 
 const DEFAULT_ROLE_CODE = "member";
 
+export type MemberMutationOptions = {
+  /** 租户自助操作时传当前用户 id，用于禁止修改/移除自己 */
+  actorUserId?: string;
+  /** 平台级操作：禁止移除/停用租户最后一个管理员 */
+  protectLastAdmin?: boolean;
+};
+
 const toDto = (row: MemberRow, roles: RoleDto[]): MemberResponseDto => ({
   userId: row.userId,
   email: row.user.email,
@@ -108,9 +115,9 @@ export class MembersService {
     tenantId: string,
     userId: string,
     input: UpdateMemberDto,
-    actorUserId: string,
+    options: MemberMutationOptions = {},
   ): Promise<MemberResponseDto> {
-    if (userId === actorUserId) {
+    if (options.actorUserId && userId === options.actorUserId) {
       throw new ForbiddenException("不能修改自己的租户成员关系");
     }
     if (input.status === undefined && input.roleCodes === undefined) {
@@ -120,12 +127,23 @@ export class MembersService {
     const beforeRow = await this.members.findMembership(tx, tenantId, userId);
     if (!beforeRow) throw new NotFoundException("成员不存在");
     const beforeRoles = await this.members.findRolesForUser(tx, tenantId, userId);
-    AuditContext.setBefore(toDto(beforeRow, beforeRoles));
 
     let roles = beforeRoles;
     if (input.roleCodes !== undefined) {
       roles = await this.resolveRoles(tx, tenantId, input.roleCodes);
     }
+
+    if (options.protectLastAdmin) {
+      await this.assertLastAdmin(
+        tx,
+        tenantId,
+        userId,
+        roles.map((role) => role.code),
+        input.status ?? beforeRow.status,
+      );
+    }
+
+    AuditContext.setBefore(toDto(beforeRow, beforeRoles));
 
     const row = await this.members.updateMembership(
       tx,
@@ -150,14 +168,20 @@ export class MembersService {
     tx: Prisma.TransactionClient,
     tenantId: string,
     userId: string,
-    actorUserId: string,
+    options: MemberMutationOptions = {},
   ): Promise<void> {
-    if (userId === actorUserId) {
+    if (options.actorUserId && userId === options.actorUserId) {
       throw new ForbiddenException("不能移除自己");
     }
 
     const beforeRow = await this.members.findMembership(tx, tenantId, userId);
     if (!beforeRow) throw new NotFoundException("成员不存在");
+
+    if (options.protectLastAdmin) {
+      await this.assertLastAdmin(tx, tenantId, userId, [], "suspended", {
+        allowSoleMemberRemoval: true,
+      });
+    }
     AuditContext.setBefore(
       toDto(
         beforeRow,
@@ -166,6 +190,43 @@ export class MembersService {
     );
 
     await this.members.removeMembership(tx, tenantId, userId);
+  }
+
+  /**
+   * 平台级操作保护：目标是当前租户唯一 active 管理员时，禁止移除、停用或改成非管理员。
+   * 租户自助操作不需要：不能改自己，因此操作者本人始终还是管理员。
+   */
+  private async assertLastAdmin(
+    tx: Prisma.TransactionClient,
+    tenantId: string,
+    userId: string,
+    nextRoleCodes: string[],
+    nextStatus: string,
+    options: { allowSoleMemberRemoval?: boolean } = {},
+  ): Promise<void> {
+    const adminCodes = ["admin", "owner"];
+    const rows = await tx.userRole.findMany({
+      where: {
+        role: { tenantId, code: { in: adminCodes } },
+        user: { tenants: { some: { tenantId, status: "active" } } },
+      },
+      select: { userId: true },
+    });
+    const adminIds = new Set(rows.map((row) => row.userId));
+    if (!adminIds.has(userId)) return;
+
+    const staysAdmin = nextRoleCodes.some((code) => adminCodes.includes(code));
+    if (staysAdmin && nextStatus === "active") return;
+
+    if (adminIds.size <= 1) {
+      // 只剩「唯一管理员 + 无其他成员」时允许移除，用于平台回收空租户；
+      // 降级/停用仍然禁止，避免留下无管理员的租户。
+      if (options.allowSoleMemberRemoval) {
+        const totalMembers = await tx.userTenant.count({ where: { tenantId } });
+        if (totalMembers <= 1) return;
+      }
+      throw new ConflictException("不能移除或停用租户最后一个管理员");
+    }
   }
 
   /** 校验角色 code 都属于当前租户；不存在时统一 400，避免把用户加进「没有权限」的成员关系 */

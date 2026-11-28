@@ -27,5 +27,6 @@ import { PermissionsRepository } from "./permissions/permissions.repository";
     PermissionsRepository,
     TenantTransactionInterceptor,
   ],
+  exports: [MembersService, RolesService, TenantTransactionInterceptor],
 })
 export class TenancyModule {}

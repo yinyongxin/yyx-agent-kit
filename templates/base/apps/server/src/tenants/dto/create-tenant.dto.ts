@@ -1,5 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, Length, Matches } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+  MaxLength,
+} from "class-validator";
 
 export class CreateTenantDto {
   @ApiProperty({ example: "Acme Inc", description: "租户名称" })
@@ -15,4 +22,13 @@ export class CreateTenantDto {
   @Length(3, 32)
   @Matches(/^[a-z0-9-]+$/, { message: "slug 只能包含小写字母、数字和 -" })
   slug!: string;
+
+  @ApiPropertyOptional({
+    example: "owner@example.com",
+    description: "可选：创建后自动加入并授予 admin 的已存在用户邮箱",
+  })
+  @IsOptional()
+  @IsEmail()
+  @MaxLength(200)
+  initialAdminEmail?: string;
 }

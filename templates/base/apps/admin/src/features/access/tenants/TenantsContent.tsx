@@ -35,7 +35,12 @@ type TenantRow = {
   createdAt: string;
 };
 
-type TenantForm = { name: string; slug: string; status: TenantRow["status"] };
+type TenantForm = {
+  name: string;
+  slug: string;
+  status: TenantRow["status"];
+  initialAdminEmail: string;
+};
 
 const toRow = (tenant: TenantResponseDto): TenantRow => ({
   id: tenant.id,
@@ -84,17 +89,27 @@ export const TenantsContent = () => {
 
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<TenantRow | null>(null);
-  const [form, setForm] = useState<TenantForm>({ name: "", slug: "", status: "active" });
+  const [form, setForm] = useState<TenantForm>({
+    name: "",
+    slug: "",
+    status: "active",
+    initialAdminEmail: "",
+  });
   const [saving, setSaving] = useState(false);
 
   const openCreate = () => {
-    setForm({ name: "", slug: "", status: "active" });
+    setForm({
+      name: "",
+      slug: "",
+      status: "active",
+      initialAdminEmail: "",
+    });
     setCreating(true);
     setEditing(null);
   };
 
   const openEdit = (row: TenantRow) => {
-    setForm({ name: row.name, slug: row.slug, status: row.status });
+    setForm({ name: row.name, slug: row.slug, status: row.status, initialAdminEmail: "" });
     setEditing(row);
     setCreating(false);
   };
@@ -110,10 +125,16 @@ export const TenantsContent = () => {
     try {
       if (creating) {
         const res = await tenantsControllerCreate({
-          body: { name: form.name, slug: form.slug },
+          body: {
+            name: form.name,
+            slug: form.slug,
+            ...(form.initialAdminEmail.trim()
+              ? { initialAdminEmail: form.initialAdminEmail.trim() }
+              : {}),
+          },
         });
         if (res.error || !res.data) {
-          setActionError("创建失败：slug 可能已存在");
+          setActionError("创建失败：slug 可能已存在，或初始管理员邮箱无效");
           return;
         }
         apiRef.current?.applyMutation({ row: toRow(res.data), mode: "create" });
@@ -284,7 +305,17 @@ export const TenantsContent = () => {
             description="小写字母、数字、-，创建后不可修改"
             onChange={(e) => setForm({ ...form, slug: e.currentTarget.value })}
           />
-          {editing && (
+          {creating && (
+            <TextInput
+              label="初始管理员邮箱（可选）"
+              type="email"
+              value={form.initialAdminEmail}
+              description="填写已存在用户邮箱：创建后自动加入租户并授予管理员角色"
+              onChange={(e) =>
+                setForm({ ...form, initialAdminEmail: e.currentTarget.value })
+              }
+            />
+          )}          {editing && (
             <Select
               label="状态"
               data={STATUS_OPTIONS}

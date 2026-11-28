@@ -13,4 +13,11 @@ export class MeResponseDto {
 
   @ApiProperty({ description: "是否为平台管理员（super / ops）" })
   isPlatformAdmin!: boolean;
+
+  @ApiProperty({
+    enum: ["super", "ops"],
+    nullable: true,
+    description: "平台管理员级别；非平台管理员为 null",
+  })
+  platformAdminLevel!: "super" | "ops" | null;
 }
