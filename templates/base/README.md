@@ -47,7 +47,7 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | postgres | `pgvector/pgvector:pg17` | 54732 | 关系库 + pgvector 扩展；认证状态表也在此库 |
 | redis | `redis:7-alpine` | 46379 | 限流共享存储 / 业务缓存 |
 
-**可观测性（可选）**：`docker compose --profile observability up -d` 额外起 Loki（47110）、Grafana（47111）、Alloy（47112）、Tempo（47113 / OTLP 47114）。
+**可观测性（本地默认）**：`docker compose up -d` 会同时启动 Loki（47110）、Grafana（47111）、Alloy（47112）、Tempo（47113 / OTLP 47114）；只想要最小依赖时用 `docker compose up -d postgres redis`。
 默认 Grafana 账号 `admin` / `starter_grafana_2026`（`.env` 可改），开发导航页「本地凭据」会显示；
 打开 `http://localhost:47111/d/starter-overview` 可看日志量、错误与告警日志。
 应用日志写 `logs/`（`pino-roll` 按天/50m 轮转，保留 7 个），Alloy 采集后进 Loki；管理端 `/observability/logs` 可检索请求日志与 traceId 时间线，

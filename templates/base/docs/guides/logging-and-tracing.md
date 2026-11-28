@@ -124,11 +124,11 @@ pino + nestjs-pino 在这些点成熟，NodeAdapter 实测通过（健康检查�
 ## 5. 本地可观测性栈
 
 ```bash
-# 只起数据库/Redis（默认）
+# 默认：数据库/Redis + Loki + Alloy + Grafana + Tempo
 docker compose up -d
 
-# 额外起 Loki + Alloy + Grafana + Tempo
-docker compose --profile observability up -d
+# 只要最小依赖（数据库/Redis）
+docker compose up -d postgres redis
 ```
 
 | 服务 | 端口 | 入口 |

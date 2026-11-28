@@ -268,7 +268,7 @@ export class DevService {
           { label: "ready", href: `${base(lokiPort)}/ready` },
           { label: "metrics", href: `${base(lokiPort)}/metrics` },
         ],
-        command: "docker compose --profile observability up -d loki",
+        command: "docker compose up -d loki",
         probe: "HTTP",
       },
       {
@@ -287,7 +287,7 @@ export class DevService {
           { label: "账号", value: grafanaUser },
           { label: "密码", value: grafanaPassword },
         ],
-        command: "docker compose --profile observability up -d grafana",
+        command: "docker compose up -d grafana",
         probe: "HTTP",
       },
       {
@@ -298,7 +298,7 @@ export class DevService {
         status: tempoUp ? "online" : "offline",
         url: base(tempoPort),
         links: [{ label: "ready", href: `${base(tempoPort)}/ready` }],
-        command: "docker compose --profile observability up -d tempo",
+        command: "docker compose up -d tempo",
         probe: "HTTP",
       },
     ];

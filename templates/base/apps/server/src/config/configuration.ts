@@ -58,7 +58,7 @@ export const devConfig = registerAs("dev", () => {
     /** 本地 Penpot MCP（tools/penpot/start-mcp.ps1）：4401 MCP、4400 插件 manifest */
     penpotMcpPort: Number(process.env.PENPOT_MCP_PORT ?? 4401),
     penpotPluginPort: Number(process.env.PENPOT_MCP_PLUGIN_PORT ?? 4400),
-    /** 可观测性（docker compose --profile observability） */
+    /** 可观测性（docker compose 默认启动） */
     lokiPort: Number(process.env.LOKI_PORT ?? 47110),
     grafanaPort: Number(process.env.GRAFANA_PORT ?? 47111),
     tempoPort: Number(process.env.TEMPO_PORT ?? 47113),

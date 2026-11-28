@@ -1,6 +1,6 @@
 # observability — 本地可观测性栈配置
 
-随 `docker compose --profile observability up -d` 启动，默认不参与日常开发。
+随 `docker compose up -d` 默认启动，日常开发即可使用管理端日志页与 Grafana。
 
 ## 文件索引
 
@@ -50,6 +50,6 @@ apps/server（OTel） ──► OTLP HTTP 47114 ──► Tempo ──► Grafan
 
 - label 只保留 `service` / `env` / `level`；traceId / userId / tenantId 用 structured metadata，**不要**改成 label（高基数）
 - 本地 Loki 保留 168h、Tempo 保留 24h；长期保留换对象存储并单独部署 compactor
-- 修改配置后 `docker compose --profile observability restart loki alloy tempo grafana`
+- 修改配置后 `docker compose restart loki alloy tempo grafana`
 - 管理端日志页依赖 `LOKI_URL`（默认 `http://localhost:47110`）与 `LOG_SERVICE_NAME`（默认 `starter-api`）
 - OTel 只导出 traces；logs 走 pino→Loki，metrics 暂不采集（`OTEL_LOGS_EXPORTER=none` / `OTEL_METRICS_EXPORTER=none`）

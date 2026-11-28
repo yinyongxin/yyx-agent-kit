@@ -98,8 +98,8 @@ ego 实际验证：
 ## 7. 运维手册
 
 ```bash
-# 启动可观测性栈
-docker compose --profile observability up -d
+# 启动本地依赖（默认含可观测性栈）
+docker compose up -d
 
 # 日志页
 open http://localhost:47174/observability/logs

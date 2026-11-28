@@ -1,6 +1,6 @@
 /**
  * 链路追踪验收（OTel → Tempo）。
- * 前置：server 已启动且 `OTEL_ENABLED=true`；`docker compose --profile observability up -d tempo`。
+ * 前置：server 已启动且 `OTEL_ENABLED=true`；`docker compose up -d tempo`。
  * 运行：`pnpm --filter @starter/server test:traces`
  *
  * Tempo 不可达 / 未收到 trace 时 SKIP（不算失败），便于只跑主业务回归。
@@ -57,11 +57,11 @@ const hexToBase64 = (hex) => Buffer.from(hex, "hex").toString("base64");
 try {
   const ready = await fetch(`${TEMPO}/ready`);
   if (!ready.ok) {
-    console.log("\nSKIP Tempo 未就绪（先 docker compose --profile observability up -d tempo）");
+    console.log("\nSKIP Tempo 未就绪（先 docker compose up -d tempo）");
     process.exit(0);
   }
 } catch {
-  console.log("\nSKIP Tempo 不可达（先 docker compose --profile observability up -d tempo）");
+  console.log("\nSKIP Tempo 不可达（先 docker compose up -d tempo）");
   process.exit(0);
 }
 

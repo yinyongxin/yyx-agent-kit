@@ -1,6 +1,6 @@
 /**
  * 日志查询 API 验收（Loki 只读接口）。
- * 前置：server 已启动、数据库已 seed、`docker compose --profile observability up -d`。
+ * 前置：server 已启动、数据库已 seed、`docker compose up -d`（默认含 Loki）。
  * 运行：`pnpm --filter @starter/server test:logs`
  *
  * Loki 不可达时整组跳过（不算失败），便于只跑主业务回归。
@@ -61,7 +61,7 @@ check("未登录访问日志接口 401", unauthorized.status === 401, `HTTP ${un
 
 const list = await request("GET", "/logs?range=24h&pageSize=5", undefined, token);
 if (list.status === 502 || list.status === 503) {
-  console.log("\nSKIP Loki 不可达（先 docker compose --profile observability up -d）");
+  console.log("\nSKIP Loki 不可达（执行 docker compose up -d）");
   process.exit(0);
 }
 

@@ -11,7 +11,7 @@
 - 接口调用统一走 `@starter/api`，业务代码不自己写 `fetch`、不自己拼 URL。
 - **日志与 traceId 统一由 `apps/server/src/logging/` 处理**：所有响应头带 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；新接口不要手动加 traceId，也不要另起 logger。业务打印规范见 [`docs/guides/logging-conventions.md`](docs/guides/logging-conventions.md)，架构/运维见 [`docs/guides/logging-and-tracing.md`](docs/guides/logging-and-tracing.md)。
 - **本地凭据**：数据库 / Redis / Penpot / Grafana / 测试账号统一在开发导航页 `http://localhost:47100/starter/starter/api/dev#services` 的「本地凭据」卡片查看（仅开发环境，生产 404）；新增有账号密码的本地服务时同步 `src/dev/dev.service.ts` 的 `credentials`。
-- **日志检索**：管理端 `/observability/logs`，后端 `apps/server/src/logs/`（只读 Loki）。本地需 `docker compose --profile observability up -d` 起 Loki（47110）/ Grafana（47111）/ Alloy（47112）；日志写入 `logs/app.log` 供 Alloy 采集。
+- **日志检索**：管理端 `/observability/logs`，后端 `apps/server/src/logs/`（只读 Loki）。本地 `docker compose up -d` 默认启动 Loki（47110）/ Grafana（47111）/ Alloy（47112）/ Tempo（47113）；只想要最小依赖时用 `docker compose up -d postgres redis`。日志写入 `logs/app.log` 供 Alloy 采集。
 - **租户接口授权按权限点**：租户内业务接口用 `@RequirePermission(PERMISSIONS.xxx)` 声明所需权限（可传多个，全部满足）；权限来自当前租户角色并集，`owner` / `admin` 视为拥有全部权限（`["*"]`）。不要只靠 `@MinRole` 做业务授权，权限点才对应角色配置。
 - **跨租户成员操作**：平台级引导/恢复走 `/tenants/:tenantId/members`（写操作要求 `super`），不要为了让平台管理员通过 `TenantMembershipGuard` 而伪造租户成员关系。
 - **管理端前端权限**：按钮 / 操作项显隐用 `<Can permission="user:write">`，租户页面级门禁用 `<PermissionGate>`，平台页面用 `<PlatformAdminGate>`；导航菜单用 `useMenuAccess()`（平台专属标 `platformOnly`，租户菜单标 `permission`）。前端只做展示收口，后端仍必须用 `@RequirePermission` / `PlatformAdminGuard` 拦截。
