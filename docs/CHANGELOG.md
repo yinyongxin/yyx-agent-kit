@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **测试租户清理命令**：新增 `db:cleanup:test-tenants`，默认 dry-run，`-- --apply` 硬删除软删除的测试租户（e2e/audit/prov/ui/ego/test）并级联角色/成员/文件/订阅，保留 `default`、`demo-b` 与审计日志
 - **租户软删除状态统一**：`DELETE /tenants/:id` 现在同时写 `status=suspended` + `deletedAt`；历史软删除租户通过迁移统一为 `suspended`，避免只依赖 `deletedAt` 拦截
 - **租户自助成员管理 + 演示账号**：管理端新增「权限管理 → 成员」，跟随全局租户切换器，复用 `TenantMembersContent`，租户管理员可添加已存在账号、分配角色、停用/移除成员；新增 `db:seed:demo`，创建平台超管/运维、租户管理员、普通成员、文件角色、多租户、停用成员、禁用账号，统一密码 `demo_pwd_2026`；开发导航页「工具 → 演示账号」可一键重置（`POST /dev/seed-demo`），无需命令行；凭据文档同步
 - **SaaS 账号模型说明**：新增 `docs/guides/identity-tenant-model.md`，用 ER 图、管理员建账号流程图和鉴权链路图说明 `User` / `Tenant` / `UserTenant` / `Role` / `Permission` 的关系与当前边界

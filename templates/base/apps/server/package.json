@@ -33,6 +33,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:demo": "tsx prisma/seed-demo.ts",
+    "db:cleanup:test-tenants": "tsx prisma/cleanup-test-tenants.ts",
     "db:reset": "prisma migrate reset"
   },
   "dependencies": {
