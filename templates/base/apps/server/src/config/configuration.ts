@@ -84,6 +84,10 @@ export const loggingConfig = registerAs("logging", () => {
     bodyLimit: Number(process.env.LOG_BODY_LIMIT ?? 16384),
     /** 额外写一份 JSON 日志到文件（相对进程 cwd）；生产不配则只写 stdout */
     file: process.env.LOG_FILE ?? "",
+    /** 文件轮转：daily / hourly，按大小兜底，保留 N 个历史文件 */
+    fileRotateFrequency: process.env.LOG_ROTATE_FREQUENCY ?? "daily",
+    fileRotateSize: process.env.LOG_ROTATE_SIZE ?? "50m",
+    fileRotateKeep: Number(process.env.LOG_ROTATE_KEEP ?? 7),
     /** 管理端日志页查询用；未配置时日志查询 API 返回 503 */
     lokiUrl: process.env.LOKI_URL ?? "http://localhost:47110",
     /** Loki 里的 service label，需与 Alloy 配置一致 */

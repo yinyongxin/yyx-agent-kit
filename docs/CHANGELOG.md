@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **日志轮转与告警**：本地文件改用 `pino-roll`，按天/50m 切分（`app.YYYY-MM-DD.N.log`），保留 7 个（`LOG_ROTATE_*`）；Grafana provisioning 新增两条告警规则（错误日志 >10/5m、慢请求 >5/5m），状态 `health=ok`
 - **开发导航页统一展示本地凭据**：`/api/dev#services` 的「本地凭据」卡片覆盖 server 测试账号、PostgreSQL（应用 + 管理）、Redis、Penpot、Grafana；点击值复制；凭据从 `.env` / `DATABASE_URL` 解析，仅开发环境返回
 - **Grafana 概览与本地凭据**：Grafana 固定 12.4.16（13.x 的 Loki/Tempo bundled 插件在 Explore 加载失败）；默认账号 `admin` / `starter_grafana_2026`，开发导航页新增「本地凭据」卡片（可点击复制）；新增预置 Dashboard「Starter 概览」（日志量 / 错误数 / 按 level 曲线 / 告警日志），dev 页 Grafana 入口指向该概览
 - **链路追踪（OTel + Tempo）**：`src/tracing.ts` 初始化 `@opentelemetry/sdk-node`，OTLP → Tempo（47113 查询 / 47114 OTLP HTTP）；NodeAdapter 下 HTTP 插桩的 context 传不进 middleware，改由 `TraceMiddleware` 创建 server span 并用 `context.with` 包裹请求链，日志 traceId 与 Tempo 一致；关闭 `instrumentation-nestjs-core`（不支持 Nest 12）/ `fs`，logs/metrics 不重复导出；新增 Tempo compose 服务、Grafana 数据源与 `test:traces` 验收

@@ -132,8 +132,11 @@ Grafana 固定 **12.x**：13.x 的 Loki/Tempo bundled 插件在 Explore 里加�
 - `alloy-config.alloy`：tail `logs/*.log` → 解析 JSON → `level` 做 label，traceId/requestId/userId/tenantId 做 structured metadata
 - `tempo-config.yaml`：单进程 local 存储，OTLP HTTP/gRPC 接收，保留 24h
 - `grafana/provisioning`：预置 Loki + Tempo 数据源（Tempo 可跳同 traceId 的 Loki 日志）
+- `grafana/provisioning/alerting/rules.yaml`：错误日志过多、慢请求过多两条告警规则
 
 应用侧：`.env` 设置 `LOG_FILE=../../logs/app.log`（相对 `apps/server`），Alloy 挂载项目根 `./logs`。
+文件由 `pino-roll` 轮转：按天（`LOG_ROTATE_FREQUENCY=daily`）或超过 `LOG_ROTATE_SIZE`（默认 50m）切分，
+命名 `app.YYYY-MM-DD.N.log`，保留 `LOG_ROTATE_KEEP`（默认 7）个历史文件。
 生产容器不配 `LOG_FILE`，只写 stdout，由容器日志采集（Alloy `discovery.docker` / K8s）。
 
 验证：
@@ -175,7 +178,21 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 - 管理端 `/observability/audit-logs`
 - 与请求日志分开：请求日志是排障数据（Loki，短保留），审计是合规数据（PostgreSQL，长保留）
 
-## 8. 性能与容量
+## 8. 告警
+
+`docker/observability/grafana/provisioning/alerting/rules.yaml` 预置两条规则（Grafana Alerting）：
+
+| 规则 | 条件 | 持续 |
+| --- | --- | --- |
+| 错误日志过多 | 近 5m `level=error` 条数 > 10 | 5m |
+| 慢请求过多 | 近 5m `responseTime > 1000` 条数 > 5 | 5m |
+
+- 规则放在 Grafana 的 `General` folder，启动时由 provisioning 自动加载
+- 通知默认走 `grafana-default-email`；本地没配 SMTP 只会记录发送失败，不影响规则状态
+- 生产在 `Alerting → Contact points` 接 Slack / 邮件 / Webhook，并在 `Notification policies` 分配
+- 查规则状态：`GET /api/prometheus/grafana/api/v1/rules`（health=ok 表示表达式可执行）
+
+## 9. 性能与容量
 
 - pino overhead 低；成本主要来自 body 序列化与日志量
 - 成功请求 body 日志生产默认关闭；错误 / 慢请求可 100%
@@ -185,7 +202,7 @@ curl -s -G http://localhost:47110/loki/api/v1/query_range \
 - OTel 只保留 HTTP client / pg / dns 等基础插桩；`instrumentation-nestjs-core` 必须关闭（不支持 Nest 12）
 - Tempo 本地保留 24h；生产换对象存储（S3/MinIO），采样率按流量调低
 
-## 9. 验证基线
+## 10. 验证基线
 
 - `/api/health` 响应头有 `X-Trace-Id` / `traceparent`
 - 入站 `traceparent` 被复用

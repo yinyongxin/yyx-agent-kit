@@ -34,6 +34,10 @@
 | `LOG_LEVEL` | 开发 `debug` / 生产 `info` | pino 级别 |
 | `LOG_HTTP_BODY` | 开发 `true` / 生产 `false` | 是否记录请求/响应体 |
 | `LOG_BODY_LIMIT` | `16384` | body 日志字符上限 |
+| `LOG_FILE` | 空 | 额外写文件（开发 `../../logs/app.log`）；生产不配只写 stdout |
+| `LOG_ROTATE_FREQUENCY` | `daily` | 轮转频率：`daily` / `hourly` |
+| `LOG_ROTATE_SIZE` | `50m` | 单文件大小上限，超过即切 |
+| `LOG_ROTATE_KEEP` | `7` | 保留的历史文件数（不含当前文件） |
 
 ## 注意
 

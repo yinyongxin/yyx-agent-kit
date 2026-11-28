@@ -29,21 +29,32 @@ import { TraceMiddleware, type TracedRequest } from "./trace.middleware";
         const level = config.getOrThrow<string>("logging.level");
         const httpBody = config.getOrThrow<boolean>("logging.httpBody");
         const file = config.getOrThrow<string>("logging.file");
+        const rotateFrequency = config.getOrThrow<string>("logging.fileRotateFrequency");
+        const rotateSize = config.getOrThrow<string>("logging.fileRotateSize");
+        const rotateKeep = config.getOrThrow<number>("logging.fileRotateKeep");
 
-        // 开发把 JSON 同时写文件，供本地 Alloy 采集；生产只写 stdout 交给容器日志
-        const stream = file
-          ? pino.multistream([
-              { level, stream: process.stdout },
-              {
-                level,
-                stream: pino.destination({
-                  dest: file,
-                  mkdir: true,
-                  sync: false,
-                }),
-              },
-            ])
-          : undefined;
+        // 开发把 JSON 同时写文件（pino-roll 按天/大小切分），供本地 Alloy 采集；
+        // 生产只写 stdout 交给容器日志
+        let stream: ReturnType<typeof pino.multistream> | undefined;
+        if (file) {
+          const fileStream = pino.transport({
+            target: "pino-roll",
+            options: {
+              // pino-roll 会在基础名后追加日期/序号，例如 app.2026-11-28.1.log
+              file: file.replace(/\.log$/i, ""),
+              frequency: rotateFrequency,
+              dateFormat: "yyyy-MM-dd",
+              size: rotateSize,
+              limit: { count: rotateKeep },
+              mkdir: true,
+            },
+          });
+
+          stream = pino.multistream([
+            { level, stream: process.stdout },
+            { level, stream: fileStream },
+          ]);
+        }
 
         return {
           pinoHttp: {

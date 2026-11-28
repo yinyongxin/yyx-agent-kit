@@ -47,6 +47,18 @@ class EnvironmentVariables {
   LOG_FILE?: string;
 
   @IsOptional()
+  @IsIn(["daily", "hourly"])
+  LOG_ROTATE_FREQUENCY?: string;
+
+  @IsOptional()
+  @IsString()
+  LOG_ROTATE_SIZE?: string;
+
+  @IsOptional()
+  @IsInt()
+  LOG_ROTATE_KEEP?: number;
+
+  @IsOptional()
   @IsString()
   LOKI_URL?: string;
 

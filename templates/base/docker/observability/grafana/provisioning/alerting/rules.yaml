@@ -1,0 +1,96 @@
+apiVersion: 1
+
+# 本地告警规则（Loki 日志）
+# 通知渠道：Grafana 默认 grafana-default-email（本地未配 SMTP，只会记失败）；
+# 生产在 Alerting → Contact points 接 Slack / 邮件 / Webhook。
+groups:
+  - orgId: 1
+    name: starter-logs
+    folder: General
+    interval: 1m
+    rules:
+      - uid: starter-error-logs
+        title: 错误日志过多
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              editorMode: code
+              expr: sum(count_over_time({service="starter-api", level="error"}[5m]))
+              instant: true
+              queryType: instant
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: ""
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              refId: C
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [10]
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 近 5 分钟错误日志超过 10 条
+          description: 打开管理端「日志」页或 Grafana Explore，按 level=error 排查。
+
+      - uid: starter-slow-requests
+        title: 慢请求过多
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              editorMode: code
+              expr: sum(count_over_time({service="starter-api"} | json | responseTime > 1000 [5m]))
+              instant: true
+              queryType: instant
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: ""
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              refId: C
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [5]
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 近 5 分钟有超过 5 个慢请求（>1000ms）
+          description: 查看日志中的 responseTime 与 traceId，再到 Tempo 看 span 瀑布。
