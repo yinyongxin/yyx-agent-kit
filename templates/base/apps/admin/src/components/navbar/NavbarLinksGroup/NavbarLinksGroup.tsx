@@ -11,6 +11,32 @@ interface LinksGroupProps {
   links: { label: string; link: string }[];
 }
 
+interface NavbarLeafProps {
+  icon: TablerIcon;
+  label: string;
+  to: string;
+}
+
+// 一级叶子节点：不折叠，直接跳路由
+export const NavbarLeaf = ({ icon: Icon, label, to }: NavbarLeafProps) => (
+  <Link
+    to={to}
+    className={classes.control}
+    style={{ textDecoration: "none" }}
+    activeProps={{ className: classes.linkActive }}
+    activeOptions={{ exact: to === "/" }}
+  >
+    <Group justify="space-between" gap={0}>
+      <Box style={{ display: "flex", alignItems: "center" }}>
+        <ThemeIcon variant="light" size={30}>
+          <Icon size={18} />
+        </ThemeIcon>
+        <Box ml="md">{label}</Box>
+      </Box>
+    </Group>
+  </Link>
+);
+
 // 基于 ui.mantine.dev 官方 LinksGroup：分组可折叠，子链接改用 TanStack Link
 export const LinksGroup = ({
   icon: Icon,

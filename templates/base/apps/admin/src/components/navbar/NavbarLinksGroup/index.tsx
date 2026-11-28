@@ -1,1 +1,1 @@
-export { LinksGroup } from "./NavbarLinksGroup";
+export { LinksGroup, NavbarLeaf } from "./NavbarLinksGroup";

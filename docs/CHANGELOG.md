@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **管理端导航统一为单棵菜单树**：新增 `lib/navigation.ts` 的 `NAV_TREE` + `useNavigation()`，嵌套侧栏 / 双栏侧栏 / 顶部大菜单只渲染同一棵树；`platformOnly` / `permission` 过滤与空分组隐藏集中处理；工作台提升为一级菜单，文件/日志/审计等统一归入「系统」
 - **租户暂停立即生效**：`TenantMembershipGuard` 现在要求租户 `status=active` 且未软删除；租户被平台暂停后，成员已签发的 token 访问 `/t/:tenantId/*` 直接 404；补充 `test:tenants` 暂停/恢复回归
 - **开发导航页服务列表重做**：服务区改为每个服务一行卡片（名称、分组、端口、入口、启动命令、本地凭据），概览与「服务」视图共用；修复页面内 `API_PREFIX` 未定义导致的轮询报错；同步文档中的开发页路径
 - **本地可观测性默认启动**：`docker compose up -d` 现在默认包含 Loki / Alloy / Tempo / Grafana；只需要最小依赖时用 `docker compose up -d postgres redis`；移除 Loki 无效的 shell healthcheck（镜像无 `/bin/sh`）；同步启动脚本、开发导航命令、测试前置说明与文档
