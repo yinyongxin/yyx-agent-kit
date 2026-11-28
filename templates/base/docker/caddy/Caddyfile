@@ -1,0 +1,28 @@
+# 本地/单机网关：按 Host 路由到 admin / client / portal
+# 访问：
+#   http://admin.localhost:47180
+#   http://client.localhost:47180
+#   http://portal.localhost:47180
+#
+# 生产把 ADMIN_HOST / CLIENT_HOST / PORTAL_HOST 换成真实域名，
+# 并把 :47180 改成 :443（Caddy 自动申请证书）。
+:47180 {
+  @admin host {$ADMIN_HOST:admin.localhost}
+  handle @admin {
+    reverse_proxy admin:80
+  }
+
+  @client host {$CLIENT_HOST:client.localhost}
+  handle @client {
+    reverse_proxy client:80
+  }
+
+  @portal host {$PORTAL_HOST:portal.localhost}
+  handle @portal {
+    reverse_proxy portal:47175
+  }
+
+  handle {
+    respond "Not Found" 404
+  }
+}

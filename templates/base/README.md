@@ -117,7 +117,13 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 - 容器启动时自动执行 `prisma migrate deploy`；`SEED_ON_START=true` 时执行幂等 seed
 - PostgreSQL / Redis 不暴露宿主端口，只暴露 `SERVER_PORT`
 - `app_rw` 密码在 `docker/init-db.sql` 中固定，生产必须同步修改 SQL 与 compose 的 `DATABASE_URL`
-- 前端（admin / client / portal）镜像与反向代理见下一阶段
+- admin / client：nginx 静态镜像，内置 `/<app>/api` 反代到 server
+- portal：Next `next start`，`API_ORIGIN=http://server:47100`
+- 网关（Caddy）按 Host 路由，默认：
+  - `http://admin.localhost:47180`
+  - `http://client.localhost:47180`
+  - `http://portal.localhost:47180`
+- 生产把 `ADMIN_HOST` / `CLIENT_HOST` / `PORTAL_HOST` 换成真实域名，Caddy 监听改 `:443` 自动 HTTPS
 
 ## 双击启动 / 停止（Windows）
 

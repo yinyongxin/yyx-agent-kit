@@ -77,6 +77,59 @@ services:
     networks:
       - starter-net
 
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - starter-net
+
+  client:
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - starter-net
+
+  portal:
+    build:
+      context: .
+      dockerfile: apps/portal/Dockerfile
+    restart: unless-stopped
+    environment:
+      API_ORIGIN: http://server:47100
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - starter-net
+
+  gateway:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      ADMIN_HOST: ${ADMIN_HOST:-admin.localhost}
+      CLIENT_HOST: ${CLIENT_HOST:-client.localhost}
+      PORTAL_HOST: ${PORTAL_HOST:-portal.localhost}
+    ports:
+      - "${GATEWAY_PORT:-47180}:47180"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - admin
+      - client
+      - portal
+    networks:
+      - starter-net
+
 volumes:
   postgres-data:
     name: starter-prod-postgres-data
