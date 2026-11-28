@@ -8,7 +8,7 @@ import { PasswordHasher } from "@nestjs/authentication";
 import { randomUUID } from "node:crypto";
 import type { Prisma } from "../generated/prisma/client";
 import { AuditContext } from "../audit/audit-context";
-import { UsersRepository, type UserRow } from "./users.repository";
+import { UsersRepository, type UserRow } from "./repositories/users.repository";
 import type { CreateUserDto } from "./dto/create-user.dto";
 import type { QueryUsersDto } from "./dto/query-users.dto";
 import type { UpdateUserDto } from "./dto/update-user.dto";

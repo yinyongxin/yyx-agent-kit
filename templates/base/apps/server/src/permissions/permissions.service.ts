@@ -15,7 +15,7 @@ import type { UpdatePermissionDto } from "./dto/update-permission.dto";
 import {
   PermissionsRepository,
   type PermissionRow,
-} from "./permissions.repository";
+} from "./repositories/permissions.repository";
 
 const toDto = (row: PermissionRow): PermissionResponseDto => ({
   id: row.id,

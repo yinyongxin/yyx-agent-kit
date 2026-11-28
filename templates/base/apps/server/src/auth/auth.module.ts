@@ -6,7 +6,7 @@ import {
 } from "@nestjs/authentication";
 import { AuthorizationModule } from "@nestjs/authorization";
 import { JwtAuth } from "./providers/jwt-auth.provider";
-import { UsersRepository } from "./repositories/users.repository";
+import { AuthUsersRepository } from "./repositories/auth-users.repository";
 import { TenantMembershipGuard } from "./guards/tenant-membership.guard";
 import { AuthController } from "./auth.controller";
 import { CredentialsService } from "./credentials.service";
@@ -49,11 +49,11 @@ import { CredentialsService } from "./credentials.service";
   controllers: [AuthController],
   // PasswordHasher 由 AuthenticationModule 导出，复用它的实例（不要在此重复注册）
   providers: [
-    UsersRepository,
+    AuthUsersRepository,
     JwtAuth,
     TenantMembershipGuard,
     CredentialsService,
   ],
-  exports: [UsersRepository, TenantMembershipGuard, CredentialsService],
+  exports: [AuthUsersRepository, TenantMembershipGuard, CredentialsService],
 })
 export class AuthModule {}

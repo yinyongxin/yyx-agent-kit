@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { PlatformAdminGuard } from "../auth/guards/platform-admin.guard";
 import { PermissionsController } from "./permissions.controller";
 import { PermissionsService } from "./permissions.service";
-import { PermissionsRepository } from "./permissions.repository";
+import { PermissionsRepository } from "./repositories/permissions.repository";
 
 @Module({
   controllers: [PermissionsController],

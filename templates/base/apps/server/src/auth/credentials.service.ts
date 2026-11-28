@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PasswordHasher, TokenService } from "@nestjs/authentication";
 import { AuditService } from "../audit/audit.service";
-import { UsersRepository } from "./repositories/users.repository";
+import { AuthUsersRepository } from "./repositories/auth-users.repository";
 
 /**
  * 登录闭环的业务逻辑：验证邮箱密码，签发 access token。
@@ -13,7 +13,7 @@ import { UsersRepository } from "./repositories/users.repository";
 @Injectable()
 export class CredentialsService {
   constructor(
-    private readonly users: UsersRepository,
+    private readonly users: AuthUsersRepository,
     private readonly hasher: PasswordHasher,
     private readonly tokens: TokenService,
     private readonly audit: AuditService,

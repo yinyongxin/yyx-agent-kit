@@ -1,14 +1,15 @@
 import { Module } from "@nestjs/common";
 import { UsersController } from "./users.controller";
-import { UsersRepository } from "./users.repository";
+import { MeController } from "./me.controller";
+import { UsersRepository } from "./repositories/users.repository";
 import { UsersService } from "./users.service";
 
 /**
- * 平台级用户管理。
+ * 平台级用户管理 + 当前用户资源（/me）。
  * User 是全局表，走 `prisma.scoped`；租户成员关系由 tenancy 模块维护。
  */
 @Module({
-  controllers: [UsersController],
+  controllers: [UsersController, MeController],
   providers: [UsersService, UsersRepository],
 })
 export class UsersModule {}

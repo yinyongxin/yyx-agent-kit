@@ -4,7 +4,7 @@ import { AppConfigModule } from "../config/config.module";
 import { AuditController } from "./audit.controller";
 import { AuditInterceptor } from "./audit.interceptor";
 import { AuditQueryService } from "./audit-query.service";
-import { AuditRepository } from "./audit.repository";
+import { AuditRepository } from "./repositories/audit.repository";
 import { AuditService } from "./audit.service";
 
 /**

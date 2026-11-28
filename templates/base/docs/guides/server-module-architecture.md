@@ -28,17 +28,17 @@ apps/server/
 │   ├── auth/                   # 领域模块：认证与授权
 │   │   ├── auth.module.ts
 │   │   ├── auth.controller.ts  # /starter/api/auth/*
-│   │   ├── me.controller.ts    # /starter/api/me/*（当前用户资源）
 │   │   ├── credentials.service.ts
 │   │   ├── dto/
 │   │   ├── guards/
 │   │   ├── middleware/
 │   │   ├── decorators/
 │   │   ├── providers/
+│   │   ├── repositories/
 │   │   └── README.md
 │   └── <feature>/              # 业务模块（users / orders / ...）
 │       ├── <feature>.module.ts
-│       ├── <feature>.controller.ts
+│       ├── <feature>.controller.ts  # 可多个 controller（如 users/me.controller.ts）
 │       ├── <feature>.service.ts
 │       ├── dto/
 │       │   ├── create-<feature>.dto.ts
@@ -55,9 +55,9 @@ apps/server/
 
 规则：
 
-- **一个业务领域一个模块目录**，目录名用复数 kebab-case（`users/`、`audit-logs/`）。存量 `auth/`、`tenancy/` 为单数，保留不改。
-- **一个模块可以有多个 controller**，按路由前缀/资源划分（Nest 一个 controller 只能绑一个 `@Controller()` 前缀）。例如 `auth/` 下：`auth.controller.ts` 管 `/auth/*`（登录动作），`me.controller.ts` 管 `/me/*`（当前用户资源）。不要为了「一模块一 controller」把不同前缀硬塞进同一个类。
-- `/me/*` 属于「当前用户」资源：暂放 `auth/`（与身份强相关）；出现独立 `users/` 模块后，迁到 `users/me.controller.ts`。
+- **一个业务领域一个模块目录**，目录名用复数 kebab-case（`users/`、`tickets/`）。基础设施/横切模块 `auth/`、`tenancy/`、`audit/`、`logging/`、`dev/` 为历史命名，保留不改。
+- **一个模块可以有多个 controller**，按路由前缀/资源划分（Nest 一个 controller 只能绑一个 `@Controller()` 前缀）。例如 `users/` 下：`users.controller.ts` 管 `/users/*`（平台用户 CRUD），`me.controller.ts` 管 `/me/*`（当前用户资源）。不要为了「一模块一 controller」把不同前缀硬塞进同一个类。
+- `/me/*` 属于「当前用户」资源，已放到 `users/me.controller.ts`；认证凭据查询仍在 `auth/repositories/auth-users.repository.ts`。
 - **路由域命名空间**：`tenancy/` 是 `/t/:tenantId/*` 的命名空间，不是单一业务模块。其下每个功能切片（`members/`、`roles/`、`permission-catalog/`）都有 `<feature>.module.ts`，统一 `imports: [TenancyCoreModule]` 获取租户事务拦截器；平台级同名能力放 `tenants/` 或 `permissions/`，不要混用。
 - **平台 / 租户双视图**：平台级接口需要复用租户服务时，从 `TenancyModule` 的 exports 引用（如 `MembersService`、`RolesService`），不要复制业务逻辑；平台 Controller 仍挂 `PlatformAdminGuard`，不能借用 `TenantMembershipGuard`。
 - **类型/工具文件**：少量（≤3 个）时用 `*.types.ts` / `*.util.ts` 放模块根；同类文件超过 3 个、或需要跨模块复用时，再建 `types/` / `utils/`。不要为 1–2 个文件提前建目录。

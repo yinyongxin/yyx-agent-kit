@@ -8,9 +8,10 @@
 
 | 文件 | 作用 |
 | --- | --- |
-| `users.repository.ts` | 全局身份查询、租户列表、登录凭据读取 |
+| `auth-users.repository.ts` | `AuthUsersRepository`：认证用身份查询、登录凭据读取 |
 
 ## 注意事项
 
-- `User` / `UserTenant` 是 UNSCOPED 全局表，可用 `prisma.scoped`；租户表必须接收调用方的 `tx`。
-- 新增查询先 `select` 限定字段，再映射为对外类型。
+- `User` 是 UNSCOPED 全局表，可用 `prisma.scoped`
+- 平台用户 CRUD 与 `/me` 查询在 `users/repositories/users.repository.ts`，不要与本文件混用
+- 新增查询先 `select` 限定字段，再映射为对外类型

@@ -4,7 +4,7 @@ import {
   JwtBearerProvider,
   type JwtClaims,
 } from "@nestjs/authentication";
-import { UsersRepository } from "../repositories/users.repository";
+import { AuthUsersRepository } from "../repositories/auth-users.repository";
 import type { User } from "../user.types";
 
 /**
@@ -15,7 +15,7 @@ import type { User } from "../user.types";
 @Injectable()
 export class JwtAuth extends JwtBearerProvider<User> {
   constructor(
-    private readonly users: UsersRepository,
+    private readonly users: AuthUsersRepository,
     registry: AuthenticationRegistry,
   ) {
     super();

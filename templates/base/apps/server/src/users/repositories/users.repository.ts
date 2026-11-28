@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import type { Prisma } from "../generated/prisma/client";
-import { PrismaService } from "../prisma/prisma.service";
+import type { Prisma } from "../../generated/prisma/client";
+import { PrismaService } from "../../prisma/prisma.service";
 
 /** 用户对外字段：不含 passwordHash / authSubject */
 const USER_SELECT = {
@@ -58,6 +58,51 @@ export class UsersRepository {
       where: { email },
       select: { id: true, email: true },
     });
+  }
+
+  /** 当前用户资料 + 是否平台管理员（/me） */
+  async findProfile(userId: string) {
+    const row = await this.prisma.scoped.user.findFirst({
+      where: { id: userId, status: "active" },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        platformAdmin: { select: { level: true } },
+      },
+    });
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      email: row.email,
+      displayName: row.displayName,
+      isPlatformAdmin: Boolean(row.platformAdmin),
+      platformAdminLevel: row.platformAdmin?.level ?? null,
+    };
+  }
+
+  /** 当前用户所属的活跃租户，供 /me/tenants 与租户切换器使用 */
+  async findTenants(userId: string) {
+    const rows = await this.prisma.scoped.userTenant.findMany({
+      where: {
+        userId,
+        status: "active",
+        tenant: { status: "active", deletedAt: null },
+      },
+      select: {
+        joinedAt: true,
+        tenant: { select: { id: true, name: true, slug: true } },
+      },
+      orderBy: { joinedAt: "asc" },
+    });
+
+    return rows.map((row) => ({
+      id: row.tenant.id,
+      name: row.tenant.name,
+      slug: row.tenant.slug,
+      joinedAt: row.joinedAt,
+    }));
   }
 
   create(data: {

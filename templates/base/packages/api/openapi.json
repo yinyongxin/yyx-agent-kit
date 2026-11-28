@@ -23,93 +23,6 @@
         ]
       }
     },
-    "/starter/api/me": {
-      "get": {
-        "operationId": "MeController_me",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MeResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "当前用户资料（含平台管理员标记）",
-        "tags": [
-          "me"
-        ]
-      }
-    },
-    "/starter/api/me/tenants": {
-      "get": {
-        "operationId": "MeController_tenants",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TenantSummaryDto"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "当前用户所属的租户列表",
-        "tags": [
-          "me"
-        ]
-      }
-    },
     "/starter/api/logs": {
       "get": {
         "operationId": "LogsController_list",
@@ -2876,6 +2789,93 @@
         ]
       }
     },
+    "/starter/api/me": {
+      "get": {
+        "operationId": "MeController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "当前用户资料（含平台管理员标记）",
+        "tags": [
+          "me"
+        ]
+      }
+    },
+    "/starter/api/me/tenants": {
+      "get": {
+        "operationId": "MeController_tenants",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TenantSummaryDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "当前用户所属的租户列表",
+        "tags": [
+          "me"
+        ]
+      }
+    },
     "/starter/api/permissions": {
       "get": {
         "operationId": "PermissionsController_list",
@@ -3276,45 +3276,6 @@
           "status"
         ]
       },
-      "MeResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "email": {
-            "type": "string",
-            "nullable": true,
-            "example": "admin@example.com"
-          },
-          "displayName": {
-            "type": "string",
-            "nullable": true,
-            "example": "示例管理员"
-          },
-          "isPlatformAdmin": {
-            "type": "boolean",
-            "description": "是否为平台管理员（super / ops）"
-          },
-          "platformAdminLevel": {
-            "type": "string",
-            "enum": [
-              "super",
-              "ops"
-            ],
-            "nullable": true,
-            "description": "平台管理员级别；非平台管理员为 null"
-          }
-        },
-        "required": [
-          "id",
-          "email",
-          "displayName",
-          "isPlatformAdmin",
-          "platformAdminLevel"
-        ]
-      },
       "ErrorResponseDto": {
         "type": "object",
         "properties": {
@@ -3338,31 +3299,6 @@
         "required": [
           "statusCode",
           "message"
-        ]
-      },
-      "TenantSummaryDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "joinedAt": {
-            "format": "date-time",
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "slug",
-          "joinedAt"
         ]
       },
       "LogEntryDto": {
@@ -4225,6 +4161,70 @@
             ]
           }
         }
+      },
+      "MeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "example": "admin@example.com"
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true,
+            "example": "示例管理员"
+          },
+          "isPlatformAdmin": {
+            "type": "boolean",
+            "description": "是否为平台管理员（super / ops）"
+          },
+          "platformAdminLevel": {
+            "type": "string",
+            "enum": [
+              "super",
+              "ops"
+            ],
+            "nullable": true,
+            "description": "平台管理员级别；非平台管理员为 null"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "displayName",
+          "isPlatformAdmin",
+          "platformAdminLevel"
+        ]
+      },
+      "TenantSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "joinedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "joinedAt"
+        ]
       },
       "PermissionResponseDto": {
         "type": "object",

@@ -9,11 +9,11 @@
 | 文件 | 作用 |
 | --- | --- |
 | `sign-in.dto.ts` | `SignInDto`（邮箱/密码）+ `SignInResponseDto`（accessToken/tokenType） |
-| `tenant-summary.dto.ts` | `TenantSummaryDto`：我所属租户的摘要 |
 | `membership.dto.ts` | `MembershipDto`：我在某租户下的成员信息与权限并集 |
-| `me-response.dto.ts` | `MeResponseDto`：当前用户资料 + `isPlatformAdmin` |
 
 ## 注意事项
+
+- `/me` 的 `MeResponseDto` / `TenantSummaryDto` 已迁到 `users/dto/`
 
 - 出参 DTO 只放对外字段，密码哈希、内部状态等一律不出现。
 - 每个字段加 `@ApiProperty`，保证 `pnpm api:generate` 能生成准确的前端类型。

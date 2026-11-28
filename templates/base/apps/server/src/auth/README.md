@@ -11,10 +11,9 @@
 | `auth.module.ts` | 装配官方模块；JWT 签发参数、`refreshToken: false`、生产密钥校验 |
 | `auth.controller.ts` | `POST /auth/sign-in`（`@Public()`），只做 DTO 校验与转发 |
 | `credentials.service.ts` | 验密（`PasswordHasher.verify`）+ 签发（`TokenService.issue`） |
-| `repositories/` | `users.repository.ts`：全局身份查询、租户列表、登录凭据读取（密码哈希不出本层） |
+| `repositories/` | `auth-users.repository.ts`：认证用全局身份查询与登录凭据读取（密码哈希不出本层） |
 | `providers/` | `jwt-auth.provider.ts`：Bearer JWT 凭证 provider，按 sub 加载用户 |
-| `me.controller.ts` | `GET /me`（当前用户资料 + `isPlatformAdmin`）、`GET /me/tenants`（所属租户） |
-| `dto/` | `SignInDto` / `SignInResponseDto` / `TenantSummaryDto` / `MembershipDto`，详见该目录 README |
+| `dto/` | `SignInDto` / `SignInResponseDto` / `MembershipDto`，详见该目录 README |
 | `middleware/` | `tenant.middleware.ts`：从 `/t/:tenantId` 解析租户并写 `TenantContext`（不做校验） |
 | `guards/` | `tenant-membership.guard.ts`：校验用户属于该租户（非成员 404 / 角色或权限不足 403）；`platform-admin.guard.ts`：平台管理员与级别校验 |
 | `decorators/` | `membership.decorator.ts`：`@CurrentMembership()` / `@MinRole()`；`permission.decorator.ts`：`@RequirePermission()` |
@@ -24,6 +23,7 @@
 
 ## 关联
 
+- `users/me.controller.ts`：`/me` 当前用户资源（独立 `users` 模块后已迁出 auth）
 - `src/prisma/prisma.service.ts`：`scoped` 只用于全局表；租户表用 `@TenantTx()` 事务客户端 + 数据库 RLS
 - `src/tenancy/tenant.controller.ts`：`/t/:tenantId/...` 示例路由
 - `test/tenancy-e2e.mjs`：登录与租户边界接口验收

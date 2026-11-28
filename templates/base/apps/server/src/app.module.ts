@@ -8,7 +8,6 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { AppConfigModule } from "./config/config.module";
 import { AuthModule } from "./auth/auth.module";
 import { TenantMiddleware } from "./auth/middleware/tenant.middleware";
-import { MeController } from "./auth/me.controller";
 import { TenancyModule } from "./tenancy/tenancy.module";
 import { TenantsModule } from "./tenants/tenants.module";
 import { UsersModule } from "./users/users.module";
@@ -32,7 +31,7 @@ const isProduction = process.env.NODE_ENV === "production";
     PermissionsModule,
     ...(isProduction ? [] : [DevModule]),
   ],
-  controllers: [AppController, MeController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
