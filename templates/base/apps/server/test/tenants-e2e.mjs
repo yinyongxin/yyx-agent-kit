@@ -169,6 +169,80 @@ if (token) {
       await request("DELETE", `/tenants/${createdId}`, null, token);
     }
   }
+
+  // 暂停租户后，已有 token 也不能再访问 /t/:tenantId/*
+  const suspendSlug = `e2e-suspend-${Date.now()}`;
+  let suspendId;
+  try {
+    const made = await request(
+      "POST",
+      "/tenants",
+      { name: "Suspend Tenant", slug: suspendSlug, initialAdminEmail: EMAIL },
+      token,
+    );
+    suspendId = made.json?.id;
+    check("准备暂停测试租户 201", made.status === 201, `HTTP ${made.status}`);
+
+    if (suspendId) {
+      const active = await request(
+        "GET",
+        `/t/${suspendId}/members`,
+        null,
+        token,
+      );
+      check("暂停前成员接口 200", active.status === 200, `HTTP ${active.status}`);
+
+      const suspended = await request(
+        "PATCH",
+        `/tenants/${suspendId}`,
+        { status: "suspended" },
+        token,
+      );
+      check(
+        "暂停租户 200",
+        suspended.status === 200 && suspended.json?.status === "suspended",
+        `HTTP ${suspended.status}`,
+      );
+
+      const blocked = await request(
+        "GET",
+        `/t/${suspendId}/members`,
+        null,
+        token,
+      );
+      check("暂停后成员接口 404", blocked.status === 404, `HTTP ${blocked.status}`);
+
+      const resumed = await request(
+        "PATCH",
+        `/tenants/${suspendId}`,
+        { status: "active" },
+        token,
+      );
+      check("恢复租户 200", resumed.status === 200, `HTTP ${resumed.status}`);
+
+      const reopened = await request(
+        "GET",
+        `/t/${suspendId}/members`,
+        null,
+        token,
+      );
+      check("恢复后成员接口 200", reopened.status === 200, `HTTP ${reopened.status}`);
+
+      const me = await request("GET", "/me", null, token);
+      if (me.json?.id) {
+        await request(
+          "DELETE",
+          `/tenants/${suspendId}/members/${me.json.id}`,
+          null,
+          token,
+        );
+      }
+    }
+  } finally {
+    if (suspendId) {
+      await request("DELETE", `/tenants/${suspendId}`, null, token);
+    }
+  }
 }
 
 console.log(failed ? `\n${failed} 项失败` : "\n租户 CRUD 验收通过");

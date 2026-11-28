@@ -48,9 +48,13 @@ export class TenantMembershipGuard implements CanActivate {
     }
 
     // UserTenant 是授权关系表（UNSCOPED），这里显式按 userId + tenantId 查；
-    // 同时排除已软删除的租户，避免删除后仍能访问
+    // 同时排除已软删除 / 已暂停的租户，避免停用后仍能通过旧 token 访问
     const userTenant = await this.prisma.scoped.userTenant.findFirst({
-      where: { userId, tenantId, tenant: { deletedAt: null } },
+      where: {
+        userId,
+        tenantId,
+        tenant: { status: "active", deletedAt: null },
+      },
     });
     if (!userTenant || userTenant.status !== "active") {
       throw new NotFoundException("Tenant not found");
