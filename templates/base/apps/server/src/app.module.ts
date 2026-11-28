@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { LoggingModule } from "./logging/logging.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { AppConfigModule } from "./config/config.module";
 import { AuthModule } from "./auth/auth.module";
@@ -15,6 +16,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 @Module({
   imports: [
+    LoggingModule,
     AppConfigModule,
     PrismaModule,
     AuthModule,

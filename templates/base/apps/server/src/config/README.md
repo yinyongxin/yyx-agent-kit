@@ -9,7 +9,7 @@
 | 文件 | 作用 |
 | --- | --- |
 | `config.module.ts` | `AppConfigModule`：`ConfigModule.forRoot({ isGlobal, load, validate })` |
-| `configuration.ts` | 命名空间配置：`app` / `database` / `auth` / `dev`（开发导航页端口推导） |
+| `configuration.ts` | 命名空间配置：`app` / `database` / `auth` / `dev`（开发导航页端口推导）/ `logging`（pino） |
 | `env.validation.ts` | 启动时用 class-validator 校验 env（DATABASE_URL 必填、生产必须 JWT_SECRET 等） |
 
 ## 使用方式
@@ -23,6 +23,7 @@ const dbUrl = this.config.getOrThrow<string>("database.url");
 
 - 业务模块不要 import `ConfigModule`（`isGlobal: true`）。
 - 新增配置项：在 `configuration.ts` 加字段，并在 `env.validation.ts` 加校验。
+- 日志配置（`logging`）：`LOG_LEVEL` / `LOG_HTTP_BODY` / `LOG_BODY_LIMIT`，见 `.env.example` 与 `src/logging/README.md`。
 - 脚本（`prisma7.config.ts` / `seed.ts` / `scripts/*`）在 Nest 容器外，继续用 dotenv。
 
 ## 同步要求

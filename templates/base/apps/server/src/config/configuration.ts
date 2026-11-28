@@ -44,6 +44,19 @@ export const devConfig = registerAs("dev", () => {
   };
 });
 
+/** 日志配置（pino / nestjs-pino） */
+export const loggingConfig = registerAs("logging", () => {
+  const nodeEnv = process.env.NODE_ENV ?? "development";
+  return {
+    level: process.env.LOG_LEVEL ?? (nodeEnv === "production" ? "info" : "debug"),
+    httpBody:
+      process.env.LOG_HTTP_BODY !== undefined
+        ? process.env.LOG_HTTP_BODY === "true"
+        : nodeEnv !== "production",
+    bodyLimit: Number(process.env.LOG_BODY_LIMIT ?? 16384),
+  };
+});
+
 /** 认证配置（JWT 签发参数）；生产缺 JWT_SECRET 由 env.validation 拦截 */
 export const authConfig = registerAs("auth", () => ({
   jwtSecret:

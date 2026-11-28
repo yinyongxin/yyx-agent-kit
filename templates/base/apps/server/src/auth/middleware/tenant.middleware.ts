@@ -20,6 +20,7 @@ export class TenantMiddleware implements NestMiddleware {
     const tenantId = this.resolveTenantId(req);
     if (!tenantId) return next(); // health / auth / me 等非租户路由不带上下文
 
+    (req as NodeRequest & { tenantId?: string }).tenantId = tenantId;
     TenantContext.run({ tenantId }, next);
   }
 

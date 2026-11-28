@@ -44,17 +44,35 @@ async function request(method, path, body, token) {
   } catch {
     /* 非 JSON 响应保留原文 */
   }
-  return { status: res.status, json, text };
+  return { status: res.status, json, text, headers: res.headers };
 }
 
 const health = await request("GET", "/health");
 check("AC5 health 公开可访问", health.status === 200, `HTTP ${health.status}`);
+
+const traceId = health.headers.get("x-trace-id");
+const traceparent = health.headers.get("traceparent");
+check(
+  "traceId 响应头（成功响应）",
+  Boolean(traceId && /^[0-9a-f]{32}$/.test(traceId)),
+  traceId ?? "missing",
+);
+check(
+  "traceparent 格式正确",
+  Boolean(traceparent && traceparent.startsWith(`00-${traceId}-`)),
+  traceparent ?? "missing",
+);
 
 const wrong = await request("POST", "/auth/sign-in", {
   email: EMAIL,
   password: "definitely_wrong",
 });
 check("E1 错误密码 401", wrong.status === 401, `HTTP ${wrong.status}`);
+check(
+  "错误响应体 traceId 与响应头一致",
+  Boolean(wrong.json?.traceId && wrong.json.traceId === wrong.headers.get("x-trace-id")),
+  `body=${wrong.json?.traceId ?? "missing"}`,
+);
 
 const unknown = await request("POST", "/auth/sign-in", {
   email: "nobody@example.com",
@@ -62,7 +80,10 @@ const unknown = await request("POST", "/auth/sign-in", {
 });
 check(
   "E1 未知邮箱与错误密码同响应（防枚举）",
-  unknown.status === 401 && unknown.text === wrong.text,
+  unknown.status === 401 &&
+    wrong.status === 401 &&
+    unknown.json?.message === wrong.json?.message &&
+    unknown.json?.errorCode === wrong.json?.errorCode,
   `HTTP ${unknown.status}`,
 );
 

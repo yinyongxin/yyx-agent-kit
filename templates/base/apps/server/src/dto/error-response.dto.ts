@@ -10,4 +10,8 @@ export class ErrorResponseDto {
 
   @ApiPropertyOptional({ example: "missing_credentials" })
   errorCode?: string;
+
+  /** 请求 trace id，用户在页面上看到后可直接提供给支持排查 */
+  @ApiPropertyOptional({ example: "4bf92f3577b34da6a3ce929d0e0e4736" })
+  traceId?: string;
 }

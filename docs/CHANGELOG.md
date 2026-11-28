@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- **日志与 traceId**：接入 pino + nestjs-pino（NodeAdapter 实测通过），每个响应返回 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；请求/响应日志含 userId/tenantId、脱敏与 16KB 截断，4xx warn / 5xx error；`/api/dev` 不写 completion log。新增 `src/logging/`、`docs/guides/logging-and-tracing.md` 与 `LOG_*` 环境变量
+
 - **数据库字段规范**：业务表统一 UUID `id` + `createdAt`/`updatedAt` + `@db.Timestamptz(3)`；关联表保持联合主键、不加 `id`；`deletedAt` 按需。新增 `pnpm schema:check`（已并入 `pnpm build`）与 `docs/guides/database-conventions.md`；迁移 `20261128030929_standardize_timestamps` 补齐 Plan/Permission/OAuthConnection/PlatformAdmin 时间字段
 - **Tenant 软删除**：`Tenant.deletedAt` + `slug` partial unique index（Prisma 7 `partialIndexes` preview），删除改为软删、slug 可复用；列表/详情/租户守卫/`/me/tenants` 全部过滤，seed 按 id 恢复默认租户。迁移 `20261128042000_soft_delete_tenant`
 

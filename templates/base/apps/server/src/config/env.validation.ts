@@ -29,6 +29,18 @@ class EnvironmentVariables {
   @IsOptional()
   @IsIn(["development", "production", "test"])
   NODE_ENV?: string;
+
+  @IsOptional()
+  @IsIn(["trace", "debug", "info", "warn", "error", "fatal", "silent"])
+  LOG_LEVEL?: string;
+
+  @IsOptional()
+  @IsIn(["true", "false"])
+  LOG_HTTP_BODY?: string;
+
+  @IsOptional()
+  @IsInt()
+  LOG_BODY_LIMIT?: number;
 }
 
 export const validateEnv = (config: Record<string, unknown>) => {

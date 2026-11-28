@@ -16,6 +16,7 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/dto/` | 跨模块共享 DTO（错误响应、分页等） |
 | `src/swagger.ts` | OpenAPI 文档构建（main 与导出脚本共用） |
 | `src/prisma/` | Prisma Client、`scoped` 守卫、RLS 事务入口 |
+| `src/logging/` | pino 请求日志、traceId/响应头、请求响应体脱敏、全局异常过滤器 |
 | `src/auth/` | 登录、JWT、租户成员 guard、租户上下文 |
 | `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户事务拦截器、`@TenantTx()` |
 | `src/tenants/` | 平台级租户 CRUD（`/api/tenants`），`PlatformAdminGuard` 保护 |

@@ -22,6 +22,7 @@ import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { NestNodeApplication, NodeAdapter } from "@nestjs/platform-node";
 import { SwaggerModule } from "@nestjs/swagger";
+import { Logger as PinoLogger, LoggerErrorInterceptor } from "nestjs-pino";
 import { AppModule } from "./app.module";
 import { buildOpenApiDocument } from "./swagger";
 import { API_PREFIX } from "../../../packages/shared/src/index";
@@ -29,9 +30,15 @@ import { API_PREFIX } from "../../../packages/shared/src/index";
 const bootstrap = async () => {
   // NestJS 12.3+ 推荐 NodeAdapter（v13 起为默认）：直接跑在 node:http 上，
   // req/res 带 Express 风格 helpers，现有 middleware 写法不变
-  const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
+  const app = await NestFactory.create<NestNodeApplication>(
+    AppModule,
+    new NodeAdapter(),
+    { bufferLogs: true },
+  );
   const config = app.get(ConfigService);
   const port = config.getOrThrow<number>("app.port");
+  app.useLogger(app.get(PinoLogger));
+  app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
   app.setGlobalPrefix(API_PREFIX.replace(/^\//, ""));
   // DTO 校验：白名单丢弃未声明字段，transform 把 body 转成 DTO 实例
