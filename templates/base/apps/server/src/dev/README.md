@@ -13,8 +13,9 @@
 | `GET /starter/api/dev` | 导航页（原生 HTML，每 5 秒轮询） |
 | `GET /starter/api/dev#overview` | 概览视图 |
 | `GET /starter/api/dev#services` | 服务视图（分组筛选 + 每服务一行卡片） |
-| `GET /starter/api/dev#tools` | 工具视图（命令 / MCP / 入口） |
+| `GET /starter/api/dev#tools` | 工具视图（命令 / MCP / 入口 / 演示账号） |
 | `GET /starter/api/dev/services` | 探测结果 JSON |
+| `POST /starter/api/dev/seed-demo` | 重置本地演示账号（10 秒最多一次） |
 
 页面与接口都是 `@Public()`，未登录也能打开。
 
@@ -24,7 +25,7 @@
 - **三个视图**在客户端切换（`#overview` / `#services` / `#tools`），轮询不中断：
   - 概览：在线率仪表盘、应用/工具/依赖/耗时 KPI、最近事件、服务行卡片、命令/端口/探测策略
   - 服务：KPI 条 + 分组筛选（全部/应用/工具/依赖）+ 每服务一行（名称、端口、入口、启动命令、本地凭据）
-  - 工具：快捷命令、Penpot MCP（打开 Penpot）、端口约定、常用入口、探测策略、环境信息
+  - 工具：快捷命令、Penpot MCP（打开 Penpot）、端口约定、常用入口、探测策略、环境信息、演示账号重置
 - **无演示数据**：KPI、仪表盘、服务行全部由探测结果计算；事件由状态变化生成（首次加载记录“开始监控”）；探测耗时是浏览器侧 fetch 往返时间。
 - 响应式：1180px 两列、760px 单列；服务行在窄屏自动换行，不横向滚动。
 
@@ -33,8 +34,10 @@
 | 文件 | 作用 |
 | --- | --- |
 | `dev.module.ts` | `DevModule`，由 `AppModule` 按 `NODE_ENV` 条件注册 |
-| `dev.controller.ts` | 两个入口；`@ApiExcludeController()` 避免污染 OpenAPI 契约 |
+| `dev.controller.ts` | 页面 / 探测 / 演示账号重置入口；`@ApiExcludeController()` 避免污染 OpenAPI 契约 |
 | `dev.service.ts` | 服务清单 + 探测（HTTP / TCP / `SELECT 1`），1200ms 超时 |
+| `demo-seed.ts` | 演示账号创建逻辑，CLI 与开发面板共用 |
+| `demo-seed.service.ts` | 开发面板调用封装，防并发重复执行 |
 | `dev.page.ts` | 单文件 HTML（内联 CSS/JS），不依赖构建与第三方库 |
 
 ## 探测方式

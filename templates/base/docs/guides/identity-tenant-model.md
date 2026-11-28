@@ -140,6 +140,8 @@ userId, tenantId, status, joinedAt
 pnpm --filter @starter/server db:seed:demo
 ```
 
+也可以直接打开开发导航页 `http://localhost:47100/starter/api/dev#tools`，在「演示账号」卡片点击「重置演示账号」，无需命令行。
+
 会创建平台超管、平台运维、租户管理员、普通成员、文件管理员、多租户用户、停用成员、禁用账号，统一密码 `demo_pwd_2026`。完整清单见 `docs/guides/credentials.md`。
 
 租户管理员登录后可以通过「权限管理 → 成员」管理当前租户成员与角色。

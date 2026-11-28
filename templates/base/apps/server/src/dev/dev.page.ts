@@ -266,6 +266,31 @@ export const renderDevPage = (): string => `<!doctype html>
   }
   .mcp-open.off { background: rgba(255, 255, 255, 0.08); color: var(--faint); box-shadow: none; }
 
+  .seed-note { margin: 8px 0 12px; color: var(--muted); font-size: 10.5px; line-height: 1.6; }
+  .seed-btn {
+    border: 0; cursor: pointer; padding: 10px 16px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff; font: 600 10.5px/1 var(--sans);
+    box-shadow: 0 8px 18px rgba(255, 107, 61, 0.18);
+  }
+  .seed-btn:disabled { opacity: 0.6; cursor: wait; }
+  .seed-status { min-height: 16px; margin-top: 10px; font-size: 10px; color: var(--green-text); }
+  .seed-status.err { color: #ffc1a6; }
+  .seed-list {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 18px; margin-top: 12px;
+  }
+  .seed-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 10px;
+  }
+  .seed-item span { color: var(--muted); white-space: nowrap; }
+  .seed-item code { font-family: var(--mono); font-size: 9px; color: var(--faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 760px) {
+    .seed-list { grid-template-columns: 1fr; }
+  }
+
   .list { display: flex; flex-direction: column; margin-top: 8px; }
   .list a, .list .item {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -441,6 +466,20 @@ export const renderDevPage = (): string => `<!doctype html>
         <div class="list" id="tool-env"></div>
       </article>
     </div>
+
+    <div class="band-label"><span>演示 / DEMO</span><i></i></div>
+    <div class="band" style="grid-template-columns:1fr">
+      <article class="tile">
+        <div class="tile-head"><h2>演示账号</h2><span>可重复执行</span></div>
+        <p class="seed-note">
+          一键创建/重置平台超管、平台运维、租户管理员、普通成员、文件角色、多租户、停用成员与禁用账号。
+          默认统一密码 <code>demo_pwd_2026</code>，可用 <code>DEMO_USER_PASSWORD</code> 覆盖。
+        </p>
+        <button id="seed-demo" class="seed-btn" type="button">重置演示账号</button>
+        <div id="seed-status" class="seed-status"></div>
+        <div class="seed-list" id="seed-list"></div>
+      </article>
+    </div>
   </section>
 
   <div class="note">
@@ -457,8 +496,20 @@ export const renderDevPage = (): string => `<!doctype html>
 (function () {
   var API = "${API_PREFIX}/dev/services";
   var PAGE = "${API_PREFIX}/dev";
+  var SEED_API = "${API_PREFIX}/dev/seed-demo";
   var REFRESH_MS = 5000;
   var state = { services: [], prev: null, events: [], ms: null, filter: "all", view: "overview" };
+
+  var DEMO_ACCOUNTS = [
+    { scenario: "平台超管", email: "demo.platform@example.com" },
+    { scenario: "平台运维", email: "demo.ops@example.com" },
+    { scenario: "租户管理员", email: "demo.tenantadmin@example.com" },
+    { scenario: "普通成员", email: "demo.member@example.com" },
+    { scenario: "文件管理员", email: "demo.files@example.com" },
+    { scenario: "多租户用户", email: "demo.multi@example.com" },
+    { scenario: "已停用成员", email: "demo.suspended@example.com" },
+    { scenario: "禁用账号", email: "demo.disabled@example.com" }
+  ];
 
   var COMMANDS = [
     "pnpm dev",
@@ -761,6 +812,45 @@ export const renderDevPage = (): string => `<!doctype html>
     build("tool-cmds");
   }
 
+  function renderDemoAccounts() {
+    var box = document.getElementById("seed-list");
+    if (!box) return;
+    box.innerHTML = DEMO_ACCOUNTS.map(function (account) {
+      return '<div class="seed-item"><span>' + esc(account.scenario) + "</span>"
+        + '<code title="' + esc(account.email) + '">' + esc(account.email) + "</code></div>";
+    }).join("");
+  }
+
+  function bindSeedDemo() {
+    var btn = document.getElementById("seed-demo");
+    var status = document.getElementById("seed-status");
+    if (!btn || !status) return;
+    btn.addEventListener("click", function () {
+      btn.disabled = true;
+      status.className = "seed-status";
+      status.textContent = "正在重置演示账号…";
+      fetch(SEED_API, { method: "POST" })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            if (!res.ok) throw new Error(data.message || "HTTP " + res.status);
+            return data;
+          });
+        })
+        .then(function (data) {
+          status.textContent = "已重置 " + data.accounts.length + " 个账号 · 密码 " + data.password;
+          renderDemoAccounts();
+          load();
+        })
+        .catch(function (err) {
+          status.className = "seed-status err";
+          status.textContent = "重置失败：" + err.message;
+        })
+        .finally(function () {
+          btn.disabled = false;
+        });
+    });
+  }
+
   function renderAll() {
     if (!state.services.length) return;
     renderOverview();
@@ -851,6 +941,8 @@ export const renderDevPage = (): string => `<!doctype html>
 
   var initial = (location.hash || "").replace("#", "");
   renderCommands();
+  renderDemoAccounts();
+  bindSeedDemo();
   setView(initial === "services" || initial === "tools" ? initial : "overview");
   load();
   setInterval(load, REFRESH_MS);

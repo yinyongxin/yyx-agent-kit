@@ -64,6 +64,7 @@ export const API_ROUTES = {
   /** 本地开发导航页（仅开发环境注册，生产 404） */
   dev: "/dev",
   devServices: "/dev/services",
+  devSeedDemo: "/dev/seed-demo",
   devRateLimitProbe: "/dev/rate-limit-probe",
 } as const;
 
