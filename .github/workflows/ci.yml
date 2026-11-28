@@ -63,8 +63,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Init database roles
-        run: PGPASSWORD=app_dev_pwd psql -h localhost -U app -d app -f docker/init-db.sql
+      - name: Init database roles (postgres container)
+        run: |
+          docker run --rm --network host \
+            -e PGPASSWORD=app_dev_pwd \
+            -v "$PWD/docker/init-db.sql:/init.sql:ro" \
+            pgvector/pgvector:pg17 \
+            psql -h localhost -U app -d app -f /init.sql
 
       - name: Write .env
         run: |
