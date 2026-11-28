@@ -17,6 +17,7 @@ import {
   auditControllerList,
   type AuditLogDto,
 } from "@starter/api/generated";
+import { RESULT_COLOR, RESULT_LABEL } from "../constants";
 import {
   DataTableCardList,
   DataTableContent,
@@ -45,16 +46,6 @@ type AuditRow = {
   tenantId: string;
   traceId: string;
   raw: AuditLogDto;
-};
-
-const RESULT_COLOR: Record<string, string> = {
-  success: "green",
-  failure: "red",
-};
-
-const RESULT_LABEL: Record<string, string> = {
-  success: "成功",
-  failure: "失败",
 };
 
 const toRow = (item: AuditLogDto): AuditRow => ({

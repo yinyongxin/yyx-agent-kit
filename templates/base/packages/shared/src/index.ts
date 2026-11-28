@@ -1,5 +1,20 @@
 export const APP_NAME = "starter";
 
+/** 日志查询时间范围（server DTO / admin 筛选共用） */
+export const LOG_RANGES = ["5m", "15m", "1h", "6h", "24h", "7d"] as const;
+export type LogRange = (typeof LOG_RANGES)[number];
+
+/** pino 日志级别（server DTO / admin 筛选共用） */
+export const LOG_LEVELS = [
+  "trace",
+  "debug",
+  "info",
+  "warn",
+  "error",
+  "fatal",
+] as const;
+export type LogLevel = (typeof LOG_LEVELS)[number];
+
 /** API 路径前缀。server 的 setGlobalPrefix、前端的 baseUrl、路由常量都以此为准 */
 export const API_PREFIX = "/api";
 

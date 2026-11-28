@@ -10,19 +10,16 @@ import {
   MaxLength,
   Min,
 } from "class-validator";
+import {
+  LOG_LEVELS,
+  LOG_RANGES,
+  type LogLevel,
+  type LogRange,
+} from "../../../../../packages/shared/src/index";
 
-export const LOG_RANGES = ["5m", "15m", "1h", "6h", "24h", "7d"] as const;
-export type LogRange = (typeof LOG_RANGES)[number];
-
-export const LOG_LEVELS = [
-  "trace",
-  "debug",
-  "info",
-  "warn",
-  "error",
-  "fatal",
-] as const;
-export type LogLevel = (typeof LOG_LEVELS)[number];
+// 前后端共用同一份枚举；在这里 re-export，调用方仍可从 dto 目录导入
+export { LOG_LEVELS, LOG_RANGES };
+export type { LogLevel, LogRange };
 
 /** 日志查询条件（平台管理员） */
 export class QueryLogsDto {

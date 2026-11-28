@@ -25,6 +25,17 @@ import {
   type LogEntryDto,
 } from "@starter/api/generated";
 import {
+  LOG_LEVELS,
+  LOG_RANGES,
+  type LogLevel,
+  type LogRange,
+} from "@starter/shared";
+import {
+  LEVEL_COLOR,
+  LEVEL_OPTIONS,
+  RANGE_OPTIONS,
+} from "../constants";
+import {
   DataTableCardList,
   DataTableContent,
   DataTableFilterBar,
@@ -43,30 +54,6 @@ import {
   type QueryContext,
 } from "@/components/DataTable";
 
-const RANGE_VALUES = ["5m", "15m", "1h", "6h", "24h", "7d"] as const;
-type RangeValue = (typeof RANGE_VALUES)[number];
-
-const LEVEL_VALUES = ["trace", "debug", "info", "warn", "error", "fatal"] as const;
-type LevelValue = (typeof LEVEL_VALUES)[number];
-
-const RANGE_OPTIONS = [
-  { value: "15m", label: "近 15 分钟" },
-  { value: "1h", label: "近 1 小时" },
-  { value: "6h", label: "近 6 小时" },
-  { value: "24h", label: "近 24 小时" },
-  { value: "7d", label: "近 7 天" },
-];
-
-const LEVEL_OPTIONS = LEVEL_VALUES.map((level) => ({ value: level, label: level }));
-
-const LEVEL_COLOR: Record<string, string> = {
-  trace: "gray",
-  debug: "gray",
-  info: "blue",
-  warn: "yellow",
-  error: "red",
-  fatal: "red",
-};
 
 type LogRow = {
   key: string;
@@ -80,11 +67,11 @@ type LogRow = {
   raw: Record<string, unknown>;
 };
 
-const asRange = (value: FilterValue | undefined, fallback: RangeValue = "15m"): RangeValue =>
-  RANGE_VALUES.includes(value as RangeValue) ? (value as RangeValue) : fallback;
+const asRange = (value: FilterValue | undefined, fallback: LogRange = "15m"): LogRange =>
+  LOG_RANGES.includes(value as LogRange) ? (value as LogRange) : fallback;
 
-const asLevel = (value: FilterValue | undefined): LevelValue | undefined =>
-  LEVEL_VALUES.includes(value as LevelValue) ? (value as LevelValue) : undefined;
+const asLevel = (value: FilterValue | undefined): LogLevel | undefined =>
+  LOG_LEVELS.includes(value as LogLevel) ? (value as LogLevel) : undefined;
 
 const toRow = (entry: LogEntryDto): LogRow => ({
   key: `${entry.timestamp}-${entry.requestId ?? entry.traceId ?? Math.random()}`,

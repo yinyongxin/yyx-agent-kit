@@ -70,5 +70,3 @@ if (enabled) {
   process.once("SIGTERM", shutdown);
   process.once("SIGINT", shutdown);
 }
-
-export {};

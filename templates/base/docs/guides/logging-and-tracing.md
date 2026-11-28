@@ -45,6 +45,25 @@ pino + nestjs-pino 在这些点成熟，NodeAdapter 实测通过（健康检查�
 - **慢查询**：`scoped` extension 计时（`SLOW_SQL_MS`，默认 100ms）+ 租户事务整体耗时；日志 `msg: "slow query" / "slow transaction"`
 - **不要**：把完整请求日志写进业务库；Loki label 不要放 traceId（高基数）
 
+### 代码位置与分层
+
+| 位置 | 职责 | 读 / 写 |
+| --- | --- | --- |
+| `apps/server/src/logging/` | 请求日志、trace 上下文、脱敏、异常响应 | 写 |
+| `apps/server/src/logs/` | Loki 查询 API（管理端日志页） | 读 |
+| `apps/server/src/audit/` | 审计日志（PostgreSQL，append-only） | 读写 |
+| `apps/server/src/tracing.ts` | OTel SDK 初始化（`main.ts` 第一行） | 写 |
+| `apps/server/src/dev/` | 开发导航页：探活、本地凭据 | 仅开发 |
+| `docker/observability/` | Loki / Alloy / Tempo / Grafana 配置 | 基础设施 |
+| `apps/admin/src/features/observability/` | 日志页、审计页 | 读 |
+
+约定：
+
+- `logging` 是写入链路，`logs` 是查询链路；新增日志字段先改 `logging`，再改 `logs` 的解析映射
+- 日志级别 / 时间范围枚举在 `packages/shared`，前后端共用，页面里不再重复定义
+- 审计 before 由业务 service 通过 `AuditContext.setBefore()` 写入，拦截器统一记录
+- 审计与请求日志分开：审计是合规数据（PostgreSQL），请求日志是排障数据（Loki）
+
 ## 3. traceId
 
 - 入站 `traceparent` 合法则复用 trace-id；否则生成 32 位 hex

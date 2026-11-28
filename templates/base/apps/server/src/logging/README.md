@@ -11,8 +11,9 @@
 
 | 文件 | 作用 |
 | --- | --- |
-| `request-context.ts` | 请求级 ALS：`traceId / spanId / requestId` |
-| `trace.middleware.ts` | 解析/生成 traceparent，设置响应头，运行 RequestContext |
+| `request-context.ts` | 请求级 ALS：`traceId / spanId / requestId`，以及审计 before 快照 |
+| `trace.middleware.ts` | 创建 OTel server span、解析 traceparent、设置响应头、运行 RequestContext |
+| `pino-options.ts` | pino 配置（输出、轮转、脱敏、customProps、mixin） |
 | `logging.module.ts` | 注册 `LoggerModule.forRootAsync`、全局拦截器、异常过滤器、trace middleware |
 | `logging.interceptor.ts` | 把请求体/响应体脱敏截断后挂到 req，合并进 pino completion log |
 | `sanitize.ts` | 递归脱敏（password/token/cookie 等）与大小截断 |

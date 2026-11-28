@@ -16,6 +16,7 @@
 | `audit.decorator.ts` | `@Audit({ action, resource })` 声明要审计的 handler |
 | `audit.interceptor.ts` | 成功后写 success（after=返回值），失败后写 failure（summary=error.message） |
 | `audit.service.ts` | `record()`：自动补 traceId / ip / userAgent，失败只 warn 不影响业务 |
+| `audit-context.ts` | 审计上下文门面：业务 service 用 `setBefore()` 写旧值快照 |
 | `audit.repository.ts` | 平台查询：事务内 `set_config('app.audit_scope','all')` 后查全量 |
 | `audit-query.service.ts` | 列表 / 详情 DTO 转换 |
 | `audit.controller.ts` | `GET /api/audit-logs`、`GET /api/audit-logs/:id`（平台管理员） |

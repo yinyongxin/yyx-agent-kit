@@ -8,7 +8,7 @@ import { Reflector } from "@nestjs/core";
 import { from, throwError, type Observable } from "rxjs";
 import { catchError, mergeMap } from "rxjs/operators";
 import type { TracedRequest } from "../logging/trace.middleware";
-import { RequestContext } from "../logging/request-context";
+import { AuditContext } from "./audit-context";
 import { AUDIT_OPTIONS, type AuditOptions } from "./audit.decorator";
 import { AuditService } from "./audit.service";
 
@@ -48,7 +48,7 @@ export class AuditInterceptor implements NestInterceptor {
           tenantId,
           actorUserId,
           resourceId: this.resolveResourceId(options, data, req),
-          before: RequestContext.getAuditBefore(),
+          before: AuditContext.getBefore(),
           after: options.recordResult === false ? undefined : data,
         });
         return data;
@@ -63,7 +63,7 @@ export class AuditInterceptor implements NestInterceptor {
             resourceId: this.resolveResourceId(options, undefined, req),
             result: "failure",
             summary: options.summary ?? message,
-            before: RequestContext.getAuditBefore(),
+            before: AuditContext.getBefore(),
           }),
         ).pipe(mergeMap(() => throwError(() => error)));
       }),
