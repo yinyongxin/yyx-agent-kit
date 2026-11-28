@@ -23,6 +23,18 @@ export const databaseConfig = registerAs("database", () => ({
  */
 export const devConfig = registerAs("dev", () => {
   const portBase = Math.floor(Number(process.env.PORT ?? 47100) / 100) * 100;
+
+  // 从 DATABASE_URL 解析应用连库账号（app_rw），用于开发导航页展示
+  let postgresAppUser = "app_rw";
+  let postgresAppPassword = "app_rw_pwd_2026";
+  try {
+    const url = new URL(process.env.DATABASE_URL ?? "");
+    postgresAppUser = decodeURIComponent(url.username) || postgresAppUser;
+    postgresAppPassword = decodeURIComponent(url.password) || postgresAppPassword;
+  } catch {
+    // DATABASE_URL 缺失/格式异常时保持默认
+  }
+
   return {
     clientPort: portBase + 73,
     adminPort: portBase + 74,
@@ -45,9 +57,18 @@ export const devConfig = registerAs("dev", () => {
     lokiPort: Number(process.env.LOKI_PORT ?? 47110),
     grafanaPort: Number(process.env.GRAFANA_PORT ?? 47111),
     tempoPort: Number(process.env.TEMPO_PORT ?? 47113),
-    /** 开发导航页展示的 Grafana 凭据（仅开发环境） */
+    /** 开发导航页展示的本地凭据（仅开发环境） */
     grafanaUser: process.env.GRAFANA_USER ?? "admin",
     grafanaPassword: process.env.GRAFANA_PASSWORD ?? "starter_grafana_2026",
+    postgresAppUser,
+    postgresAppPassword,
+    postgresAdminUser: process.env.POSTGRES_USER ?? "app",
+    postgresAdminPassword: process.env.POSTGRES_PASSWORD ?? "app_dev_pwd",
+    redisPassword: process.env.REDIS_PASSWORD ?? "app_redis_pwd",
+    penpotUser: process.env.PENPOT_DEV_EMAIL ?? "dev@penpot.local",
+    penpotPassword: process.env.PENPOT_DEV_PASSWORD ?? "penpot_dev_pwd_2026",
+    seedUserEmail: process.env.SEED_USER_EMAIL ?? "admin@example.com",
+    seedUserPassword: process.env.SEED_USER_PASSWORD ?? "seed_pwd_2026",
   };
 });
 

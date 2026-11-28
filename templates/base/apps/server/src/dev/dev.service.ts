@@ -89,6 +89,15 @@ export class DevService {
     const tempoPort = this.config.getOrThrow<number>("dev.tempoPort");
     const grafanaUser = this.config.getOrThrow<string>("dev.grafanaUser");
     const grafanaPassword = this.config.getOrThrow<string>("dev.grafanaPassword");
+    const postgresAppUser = this.config.getOrThrow<string>("dev.postgresAppUser");
+    const postgresAppPassword = this.config.getOrThrow<string>("dev.postgresAppPassword");
+    const postgresAdminUser = this.config.getOrThrow<string>("dev.postgresAdminUser");
+    const postgresAdminPassword = this.config.getOrThrow<string>("dev.postgresAdminPassword");
+    const redisPassword = this.config.getOrThrow<string>("dev.redisPassword");
+    const penpotUser = this.config.getOrThrow<string>("dev.penpotUser");
+    const penpotPassword = this.config.getOrThrow<string>("dev.penpotPassword");
+    const seedUserEmail = this.config.getOrThrow<string>("dev.seedUserEmail");
+    const seedUserPassword = this.config.getOrThrow<string>("dev.seedUserPassword");
     const swaggerEnabled = this.config.getOrThrow<boolean>("app.swaggerEnabled");
 
     const [
@@ -138,6 +147,10 @@ export class DevService {
         status: "online",
         url: base(port),
         links: serverLinks,
+        credentials: [
+          { label: "测试账号", value: seedUserEmail },
+          { label: "密码", value: seedUserPassword },
+        ],
         command: "pnpm dev:server",
         probe: "当前进程",
       },
@@ -196,6 +209,12 @@ export class DevService {
         port: postgresPort,
         status: postgresUp ? "online" : "offline",
         links: [],
+        credentials: [
+          { label: "应用账号", value: postgresAppUser },
+          { label: "应用密码", value: postgresAppPassword },
+          { label: "管理账号", value: postgresAdminUser },
+          { label: "管理密码", value: postgresAdminPassword },
+        ],
         command: "docker compose up -d postgres",
         probe: "SELECT 1",
       },
@@ -206,6 +225,7 @@ export class DevService {
         port: redisPort,
         status: redisUp ? "online" : "offline",
         links: [],
+        credentials: [{ label: "密码", value: redisPassword }],
         command: "docker compose up -d redis",
         probe: "TCP",
       },
@@ -217,6 +237,10 @@ export class DevService {
         status: penpotUp ? "online" : "offline",
         url: base(penpotPort),
         links: [],
+        credentials: [
+          { label: "账号", value: penpotUser },
+          { label: "密码", value: penpotPassword },
+        ],
         command: "docker compose up -d penpot-frontend penpot-backend",
         probe: "HTTP",
       },
