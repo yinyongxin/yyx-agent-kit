@@ -71,7 +71,7 @@ export class TenantsRepository {
   softDelete(id: string) {
     return this.prisma.scoped.tenant.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: { status: "suspended", deletedAt: new Date() },
     });
   }
 
