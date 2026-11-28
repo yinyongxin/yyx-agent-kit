@@ -11,6 +11,7 @@
     "templates/",
     "agents/",
     "skills/",
+    "tools/penpot/",
     "README.md"
   ],
   "engines": {

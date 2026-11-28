@@ -201,7 +201,7 @@ export class DevService {
             href: base(penpotPluginPort) + "/manifest.json",
           },
         ],
-        command: "pnpm penpot:mcp",
+        command: "npx -y @penpot/mcp@2.17.0（全机一个实例）",
         probe: "HTTP",
       },
       {
@@ -243,7 +243,7 @@ export class DevService {
           { label: "账号", value: penpotUser },
           { label: "密码", value: penpotPassword },
         ],
-        command: "docker compose up -d penpot-frontend penpot-backend",
+        command: "（外部）yyx-agent-kit/tools/penpot/start.ps1",
         probe: "HTTP",
       },
       {
@@ -254,7 +254,7 @@ export class DevService {
         status: mailpitUp ? "online" : "offline",
         url: base(penpotMailpitPort),
         links: [],
-        command: "docker compose up -d penpot-mailpit",
+        command: "（外部）随 Penpot 启动",
         probe: "HTTP",
       },
       {

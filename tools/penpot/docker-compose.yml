@@ -1,0 +1,155 @@
+# 独立 Penpot 服务：不依赖 templates/base，任何项目都可以复用。
+# 默认端口：Penpot 9001 / Mailpit 8025。
+# 历史数据卷沿用 starter-penpot-*，从模板 compose 迁移时不会丢设计文件。
+name: yyx-penpot
+
+x-penpot-flags: &penpot-flags
+  PENPOT_FLAGS: disable-email-verification enable-smtp enable-prepl-server disable-secure-session-cookies
+x-penpot-uri: &penpot-public-uri
+  PENPOT_PUBLIC_URI: http://localhost:${PENPOT_PORT:-9001}
+x-penpot-body: &penpot-http-body-size
+  PENPOT_HTTP_SERVER_MAX_BODY_SIZE: 367001600
+  PENPOT_HTTP_SERVER_MAX_MULTIPART_BODY_SIZE: 367001600
+x-penpot-secret: &penpot-secret-key
+  PENPOT_SECRET_KEY: ${PENPOT_SECRET_KEY:-change-this-insecure-key}
+x-penpot-db: &penpot-database
+  PENPOT_DATABASE_URI: postgresql://yyx-penpot-postgres/penpot
+  PENPOT_DATABASE_USERNAME: penpot
+  PENPOT_DATABASE_PASSWORD: ${PENPOT_DB_PASSWORD:-penpot}
+
+services:
+  penpot-frontend:
+    image: "penpotapp/frontend:${PENPOT_VERSION:-2.18}"
+    container_name: yyx-penpot-frontend
+    restart: unless-stopped
+    ports:
+      - "${PENPOT_PORT:-9001}:8080"
+    volumes:
+      - penpot-assets:/opt/data/assets
+    depends_on:
+      penpot-backend:
+        condition: service_started
+      penpot-admin-console:
+        condition: service_started
+      penpot-exporter:
+        condition: service_started
+    networks:
+      - yyx-penpot-net
+    environment:
+      <<: [*penpot-flags, *penpot-http-body-size, *penpot-public-uri]
+      PENPOT_ADMIN_CONSOLE_URI: http://yyx-penpot-admin-console:3000
+
+  penpot-backend:
+    image: "penpotapp/backend:${PENPOT_VERSION:-2.18}"
+    container_name: yyx-penpot-backend
+    restart: unless-stopped
+    volumes:
+      - penpot-assets:/opt/data/assets
+    depends_on:
+      penpot-postgres:
+        condition: service_healthy
+      penpot-valkey:
+        condition: service_healthy
+    networks:
+      - yyx-penpot-net
+    environment:
+      <<: [*penpot-flags, *penpot-public-uri, *penpot-http-body-size, *penpot-secret-key, *penpot-database]
+      PENPOT_ADMIN_CONSOLE_URI: http://yyx-penpot-admin-console:3000
+      PENPOT_REDIS_URI: redis://yyx-penpot-valkey/0
+      PENPOT_OBJECTS_STORAGE_BACKEND: fs
+      PENPOT_OBJECTS_STORAGE_FS_DIRECTORY: /opt/data/assets
+      PENPOT_TELEMETRY_ENABLED: "true"
+      PENPOT_TELEMETRY_REFERER: compose
+      PENPOT_SMTP_DEFAULT_FROM: no-reply@example.com
+      PENPOT_SMTP_DEFAULT_REPLY_TO: no-reply@example.com
+      PENPOT_SMTP_HOST: yyx-penpot-mailpit
+      PENPOT_SMTP_PORT: 1025
+      PENPOT_SMTP_USERNAME:
+      PENPOT_SMTP_PASSWORD:
+      PENPOT_SMTP_TLS: "false"
+      PENPOT_SMTP_SSL: "false"
+
+  penpot-admin-console:
+    image: "penpotapp/admin-console:${PENPOT_VERSION:-2.18}"
+    container_name: yyx-penpot-admin-console
+    restart: unless-stopped
+    depends_on:
+      penpot-postgres:
+        condition: service_healthy
+    networks:
+      - yyx-penpot-net
+    environment:
+      <<: [*penpot-public-uri, *penpot-secret-key, *penpot-database]
+      PENPOT_INTERNAL_URI: http://yyx-penpot-frontend:8080
+
+  penpot-exporter:
+    image: "penpotapp/exporter:${PENPOT_VERSION:-2.18}"
+    container_name: yyx-penpot-exporter
+    restart: unless-stopped
+    depends_on:
+      penpot-valkey:
+        condition: service_healthy
+    networks:
+      - yyx-penpot-net
+    environment:
+      <<: [*penpot-flags, *penpot-secret-key, *penpot-public-uri]
+      PENPOT_INTERNAL_URI: http://yyx-penpot-frontend:8080
+      PENPOT_REDIS_URI: redis://yyx-penpot-valkey/0
+
+  penpot-postgres:
+    image: "postgres:15"
+    container_name: yyx-penpot-postgres
+    restart: unless-stopped
+    stop_signal: SIGINT
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U penpot"]
+      interval: 2s
+      timeout: 10s
+      retries: 5
+      start_period: 2s
+    volumes:
+      - penpot-postgres-data:/var/lib/postgresql/data
+    networks:
+      - yyx-penpot-net
+    environment:
+      - POSTGRES_INITDB_ARGS=--data-checksums
+      - POSTGRES_DB=penpot
+      - POSTGRES_USER=penpot
+      - POSTGRES_PASSWORD=${PENPOT_DB_PASSWORD:-penpot}
+
+  penpot-valkey:
+    image: valkey/valkey:8.1
+    container_name: yyx-penpot-valkey
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+    networks:
+      - yyx-penpot-net
+    environment:
+      - VALKEY_EXTRA_FLAGS=--maxmemory 128mb --maxmemory-policy volatile-lfu
+
+  penpot-mailpit:
+    image: axllent/mailpit:v1
+    container_name: yyx-penpot-mailpit
+    restart: unless-stopped
+    expose:
+      - "1025"
+    ports:
+      - "${PENPOT_MAILPIT_PORT:-8025}:8025"
+    networks:
+      - yyx-penpot-net
+
+volumes:
+  penpot-postgres-data:
+    name: starter-penpot-postgres-data
+  penpot-assets:
+    name: starter-penpot-assets
+
+networks:
+  yyx-penpot-net:
+    name: yyx-penpot-net
+    driver: bridge

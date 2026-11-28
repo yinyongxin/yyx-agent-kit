@@ -71,7 +71,8 @@ allowBuilds:
 
 ## 本地开发启动
 
-- 根目录 `pnpm dev`：`concurrently` 同时启动 server / client / admin / portal / Penpot MCP，server 就绪后自动打开开发导航页 `http://localhost:47100/api/dev`（`scripts/open-dev.mjs`）
+- 根目录 `pnpm dev`：`concurrently` 同时启动 server / client / admin / portal，server 就绪后自动打开开发导航页 `http://localhost:47100/api/dev`（`scripts/open-dev.mjs`）
+- Penpot 已独立为仓库级服务 `tools/penpot`（`start.ps1`），MCP 用 `start-mcp.ps1` 单独启动，全机一个实例
 - Windows 双击 `start-dev.cmd` / `stop-dev.cmd`：启动 = 检查 Docker + `docker compose up -d` + 等 PG 就绪 + `pnpm dev`；停止 = 结束应用进程 + `docker compose down`（保留数据卷）
 - 导航页自动探测各应用与依赖服务（HTTP / TCP / `SELECT 1`），未启动的服务显示启动命令；每 5 秒刷新
 - 导航页只由 server 在非生产环境注册（`apps/server/src/dev/`），生产访问返回 404，接口不返回连接串/密码

@@ -3,12 +3,11 @@
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "scripts": {
-    "dev": "concurrently -n server,client,admin,portal,penpot,dashboard -c blue,green,magenta,cyan,yellow,gray \"pnpm dev:server\" \"pnpm dev:client\" \"pnpm dev:admin\" \"pnpm dev:portal\" \"pnpm penpot:mcp\" \"node scripts/open-dev.mjs\"",
+    "dev": "concurrently -n server,client,admin,portal,dashboard -c blue,green,magenta,cyan,gray \"pnpm dev:server\" \"pnpm dev:client\" \"pnpm dev:admin\" \"pnpm dev:portal\" \"node scripts/open-dev.mjs\"",
     "dev:client": "pnpm --filter @starter/client dev",
     "dev:admin": "pnpm --filter @starter/admin dev",
     "dev:portal": "pnpm --filter @starter/portal dev",
     "dev:server": "pnpm --filter @starter/server dev",
-    "penpot:mcp": "npx -y @penpot/mcp@2.17.0",
     "api:generate": "pnpm --filter @starter/server build && pnpm --filter @starter/server swagger:export && pnpm --filter @starter/api openapi-ts",
     "build": "pnpm schema:check && pnpm -r --workspace-concurrency=1 build && pnpm typecheck",
     "schema:check": "pnpm --filter @starter/server schema:check",

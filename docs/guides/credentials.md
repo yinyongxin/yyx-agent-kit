@@ -9,20 +9,20 @@
 | PostgreSQL（bootstrap superuser，仅建库/迁移用） | `localhost:54732` | `app` | `app_dev_pwd` |
 | PostgreSQL（应用连接，非 superuser，RLS 生效必需） | `localhost:54732` | `app_rw` | `app_rw_pwd_2026` |
 | Redis（限流共享存储） | `localhost:46379` | - | `app_redis_pwd` |
-| Penpot（设计工具） | `http://localhost:9001` | `dev@penpot.local` | `penpot_dev_pwd_2026` |
+| Penpot（独立 `tools/penpot`） | `http://localhost:9001` | `dev@penpot.local` | `penpot_dev_pwd_2026` |
 | Grafana（可观测性，可选 profile） | `http://localhost:47111` | `admin` | `starter_grafana_2026` |
 | 应用登录（seed 用户） | `POST http://localhost:47100/starter/api/auth/sign-in` | `admin@example.com` | `seed_pwd_2026` |
 
 > 以上账号密码会在开发导航页 `http://localhost:47100/starter/starter/api/dev#services` 的「本地凭据」卡片统一展示（点击值可复制）；该页仅开发环境注册，生产返回 404。
 
-> Penpot 账号由官方 CLI 创建：`docker exec starter-penpot-backend python3 manage.py create-profile -n "Dev User" -e dev@penpot.local -p penpot_dev_pwd_2026 --skip-tutorial --skip-walkthrough`。本地 compose 带 `disable-email-verification`，不需要验证邮件。
+> Penpot 账号由官方 CLI 创建：`docker exec yyx-penpot-backend python3 manage.py create-profile -n "Dev User" -e dev@penpot.local -p penpot_dev_pwd_2026 --skip-tutorial --skip-walkthrough`。本地 compose 带 `disable-email-verification`，不需要验证邮件。
 
 > 认证/授权由 NestJS 官方包 `@nestjs/authentication` + `@nestjs/authorization` 实现，**没有独立 IdP 容器**。session / refreshToken / mfa / oidcState / emailToken 存进同一个 PostgreSQL（通过 store，见 `apps/server/src/auth/` TODO）。
 
 ## 初始化步骤
 
 1. `cp .env.example .env`（模板仓库里 `.env` 不提交）；`DATABASE_URL` 用 `app_rw`——superuser 带 `BYPASSRLS`，会让 RLS 多租户兜底失效；`MIGRATE_DATABASE_URL` 用 bootstrap 账号（迁移/`migrate dev` 影子库需要）（见 `docs/deliverables/20261127-base-infra-rls/02-tech-design.md`）
-2. `docker compose up -d`（PostgreSQL + pgvector + Redis + Penpot 全套）
+2. `docker compose up -d`（PostgreSQL + pgvector + Redis）；Penpot 单独启动：`pwsh -NoProfile -File tools/penpot/start.ps1`
 3. `pnpm --filter @starter/server prisma:generate`、`db:deploy`（按迁移文件建表）、`db:seed`（默认租户/角色/权限/套餐）
 4. `pnpm dev:server` / `pnpm dev:admin` 启动
 5. `pnpm --filter @starter/server test:e2e`（服务在跑时验证登录与租户边界；seed 密码可用 `SEED_USER_PASSWORD` 覆盖）
@@ -38,7 +38,7 @@
 | `JWT_SECRET` | 至少 32 字节（`openssl rand -base64 32`）；官方包 HS256 强校验，短了启动失败 |
 | `POSTGRES_PASSWORD` / `REDIS_PASSWORD` | 各服务密码 |
 | `app_rw` 密码（`docker/init-db.sql` 与 `DATABASE_URL`） | 必须非 superuser / 无 BYPASSRLS，否则 RLS 失效；改密码时两处同步 |
-| `PENPOT_SECRET_KEY` / `PENPOT_DB_PASSWORD` / Penpot 账号 | 默认 `change-this-insecure-key` / `penpot` / `dev@penpot.local`，公网部署必须全换 |
+| Penpot 密钥 / 账号 | 在 `tools/penpot/.env` 修改 `PENPOT_SECRET_KEY` / `PENPOT_DB_PASSWORD`；默认账号 `dev@penpot.local`，公网部署必须全部修改 |
 | `accessToken.issuer` / `audience` | 按实际域名/应用设置（在 `auth.module.ts`） |
 | 注册 6 个 store | 生产 `NODE_ENV=production` 下，官方包强制要求 sessions/refreshTokens/mfa/magicLinks/oidcStates/emailTokens 的 store，否则启动失败；见官网 `The store contract` |
 | Google OAuth | `.env` 填 `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`，配置 `oidc.providers` |

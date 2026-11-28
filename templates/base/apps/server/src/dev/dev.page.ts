@@ -711,7 +711,7 @@ export const renderDevPage = (): string => `<!doctype html>
       + '<div class="mcp-sub">MCP HTTP 端点</div>'
       + '<div class="kv"><span>模式</span><b>本地 · 免 key</b></div>'
       + '<div class="kv"><span>插件</span><b>localhost:4400</b></div>'
-      + '<div class="kv"><span>启动</span><b>pnpm penpot:mcp</b></div>'
+      + '<div class="kv"><span>启动</span><b>npx -y @penpot/mcp@2.17.0</b></div>'
       + '<a class="mcp-open' + (mcpOk ? "" : " off") + '" href="' + esc(penpotUrl) + '" target="_blank" rel="noreferrer">打开 Penpot</a>';
 
     document.getElementById("tool-ports").innerHTML = state.services.map(function (s) {

@@ -68,7 +68,7 @@ Grafana 预置两条告警规则（错误日志过多、慢请求过多），通
 | 命令 | 作用 |
 | --- | --- |
 | `pnpm install` | 安装全部依赖 |
-| `pnpm dev` | 一键启动 server + client + admin + portal + Penpot MCP，并自动打开开发导航页 |
+| `pnpm dev` | 一键启动 server + client + admin + portal，并自动打开开发导航页 |
 | `start-dev.cmd` | **双击启动**：检查环境 → `docker compose up -d` → 等 PostgreSQL → `pnpm dev`（Windows） |
 | `stop-dev.cmd` | **双击停止**：结束应用进程 + `docker compose down`（保留数据卷） |
 | `pnpm build` | 构建 + 全量 typecheck（qa 判定基线） |
@@ -136,12 +136,12 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 
 ## 开发导航页
 
-`pnpm dev` 同时启动 server / client / admin / portal 和 Penpot MCP，server 就绪后自动打开
+`pnpm dev` 同时启动 server / client / admin / portal，server 就绪后自动打开
 `http://localhost:47100/starter/starter/api/dev`：
 
 - 各应用端口、在线状态、打开链接
 - server 的 health / Swagger / OpenAPI JSON 入口
-- Penpot MCP（工具分组）：4401 状态、插件 manifest 链接
+- Penpot MCP（外置，工具分组）：4401 状态、插件 manifest 链接
 - PostgreSQL / Redis / Penpot / Mailpit 状态
 - 未启动的服务显示启动命令，点击可复制
 

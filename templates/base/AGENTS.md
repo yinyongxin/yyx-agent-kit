@@ -58,7 +58,7 @@
 
 单测、接口测试在第一轮需求时再引入，届时补充对应脚本。
 
-启动全部应用用根目录 `pnpm dev`：并发起 server / client / admin / portal + Penpot MCP（`@penpot/mcp`），并自动打开 `http://localhost:47100/starter/starter/api/dev` 开发导航页（端口与在线状态、Swagger 入口、依赖服务、未启动服务的启动命令）。该页仅在非生产环境注册。
+启动全部应用用根目录 `pnpm dev`：并发起 server / client / admin / portal，并自动打开 `http://localhost:47100/starter/starter/api/dev` 开发导航页（端口与在线状态、Swagger 入口、依赖服务、未启动服务的启动命令）。该页仅在非生产环境注册。
 
 Windows 下也可以直接双击 `start-dev.cmd` / `stop-dev.cmd`：启动会检查 Docker、`docker compose up -d`、等 PostgreSQL 就绪后运行 `pnpm dev`；停止会结束应用进程并 `docker compose down`（保留数据卷）。
 

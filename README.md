@@ -15,6 +15,7 @@ F:\project\yyx-agent-kit\
 │   ├── flows\               # 6 个流程 skill（product-pipeline / prd / tech-design / code-review / qa-regression / archive）
 │   ├── tools\tooling\       # 工具链索引（ardot / ego-browser / opencode CLI）
 │   └── standards\           # 4 个规范 skill：workspace / nestjs / react / next
+├── tools\penpot\            # 独立 Penpot 服务 + 本地 MCP + skill 安装脚本
 ├── templates\base\          # 项目模板：client/admin/portal/server + packages 共享层
 ├── cli\bin\yyx-new.mjs      # npm CLI 入口
 ├── scripts\                 # sync.ps1（同步 agents）/ new.ps1（仓库内建项目）
@@ -22,6 +23,22 @@ F:\project\yyx-agent-kit\
 ├── package.json             # npm 包定义，bin: yyx-new / yyx-agent-kit
 └── README.md
 ```
+
+## 独立工具
+
+### Penpot
+
+Penpot 已从项目模板中拆出，作为仓库级服务被多个项目共用：
+
+```powershell
+pwsh -NoProfile -File F:\project\yyx-agent-kit\tools\penpot\start.ps1
+pwsh -NoProfile -File F:\project\yyx-agent-kit\tools\penpot\start-mcp.ps1
+```
+
+- Penpot：http://localhost:9001
+- 本地 MCP：4400 插件 / 4401 MCP
+- 其他项目安装 skill：`tools/penpot/install-skill.ps1`
+- 详见 `tools/penpot/README.md`
 
 ## 项目模板
 
