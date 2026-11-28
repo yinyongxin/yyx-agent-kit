@@ -100,10 +100,10 @@ Loki / Tempo 不可达时 `test:logs` / `test:traces` 自动 SKIP；失败会上
 | admin | `dist/admin` |
 | client | `dist/client` |
 | portal | `dist/portal`（Next `distDir`） |
-| server | `apps/server/dist`（tsc；入口 `dist/apps/server/src/main.js`） |
+| server | `apps/server/dist`（入口 `dist/apps/server/src/main.js`） |
 
 前端统一收在项目根 `dist/<app>`，部署时按子目录映射即可（`/admin`、`/client`、`/portal`）。
-server 因 `tsc` 的 `rootDir` 与生产镜像入口绑定，保留独立 `dist`。
+server 保留在 `apps/server/dist`：pnpm 的依赖链接在 app 目录，dist 移出后 Node 会解析不到 `node_modules`。
 
 ## 生产部署（Docker）
 
