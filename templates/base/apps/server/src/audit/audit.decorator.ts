@@ -1,5 +1,5 @@
 import { SetMetadata } from "@nestjs/common";
-import type { TracedRequest } from "../logging/trace.middleware";
+import type { TracedRequest } from "@/logging/trace.middleware";
 
 export const AUDIT_OPTIONS = "audit:options";
 

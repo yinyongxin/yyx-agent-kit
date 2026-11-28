@@ -1,4 +1,4 @@
-import { RequestContext } from "../logging/request-context";
+import { RequestContext } from "@/logging/request-context";
 
 /**
  * 审计上下文门面。

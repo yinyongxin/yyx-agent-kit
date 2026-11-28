@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { LoggerModule } from "nestjs-pino";
-import { AppConfigModule } from "../config/config.module";
+import { AppConfigModule } from "@/config/config.module";
 import { LoggingInterceptor } from "./logging.interceptor";
 import { AllExceptionsFilter } from "./http-exception.filter";
 import { createPinoHttpOptions } from "./pino-options";

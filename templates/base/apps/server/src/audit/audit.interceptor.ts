@@ -7,7 +7,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import { from, throwError, type Observable } from "rxjs";
 import { catchError, mergeMap } from "rxjs/operators";
-import type { TracedRequest } from "../logging/trace.middleware";
+import type { TracedRequest } from "@/logging/trace.middleware";
 import { AuditContext } from "./audit-context";
 import { AUDIT_OPTIONS, type AuditOptions } from "./audit.decorator";
 import { AuditService } from "./audit.service";

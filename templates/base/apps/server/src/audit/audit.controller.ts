@@ -16,9 +16,9 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
-import { API_ROUTES, asRoute } from "../shared";
-import { PlatformAdminGuard } from "../auth/guards/platform-admin.guard";
-import { ErrorResponseDto } from "../dto/error-response.dto";
+import { API_ROUTES, asRoute } from "@/shared";
+import { PlatformAdminGuard } from "@/auth/guards/platform-admin.guard";
+import { ErrorResponseDto } from "@/dto/error-response.dto";
 import { AuditQueryService } from "./audit-query.service";
 import { AuditLogDto, AuditLogListResponseDto } from "./dto/audit-log.dto";
 import { QueryAuditLogsDto } from "./dto/query-audit-logs.dto";

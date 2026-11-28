@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "nest start --watch",
-    "build": "tsc -p tsconfig.json",
+    "dev": "node scripts/dev.mjs",
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node dist/apps/server/src/main.js",
     "typecheck": "tsc --noEmit",
     "schema:check": "node scripts/check-schema.mjs",
@@ -65,6 +65,7 @@
     "pg": "^8.23.1",
     "prettier": "^3.10.1",
     "prisma": "^7.10.1",
+    "tsc-alias": "^1.9.11",
     "tsx": "^4.19.0",
     "typescript": "^6.0.3"
   }

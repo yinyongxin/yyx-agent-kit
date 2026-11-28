@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { createConnection } from "node:net";
-import { PrismaService } from "../prisma/prisma.service";
+import { PrismaService } from "@/prisma/prisma.service";
 
 export type DevServiceStatus = "online" | "offline";
 export type DevServiceGroup = "应用" | "工具" | "依赖服务";

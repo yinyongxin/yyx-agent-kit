@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import type { Prisma } from "../generated/prisma/client";
-import { RequestContext } from "../logging/request-context";
-import { truncateForLog } from "../logging/sanitize";
-import { PrismaService } from "../prisma/prisma.service";
+import type { Prisma } from "@/generated/prisma/client";
+import { RequestContext } from "@/logging/request-context";
+import { truncateForLog } from "@/logging/sanitize";
+import { PrismaService } from "@/prisma/prisma.service";
 
 export type AuditResult = "success" | "failure";
 

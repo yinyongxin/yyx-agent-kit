@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import type { Tenant } from "../generated/prisma/client";
-import { AuditContext } from "../audit/audit-context";
+import type { Tenant } from "@/generated/prisma/client";
+import { AuditContext } from "@/audit/audit-context";
 import type { CreateTenantDto } from "./dto/create-tenant.dto";
 import type { QueryTenantsDto } from "./dto/query-tenants.dto";
 import type { TenantListResponseDto } from "./dto/tenant-list-response.dto";

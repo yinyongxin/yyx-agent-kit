@@ -31,7 +31,8 @@
 
 ## 模块导入约定
 
-- **server 内部模块不使用 barrel（`index.ts`）**：直接引用具体文件（如 `from "./tenants.service"`、`from "../logging/request-context"`）。server 是 CJS + Nest DI，barrel 容易引入循环依赖，并破坏启动顺序（如 `tracing.ts` 必须在 `main.ts` 第一行加载）。**此约定覆盖全局默认的 barrel 规则**。
+- **server 内部模块不使用 barrel（`index.ts`）**：直接引用具体文件（如 `from "@/tenants/tenants.service"`、`from "./tenants.service"`）。server 是 CJS + Nest DI，barrel 容易引入循环依赖，并破坏启动顺序（如 `tracing.ts` 必须在 `main.ts` 第一行加载）。**此约定覆盖全局默认的 barrel 规则**。
+- **server 跨目录导入统一用 `@/`**：`tsconfig.json` 配 `paths: { "@/*": ["./src/*"] }`，构建由 `tsc-alias` 重写产物；同目录仍用 `./`。`pnpm dev:server` 走 `scripts/dev.mjs`（`tsc -w` + `tsc-alias -w` + `node --watch`），**不要用 `nest start --watch`**（它不会重写别名）。
 - **前端组件 / 页面目录保留 barrel（`index.tsx`）**：只 re-export，不写业务逻辑；外部从目录导入（见 `docs/guides/conventions.md`）。
 - **对外包保留包入口**：`packages/shared` 用 `src/index.ts`，`packages/api` 用生成物入口，外部统一从包名导入。
 - **新增源码目录仍需 `README.md`**：职责 / 文件索引 / 同步要求。

@@ -24,10 +24,10 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Can } from "@nestjs/authorization";
-import { API_ROUTES, asRoute } from "../shared";
-import { Audit } from "../audit/audit.decorator";
-import { PlatformAdminGuard } from "../auth/guards/platform-admin.guard";
-import { ErrorResponseDto } from "../dto/error-response.dto";
+import { API_ROUTES, asRoute } from "@/shared";
+import { Audit } from "@/audit/audit.decorator";
+import { PlatformAdminGuard } from "@/auth/guards/platform-admin.guard";
+import { ErrorResponseDto } from "@/dto/error-response.dto";
 import { CreateTenantDto } from "./dto/create-tenant.dto";
 import { QueryTenantsDto } from "./dto/query-tenants.dto";
 import { TenantListResponseDto } from "./dto/tenant-list-response.dto";

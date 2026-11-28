@@ -1,4 +1,4 @@
-import { API_PREFIX } from "../shared";
+import { API_PREFIX } from "@/shared";
 
 /**
  * 开发导航页（单文件、无构建、无外部依赖）。

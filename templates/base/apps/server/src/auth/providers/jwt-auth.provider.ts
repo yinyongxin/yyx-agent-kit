@@ -4,8 +4,8 @@ import {
   JwtBearerProvider,
   type JwtClaims,
 } from "@nestjs/authentication";
-import { UsersRepository } from "../repositories/users.repository";
-import type { User } from "../user.types";
+import { UsersRepository } from "@/auth/repositories/users.repository";
+import type { User } from "@/auth/user.types";
 
 /**
  * Bearer JWT 凭证 provider：验证模块签发的 access token，再从业务库加载用户。

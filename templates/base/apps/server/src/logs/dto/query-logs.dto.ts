@@ -15,7 +15,7 @@ import {
   LOG_RANGES,
   type LogLevel,
   type LogRange,
-} from "../../shared";
+} from "@/shared";
 
 // 前后端共用同一份枚举；在这里 re-export，调用方仍可从 dto 目录导入
 export { LOG_LEVELS, LOG_RANGES };

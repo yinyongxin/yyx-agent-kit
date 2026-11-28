@@ -8,8 +8,8 @@ import {
 } from "@nestjs/swagger";
 import { CurrentUser } from "@nestjs/authentication";
 import { Can } from "@nestjs/authorization";
-import { API_ROUTES, asRoute } from "../shared";
-import { ErrorResponseDto } from "../dto/error-response.dto";
+import { API_ROUTES, asRoute } from "@/shared";
+import { ErrorResponseDto } from "@/dto/error-response.dto";
 import { TenantSummaryDto } from "./dto/tenant-summary.dto";
 import { UsersRepository } from "./repositories/users.repository";
 
