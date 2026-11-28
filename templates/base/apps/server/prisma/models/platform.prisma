@@ -4,7 +4,8 @@ model PlatformAdmin {
   userId    String             @id @db.Uuid
   user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   level     PlatformAdminLevel @default(ops)
-  createdAt DateTime           @default(now())
+  createdAt DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime           @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@map("platform_admins")
 }

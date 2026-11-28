@@ -4,7 +4,8 @@ model Plan {
   code        String   @unique
   name        String
   description String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   subscriptions Subscription[]
 
@@ -19,9 +20,9 @@ model Subscription {
   planId           String             @db.Uuid
   plan             Plan               @relation(fields: [planId], references: [id])
   status           SubscriptionStatus @default(active)
-  currentPeriodEnd DateTime?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  currentPeriodEnd DateTime?          @db.Timestamptz(3)
+  createdAt        DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime           @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@unique([tenantId, planId])
   @@index([tenantId])

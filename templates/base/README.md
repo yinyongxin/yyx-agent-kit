@@ -62,6 +62,7 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | `start-dev.cmd` | **双击启动**：检查环境 → `docker compose up -d` → 等 PostgreSQL → `pnpm dev`（Windows） |
 | `stop-dev.cmd` | **双击停止**：结束应用进程 + `docker compose down`（保留数据卷） |
 | `pnpm build` | 构建 + 全量 typecheck（qa 判定基线） |
+| `pnpm schema:check` | 校验 Prisma 模型字段约定（id / 时间戳 / timestamptz） |
 | `pnpm lint` | oxlint 检查 `apps` 与 `packages`（qa 判定基线） |
 | `pnpm dev:client` | 启动客户端（47173） |
 | `pnpm dev:admin` | 启动管理端（47174） |

@@ -32,6 +32,7 @@ pnpm --filter @starter/server dev            # 开发
 pnpm --filter @starter/server build          # 编译
 pnpm --filter @starter/server start          # 运行 dist
 pnpm --filter @starter/server typecheck
+pnpm --filter @starter/server schema:check   # 模型字段约定（id / 时间戳 / timestamptz）
 pnpm --filter @starter/server prisma:generate
 pnpm --filter @starter/server db:deploy      # 应用迁移（MIGRATE_DATABASE_URL）
 pnpm --filter @starter/server db:seed
@@ -50,3 +51,4 @@ pnpm --filter @starter/server test:generated # OpenAPI 生成客户端联动
 - 新增 `src/*` 目录必须有 `README.md`。
 - 接口变更后运行 `pnpm api:generate`，同步 `packages/api/openapi.json`。
 - 新增租户表必须补 RLS 迁移，并在 `prisma/README.md` 记录。
+- 改 `prisma/models/*.prisma` 后运行 `pnpm --filter @starter/server schema:check`；字段规范见 [`docs/guides/database-conventions.md`](../../docs/guides/database-conventions.md)。

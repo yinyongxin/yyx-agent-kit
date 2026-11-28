@@ -10,7 +10,8 @@
     "dev:server": "pnpm --filter @starter/server dev",
     "penpot:mcp": "npx -y @penpot/mcp@2.17.0",
     "api:generate": "pnpm --filter @starter/server build && pnpm --filter @starter/server swagger:export && pnpm --filter @starter/api openapi-ts",
-    "build": "pnpm -r --workspace-concurrency=1 build && pnpm typecheck",
+    "build": "pnpm schema:check && pnpm -r --workspace-concurrency=1 build && pnpm typecheck",
+    "schema:check": "pnpm --filter @starter/server schema:check",
     "typecheck": "pnpm -r --workspace-concurrency=1 typecheck",
     "lint": "oxlint apps packages --ignore-pattern \"**/next-env.d.ts\" --ignore-pattern \"**/generated/**\""
   },

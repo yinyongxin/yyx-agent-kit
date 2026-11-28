@@ -5,8 +5,8 @@ model Tenant {
   name      String
   slug      String       @unique
   status    TenantStatus @default(active)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
 
   userTenants   UserTenant[]
   roles         Role[]

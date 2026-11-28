@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- **数据库字段规范**：业务表统一 UUID `id` + `createdAt`/`updatedAt` + `@db.Timestamptz(3)`；关联表保持联合主键、不加 `id`；`deletedAt` 按需。新增 `pnpm schema:check`（已并入 `pnpm build`）与 `docs/guides/database-conventions.md`；迁移 `20261128030929_standardize_timestamps` 补齐 Plan/Permission/OAuthConnection/PlatformAdmin 时间字段
+
 - **Penpot 统一为本地 MCP**：移除 compose 的 `penpot-mcp` 容器与 `enable-mcp` flag（远程模式弃用，不再维护 key）；新增 `pnpm penpot:mcp`（`npx -y @penpot/mcp@2.17.0`）起 4400 插件/4401 MCP/4402 WS，全局 `opencode.json` 指向 `http://localhost:4401/mcp`；插件用 **Plugins → Load from URL** 加载；`tools/penpot/README.md`、penpot skill、conventions 同步
 - **MCP 配置调整**：移除 `open-design`（生成流水线不可靠，规则改为通用设计原则）；接入 `MCP_DOCKER`（`docker mcp gateway run`，已 connected）；conventions / agent-system / penpot skill 与 README 同步
 - **Penpot 本地开发账号**：用官方 CLI 创建 `dev@penpot.local` / `penpot_dev_pwd_2026`（`--skip-tutorial --skip-walkthrough`，本地免邮件验证），凭据记入 `docs/guides/credentials.md`；生产必改清单同步

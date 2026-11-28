@@ -7,8 +7,8 @@ model Role {
   name        String
   description String?
   isSystem    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   users       UserRole[]
   permissions RolePermission[]
@@ -24,6 +24,8 @@ model Permission {
   code        String   @unique
   name        String
   description String?
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   roles RolePermission[]
 

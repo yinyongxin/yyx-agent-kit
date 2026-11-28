@@ -47,7 +47,7 @@
 
 ## 5. 数据库迁移
 
-结构变更走 Prisma Migrate，不再用 `db push` 直接同步。
+结构变更走 Prisma Migrate，不再用 `db push` 直接同步。字段规范（id / 时间戳 / timestamptz / 软删除）见 [`database-conventions.md`](database-conventions.md)。
 
 | 场景 | 命令 |
 | --- | --- |

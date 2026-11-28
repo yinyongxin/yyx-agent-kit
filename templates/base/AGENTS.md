@@ -24,6 +24,12 @@
 - 每个源码目录都要有 `README.md`：职责 / 文件索引 / 关联 / 同步要求。进入陌生目录先读它筛出要读的文件，再读具体代码；结论以代码为准，README 只用于导航。
 - 文档、提交信息、回复使用简体中文。
 
+## 数据库
+
+- 表结构遵循 [`docs/guides/database-conventions.md`](docs/guides/database-conventions.md)：业务表 `id`(uuid) + `createdAt` + `updatedAt`（`@db.Timestamptz(3)`）；关联表用联合主键、不加 `id`；`deletedAt` 只按需加。
+- `pnpm schema:check` 校验模型字段约定（已并入 `pnpm build`）；不通过先修模型再提交。
+- 结构变更一律 `db:migrate` + review SQL，禁止 `db push` 用于正式开发。
+
 ## 验证命令（qa 判定基线）
 
 在仓库根目录执行：

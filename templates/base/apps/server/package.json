@@ -7,6 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/apps/server/src/main.js",
     "typecheck": "tsc --noEmit",
+    "schema:check": "node scripts/check-schema.mjs",
     "swagger:export": "tsx scripts/export-openapi.ts",
     "test:e2e": "node test/tenancy-e2e.mjs",
     "test:rls": "node test/rls-concurrency.mjs",
