@@ -113,4 +113,4 @@ open http://localhost:47111/d/starter-overview
 # 2) 日志页搜索 traceId，或 Tempo 输入 traceId
 ```
 
-本地凭据在 `http://localhost:47100/starter/starter/api/dev#services` 的「本地凭据」卡片。
+本地凭据在 `http://localhost:47100/starter/api/dev#services` 的「本地凭据」卡片。

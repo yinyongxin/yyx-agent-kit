@@ -21,8 +21,8 @@ export interface DevServicesResponse {
 /**
  * 本地开发导航页。
  *
- * - `GET /starter/starter/api/dev`          网页（每 5 秒轮询一次）
- * - `GET /starter/starter/api/dev/services` 探测结果 JSON
+ * - `GET /starter/api/dev`          网页（每 5 秒轮询一次）
+ * - `GET /starter/api/dev/services` 探测结果 JSON
  *
  * 只由 DevModule 在非生产环境注册；这里再兜一层，避免误配把开发信息暴露到生产。
  * `@Public()`：页面需要在未登录时也能打开（不带头部 token）。

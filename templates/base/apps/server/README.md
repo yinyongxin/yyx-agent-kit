@@ -11,7 +11,7 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/main.ts` | 启动：加载 env、全局前缀/管道、Swagger、listen（配置从 `ConfigService` 取） |
 | `src/app.module.ts` | 根模块：装配 Config / Prisma / Auth / Tenancy / Tenants，注册租户 middleware |
 | `src/config/` | `@nestjs/config`：命名空间配置、启动时 env 校验 |
-| `src/dev/` | 本地开发导航页 `/starter/starter/api/dev`（仅非生产环境注册） |
+| `src/dev/` | 本地开发导航页 `/starter/api/dev`（仅非生产环境注册） |
 | `src/common/` | 跨模块共享构件（filters / guards / interceptors / pipes / decorators / middleware）；按需创建 |
 | `src/dto/` | 跨模块共享 DTO（错误响应、分页等） |
 | `src/swagger.ts` | OpenAPI 文档构建（main 与导出脚本共用） |

@@ -13,7 +13,7 @@
 | Grafana（可观测性，可选 profile） | `http://localhost:47111` | `admin` | `starter_grafana_2026` |
 | 应用登录（seed 用户） | `POST http://localhost:47100/starter/api/auth/sign-in` | `admin@example.com` | `seed_pwd_2026` |
 
-> 以上账号密码会在开发导航页 `http://localhost:47100/starter/starter/api/dev#services` 的「本地凭据」卡片统一展示（点击值可复制）；该页仅开发环境注册，生产返回 404。
+> 以上账号密码会在开发导航页 `http://localhost:47100/starter/api/dev#services` 的「本地凭据」卡片统一展示（点击值可复制）；该页仅开发环境注册，生产返回 404。
 
 > Penpot 账号由官方 CLI 创建：`docker exec yyx-penpot-backend python3 manage.py create-profile -n "Dev User" -e dev@penpot.local -p penpot_dev_pwd_2026 --skip-tutorial --skip-walkthrough`。本地 compose 带 `disable-email-verification`，不需要验证邮件。
 

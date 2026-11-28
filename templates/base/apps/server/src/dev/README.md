@@ -10,23 +10,23 @@
 
 | 地址 | 内容 |
 | --- | --- |
-| `GET /starter/starter/api/dev` | 导航页（原生 HTML，每 5 秒轮询） |
-| `GET /starter/starter/api/dev#overview` | 概览视图 |
-| `GET /starter/starter/api/dev#services` | 服务视图（分组筛选 + 全宽表格） |
-| `GET /starter/starter/api/dev#tools` | 工具视图（命令 / MCP / 入口） |
-| `GET /starter/starter/api/dev/services` | 探测结果 JSON |
+| `GET /starter/api/dev` | 导航页（原生 HTML，每 5 秒轮询） |
+| `GET /starter/api/dev#overview` | 概览视图 |
+| `GET /starter/api/dev#services` | 服务视图（分组筛选 + 每服务一行卡片） |
+| `GET /starter/api/dev#tools` | 工具视图（命令 / MCP / 入口） |
+| `GET /starter/api/dev/services` | 探测结果 JSON |
 
 页面与接口都是 `@Public()`，未登录也能打开。
 
 ## 视觉与数据
 
-- **Bento Grid + 深色玻璃拟态**：大小 tile 混排，半透明渐变 + `backdrop-filter`，背景为橙/紫/蓝径向光斑。
+- **Bento 概览 + 深色玻璃拟态**：KPI 大小 tile 混排，服务区每个服务一行卡片；半透明渐变 + `backdrop-filter`，背景为橙/紫/蓝径向光斑。
 - **三个视图**在客户端切换（`#overview` / `#services` / `#tools`），轮询不中断：
-  - 概览：在线率仪表盘、应用/工具/依赖/耗时 KPI、最近事件、应用列表、服务表、命令/端口/探测策略
-  - 服务：KPI 条 + 分组筛选（全部/应用/工具/依赖）+ 全宽明细表（含启动命令）
+  - 概览：在线率仪表盘、应用/工具/依赖/耗时 KPI、最近事件、服务行卡片、命令/端口/探测策略
+  - 服务：KPI 条 + 分组筛选（全部/应用/工具/依赖）+ 每服务一行（名称、端口、入口、启动命令、本地凭据）
   - 工具：快捷命令、Penpot MCP（打开 Penpot）、端口约定、常用入口、探测策略、环境信息
-- **无演示数据**：KPI、仪表盘、表格全部由探测结果计算；事件由状态变化生成（首次加载记录“开始监控”）；探测耗时是浏览器侧 fetch 往返时间。
-- 响应式：1180px 两列、760px 单列（表格横向滚动）；不支持 `backdrop-filter` 时回退实色卡片。
+- **无演示数据**：KPI、仪表盘、服务行全部由探测结果计算；事件由状态变化生成（首次加载记录“开始监控”）；探测耗时是浏览器侧 fetch 往返时间。
+- 响应式：1180px 两列、760px 单列；服务行在窄屏自动换行，不横向滚动。
 
 ## 文件索引
 

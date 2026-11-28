@@ -137,7 +137,7 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 ## 开发导航页
 
 `pnpm dev` 同时启动 server / client / admin / portal，server 就绪后自动打开
-`http://localhost:47100/starter/starter/api/dev`：
+`http://localhost:47100/starter/api/dev`：
 
 - 各应用端口、在线状态、打开链接
 - server 的 health / Swagger / OpenAPI JSON 入口

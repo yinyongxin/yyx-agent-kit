@@ -6,7 +6,8 @@ import { API_PREFIX } from "../shared";
  * 视觉：Bento Grid + 深色玻璃拟态（CSS backdrop-filter）。
  * 三个视图（概览 / 服务 / 工具）在客户端切换，轮询不中断；数据全部来自
  * `/starter/api/dev/services`，无演示数据：
- * - KPI / 仪表盘 / 表格由探测结果实时计算
+ * - KPI / 仪表盘 / 服务列表由探测结果实时计算
+ * - 每个服务一行卡片：名称、分组、端口、入口、启动命令、本地凭据
  * - 最近事件由状态变化生成（首次加载记录“开始监控”）
  * - 探测耗时为浏览器侧 fetch 往返时间
  */
@@ -98,10 +99,56 @@ export const renderDevPage = (): string => `<!doctype html>
 
   .band { display: grid; gap: 14px; }
   .band-kpi { grid-template-columns: 4fr 3fr 3fr 2fr; grid-template-rows: 101px 101px; }
-  .band-main { grid-template-columns: 5fr 7fr; }
   .band-tools { grid-template-columns: 4fr 3fr 5fr; }
   .band-support { grid-template-columns: 5fr 3fr 4fr; }
   .band-svc-kpi { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  /* 服务列表：每个服务一行卡片，信息横向排列 */
+  .svc-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .tile.svc-row {
+    display: flex; align-items: center; gap: 12px 18px; flex-wrap: wrap;
+    min-height: 72px; padding: 14px 18px;
+    border-left: 2px solid rgba(255, 255, 255, 0.12);
+  }
+  .tile.svc-row.g-app { border-left-color: rgba(52, 211, 153, 0.65); }
+  .tile.svc-row.g-tool { border-left-color: rgba(56, 189, 248, 0.65); }
+  .tile.svc-row.g-dep { border-left-color: rgba(167, 139, 250, 0.65); }
+  .tile.svc-row.is-off { opacity: 0.72; }
+  .svc-ident { display: flex; align-items: center; gap: 10px; flex: 0 0 190px; min-width: 0; }
+  .svc-ident h2 {
+    margin: 0; font-size: 13px; font-weight: 650; letter-spacing: -0.01em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .svc-ident span {
+    display: block; margin-top: 2px; font-size: 9.5px; color: var(--faint);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .svc-port { flex: 0 0 82px; font: 700 20px/1 var(--mono); letter-spacing: -0.03em; }
+  .svc-links { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 220px; }
+  .svc-link {
+    padding: 4px 9px; border-radius: 999px; text-decoration: none;
+    background: rgba(255, 255, 255, 0.05); color: var(--accent-2);
+    font-size: 9.5px; line-height: 1.2; white-space: nowrap;
+  }
+  .svc-link:hover { background: rgba(255, 255, 255, 0.11); }
+  .svc-none { font-size: 9.5px; color: var(--faint); }
+  .svc-cmd { flex: 1 1 240px; max-width: 380px; }
+  .svc-side { margin-left: auto; flex: none; }
+  .svc-creds {
+    display: flex; flex: 1 0 100%; flex-wrap: wrap; gap: 6px 12px;
+    padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .svc-cred { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+  .svc-cred .cred-label { font-size: 8.5px; }
+  .svc-cred .cred-value {
+    max-width: 180px; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; font-size: 9.5px; padding: 2px 6px;
+  }
+  .cmd.mini { padding: 7px 9px; border-radius: 9px; font-size: 9px; }
+  .svc-empty {
+    padding: 42px 20px; text-align: center; color: var(--faint); font-size: 11px;
+    border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: 20px;
+  }
 
   .tile {
     position: relative; padding: 18px 20px; border-radius: 24px;
@@ -128,7 +175,6 @@ export const renderDevPage = (): string => `<!doctype html>
   .t-kpi-deps { grid-column: 2; grid-row: 2; }
   .t-kpi-probe { grid-column: 3; grid-row: 2; }
   .t-events { grid-column: 4; grid-row: 1 / span 2; display: flex; flex-direction: column; }
-  .band-main .tile { min-height: 300px; }
   .band-tools .tile { min-height: 300px; }
   .band-support .tile { min-height: 220px; }
   .band-svc-kpi .tile { min-height: 92px; }
@@ -172,48 +218,13 @@ export const renderDevPage = (): string => `<!doctype html>
   .tile-head h2 { margin: 0; font-size: 12.5px; font-weight: 600; }
   .tile-head span { font-size: 9.5px; color: var(--faint); }
 
-  .rows { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
-  .row {
-    display: grid; grid-template-columns: 9px minmax(0, 1fr) auto 54px;
-    align-items: center; gap: 10px; height: 38px; padding: 0 12px;
-    border-radius: 12px; background: rgba(255, 255, 255, 0.045);
-  }
-  .row b { font-size: 12.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .row code { font-family: var(--mono); font-size: 10px; color: var(--muted); }
-
   .badge { font-size: 9.5px; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
   .badge.ok { background: rgba(52, 211, 153, 0.15); color: var(--green-text); }
   .badge.off { background: rgba(255, 107, 61, 0.18); color: #ffc1a6; }
 
-  .tbl { margin-top: 10px; }
-  .thead, .trow { display: grid; gap: 10px; align-items: center; }
-  .tbl-mini .thead, .tbl-mini .trow { grid-template-columns: minmax(0, 1.5fr) 66px 62px 60px; }
-  .tbl-full .thead, .tbl-full .trow { grid-template-columns: minmax(0, 1.5fr) 78px 74px 86px 64px 64px minmax(0, 1.6fr); }
-  .thead { padding: 5px 0 8px; font-size: 9px; letter-spacing: 0.08em; color: var(--faint); text-transform: uppercase; }
-  .trow { min-height: 30px; border-top: 1px solid rgba(255, 255, 255, 0.055); font-size: 11px; }
-  .trow .name { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .trow .name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .trow code { font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
-  .trow .probe { font-size: 9.5px; color: var(--faint); }
-  .trow .cmdtext { font-family: var(--mono); font-size: 9px; color: #8f8981; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .trow a { color: var(--accent-2); text-decoration: none; font-size: 9.5px; }
-  .trow a:hover { text-decoration: underline; }
-  .trow .none { color: var(--faint); font-size: 9.5px; }
-
-  .cred-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, 0.055); font-size: 11px; flex-wrap: wrap; }
-  .cred-row:first-of-type { border-top: 0; }
-  .cred-name { min-width: 70px; color: var(--muted); }
-  .cred-item { display: inline-flex; align-items: center; gap: 6px; }
   .cred-label { font-size: 9.5px; color: var(--faint); }
   .cred-value { font-family: var(--mono); font-size: 11px; color: var(--accent-2); background: rgba(255, 255, 255, 0.06); padding: 3px 7px; border-radius: 5px; cursor: copy; }
   .cred-value:hover, .cred-value.copied { background: rgba(255, 255, 255, 0.16); }
-  .cred-open { margin-left: auto; color: var(--accent-2); text-decoration: none; font-size: 10px; }
-  .cred-open:hover { text-decoration: underline; }
-
-  .gtag { font-size: 9px; padding: 3px 8px; border-radius: 999px; justify-self: start; }
-  .gtag.app { background: #123326; color: var(--green-text); }
-  .gtag.tool { background: #102a36; color: var(--blue); }
-  .gtag.dep { background: #241e38; color: var(--violet); }
 
   .filters { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; flex-wrap: wrap; }
   .filters button {
@@ -280,16 +291,19 @@ export const renderDevPage = (): string => `<!doctype html>
     .band-kpi { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
     .t-uptime, .t-events { grid-column: auto; grid-row: auto; min-height: 200px; }
     .t-kpi-apps, .t-kpi-tools, .t-kpi-deps, .t-kpi-probe { grid-column: auto; grid-row: auto; }
-    .band-main, .band-tools, .band-support, .band-svc-kpi { grid-template-columns: 1fr 1fr; }
+    .band-tools, .band-support, .band-svc-kpi { grid-template-columns: 1fr 1fr; }
+    .svc-ident { flex-basis: 160px; }
+    .svc-cmd { max-width: none; }
   }
   @media (max-width: 760px) {
     body { padding: 16px 12px 24px; }
     .tabs { order: 3; width: 100%; margin-left: 0; overflow-x: auto; }
     .top-right { margin-left: auto; }
-    .band-kpi, .band-main, .band-tools, .band-support, .band-svc-kpi { grid-template-columns: 1fr; }
+    .band-kpi, .band-tools, .band-support, .band-svc-kpi { grid-template-columns: 1fr; }
     .t-uptime, .t-events { min-height: 190px; }
-    .tbl { overflow-x: auto; }
-    .tbl-full { min-width: 700px; }
+    .svc-ident { flex: 1 0 100%; }
+    .svc-links, .svc-cmd { flex: 1 0 100%; max-width: none; }
+    .svc-side { margin-left: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     .live i { animation: none; }
@@ -368,16 +382,7 @@ export const renderDevPage = (): string => `<!doctype html>
     </div>
 
     <div class="band-label"><span>服务 / SERVICES</span><i></i></div>
-    <div class="band band-main">
-      <article class="tile">
-        <div class="tile-head"><h2>应用与工具</h2><span id="ov-apps-meta"></span></div>
-        <div class="rows" id="ov-app-rows"></div>
-      </article>
-      <article class="tile">
-        <div class="tile-head"><h2>服务明细</h2><span id="ov-table-meta"></span></div>
-        <div class="tbl tbl-mini" id="ov-table"></div>
-      </article>
-    </div>
+    <div class="svc-list" id="ov-services"></div>
 
     <div class="band-label"><span>工具 / TOOLS</span><i></i></div>
     <div class="band band-tools">
@@ -403,11 +408,7 @@ export const renderDevPage = (): string => `<!doctype html>
 
     <div class="band-label"><span>服务 / SERVICES</span><i></i></div>
     <div class="filters" id="svc-filters"></div>
-    <div class="tile" style="margin-top:14px">
-      <div class="tile-head"><h2>服务明细</h2><span id="svc-table-meta"></span></div>
-      <div class="tbl tbl-full" id="svc-table"></div>
-    </div>
-    <div class="tile" style="margin-top:14px" id="svc-cred" hidden></div>
+    <div class="svc-list" id="svc-list"></div>
   </section>
 
   <!-- 工具 -->
@@ -455,6 +456,7 @@ export const renderDevPage = (): string => `<!doctype html>
 <script>
 (function () {
   var API = "${API_PREFIX}/dev/services";
+  var PAGE = "${API_PREFIX}/dev";
   var REFRESH_MS = 5000;
   var state = { services: [], prev: null, events: [], ms: null, filter: "all", view: "overview" };
 
@@ -487,19 +489,67 @@ export const renderDevPage = (): string => `<!doctype html>
     return p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
   }
   function base(port) { return "http://localhost:" + port; }
-  function entryOf(s) {
-    if (s.url) return s.url;
-    if (s.links && s.links.length) return s.links[0].href;
-    return null;
-  }
   function groupClass(group) {
     return group === "应用" ? "app" : group === "工具" ? "tool" : "dep";
   }
-  function groupTag(group) {
-    return '<span class="gtag ' + groupClass(group) + '">' + esc(group) + "</span>";
-  }
   function badge(ok) {
     return '<span class="badge ' + (ok ? "ok" : "off") + '">' + (ok ? "在线" : "离线") + "</span>";
+  }
+
+  function orderRank(s) {
+    return s.group === "应用" ? 0 : s.group === "工具" ? 1 : 2;
+  }
+  function ordered(list) {
+    return list.slice().sort(function (a, b) {
+      var byGroup = orderRank(a) - orderRank(b);
+      return byGroup || String(a.name).localeCompare(String(b.name));
+    });
+  }
+  function linksOf(s) {
+    var out = [];
+    if (s.url) out.push({ label: "打开", href: s.url });
+    (s.links || []).forEach(function (link) {
+      var exists = out.some(function (item) { return item.href === link.href; });
+      if (!exists) out.push(link);
+    });
+    return out;
+  }
+  function credentialHtml(s) {
+    if (!s.credentials || !s.credentials.length) return "";
+    return s.credentials.map(function (cred) {
+      return '<span class="svc-cred"><span class="cred-label">' + esc(cred.label) + "</span>"
+        + '<code class="cred-value" data-copy="' + esc(cred.value) + '" title="点击复制">' + esc(cred.value) + "</code></span>";
+    }).join("");
+  }
+  function serviceRow(s) {
+    var ok = s.status === "online";
+    var links = linksOf(s);
+    var html = '<article class="tile svc-row g-' + groupClass(s.group) + (ok ? "" : " is-off") + '">'
+      + '<div class="svc-ident"><i class="dot' + (ok ? " ok" : "") + '"></i>'
+      + "<div><h2>" + esc(s.name) + "</h2><span>" + esc(s.group) + " · " + esc(s.probe) + "</span></div></div>"
+      + '<span class="svc-port">:' + esc(s.port) + "</span>"
+      + '<div class="svc-links">';
+    html += links.length
+      ? links.slice(0, 6).map(function (link) {
+          return '<a class="svc-link" href="' + esc(link.href) + '" target="_blank" rel="noreferrer">' + esc(link.label) + " ↗</a>";
+        }).join("")
+      : '<span class="svc-none">暂无入口</span>';
+    html += "</div>";
+    if (s.command) {
+      html += '<div class="svc-cmd"><button type="button" class="cmd mini" data-copy="' + esc(s.command) + '"><span>' + esc(s.command) + '</span><span class="copy">复制</span></button></div>';
+    }
+    html += '<div class="svc-side">' + badge(ok) + "</div>";
+    var creds = credentialHtml(s);
+    if (creds) html += '<div class="svc-creds">' + creds + "</div>";
+    html += "</article>";
+    return html;
+  }
+  function renderServiceRows(id, list) {
+    var box = document.getElementById(id);
+    if (!box) return;
+    box.innerHTML = list.length
+      ? list.map(serviceRow).join("")
+      : '<div class="svc-empty">没有匹配的服务</div>';
   }
 
   function gaugeSvg(ratio) {
@@ -587,22 +637,7 @@ export const renderDevPage = (): string => `<!doctype html>
 
     document.getElementById("ov-probe-value").textContent = state.ms == null ? "—" : state.ms + "ms";
 
-    var rows = byGroup("应用").concat(byGroup("工具"));
-    document.getElementById("ov-apps-meta").textContent = rows.length + " 项";
-    document.getElementById("ov-app-rows").innerHTML = rows.map(function (s) {
-      var ok = s.status === "online";
-      return '<div class="row"><i class="dot' + (ok ? " ok" : "") + '"></i><b>' + esc(s.name) + "</b><code>:" + s.port + "</code>" + badge(ok) + "</div>";
-    }).join("");
-
-    document.getElementById("ov-table-meta").textContent = total + " 个服务";
-    var thead = '<div class="thead"><span>服务</span><span>端口</span><span>状态</span><span>入口</span></div>';
-    var trows = state.services.map(function (s) {
-      var ok = s.status === "online";
-      var href = entryOf(s);
-      var entry = ok && href ? '<a href="' + esc(href) + '" target="_blank" rel="noreferrer">打开 ↗</a>' : '<span class="none">—</span>';
-      return '<div class="trow"><div class="name"><i class="dot' + (ok ? " ok" : "") + '"></i><span>' + esc(s.name) + "</span></div><code>:" + s.port + "</code>" + badge(ok) + "<div>" + entry + "</div></div>";
-    }).join("");
-    document.getElementById("ov-table").innerHTML = thead + trows;
+    renderServiceRows("ov-services", ordered(state.services));
 
     document.getElementById("ov-ports").innerHTML = state.services.map(function (s) {
       return '<div class="item"><span>' + esc(s.name) + "</span><code>:" + s.port + "</code></div>";
@@ -651,52 +686,12 @@ export const renderDevPage = (): string => `<!doctype html>
       return '<button type="button" class="' + active.trim() + '" data-filter="' + f[0] + '">' + f[1] + "  " + n + "</button>";
     }).join("");
     document.getElementById("svc-filters").innerHTML = filterHtml
-      + '<span class="hint">按分组筛选 · 点击行打开服务</span>';
+      + '<span class="hint">按分组筛选 · 卡片内打开入口 / 复制命令</span>';
 
     var list = state.services.filter(function (s) {
       return state.filter === "all" || s.group === state.filter;
     });
-    document.getElementById("svc-table-meta").textContent = list.length + " 个服务 · 实时";
-
-    var thead = '<div class="thead"><span>服务</span><span>分组</span><span>端口</span><span>探测</span><span>状态</span><span>入口</span><span>启动命令</span></div>';
-    var trows = list.map(function (s) {
-      var ok = s.status === "online";
-      var href = entryOf(s);
-      var entry = ok && href ? '<a href="' + esc(href) + '" target="_blank" rel="noreferrer">打开 ↗</a>' : '<span class="none">—</span>';
-      return '<div class="trow"><div class="name"><i class="dot' + (ok ? " ok" : "") + '"></i><span>' + esc(s.name) + "</span></div>"
-        + groupTag(s.group)
-        + "<code>:" + s.port + "</code>"
-        + '<span class="probe">' + esc(s.probe) + "</span>"
-        + badge(ok)
-        + "<div>" + entry + "</div>"
-        + '<span class="cmdtext" title="' + esc(s.command) + '">' + esc(s.command) + "</span></div>";
-    }).join("");
-    document.getElementById("svc-table").innerHTML = thead + trows;
-
-    renderCredentials();
-  }
-
-  function renderCredentials() {
-    var box = document.getElementById("svc-cred");
-    if (!box) return;
-    var items = state.services.filter(function (s) {
-      return s.credentials && s.credentials.length;
-    });
-    if (!items.length) {
-      box.hidden = true;
-      return;
-    }
-    box.hidden = false;
-    box.innerHTML = '<div class="tile-head"><h2>本地凭据</h2><span>点击值复制</span></div>'
-      + items.map(function (s) {
-          return '<div class="cred-row"><span class="cred-name">' + esc(s.name) + "</span>"
-            + s.credentials.map(function (c) {
-                return '<span class="cred-item"><span class="cred-label">' + esc(c.label) + "</span>"
-                  + '<code class="cred-value" data-copy="' + esc(c.value) + '" title="点击复制">' + esc(c.value) + "</code></span>";
-              }).join("")
-            + (s.url ? '<a class="cred-open" href="' + esc(s.url) + '" target="_blank" rel="noreferrer">打开 ' + esc(s.name) + " ↗</a>" : "")
-            + "</div>";
-        }).join("");
+    renderServiceRows("svc-list", ordered(list));
   }
 
   function renderTools() {
@@ -747,7 +742,7 @@ export const renderDevPage = (): string => `<!doctype html>
       ["端口基址", server ? String(server.port) : "47100"],
       ["刷新间隔", "5s"],
       ["探测超时", "1200ms"],
-      ["页面", API_PREFIX + "/dev"]
+      ["页面", PAGE]
     ];
     document.getElementById("tool-env").innerHTML = env.map(function (e) {
       return '<div class="item"><span>' + esc(e[0]) + "</span><code>" + esc(e[1]) + "</code></div>";
