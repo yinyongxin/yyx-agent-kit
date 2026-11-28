@@ -46,17 +46,28 @@ pwsh -NoProfile -File F:\project\yyx-agent-kit\tools\penpot\stop.ps1
 
 - 停止保留数据卷
 - `docker compose down -v` 才会删除数据（危险）
-- 数据卷沿用历史名称 `starter-penpot-postgres-data` / `starter-penpot-assets`，从模板 compose 迁移不会丢失设计文件
+- 数据卷：`yyx-penpot-postgres-data` / `yyx-penpot-assets`
 
 ### 从旧模板栈迁移
 
-如果旧容器 `starter-penpot-*` 还在运行，会占用 9001。先停止旧容器（保留卷）：
+旧模板 compose 使用 `starter-penpot-*` 容器和 `starter-penpot-*` 数据卷。迁移时先停旧容器，再复制数据卷：
 
 ```powershell
+# 1. 停止旧容器（保留旧卷）
 docker stop starter-penpot-frontend starter-penpot-backend starter-penpot-admin-console starter-penpot-exporter starter-penpot-postgres starter-penpot-valkey starter-penpot-mailpit
-```
 
-然后用 `start.ps1` 启动新栈 `yyx-penpot-*`。
+# 2. 创建并复制到新卷
+docker volume create yyx-penpot-postgres-data
+docker volume create yyx-penpot-assets
+docker run --rm -v starter-penpot-postgres-data:/from:ro -v yyx-penpot-postgres-data:/to alpine sh -c "cp -a /from/. /to/"
+docker run --rm -v starter-penpot-assets:/from:ro -v yyx-penpot-assets:/to alpine sh -c "cp -a /from/. /to/"
+
+# 3. 启动新栈并验证设计文件
+pwsh -NoProfile -File tools/penpot/start.ps1
+
+# 4. 验证后删除旧卷
+docker volume rm starter-penpot-postgres-data starter-penpot-assets
+```
 
 ## 本地 MCP（全机一个实例）
 

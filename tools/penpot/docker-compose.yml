@@ -1,6 +1,6 @@
 # 独立 Penpot 服务：不依赖 templates/base，任何项目都可以复用。
 # 默认端口：Penpot 9001 / Mailpit 8025。
-# 历史数据卷沿用 starter-penpot-*，从模板 compose 迁移时不会丢设计文件。
+# 数据卷使用 yyx-penpot-*；从旧 starter-penpot-* 迁移时先复制再切换。
 name: yyx-penpot
 
 x-penpot-flags: &penpot-flags
@@ -145,9 +145,9 @@ services:
 
 volumes:
   penpot-postgres-data:
-    name: starter-penpot-postgres-data
+    name: yyx-penpot-postgres-data
   penpot-assets:
-    name: starter-penpot-assets
+    name: yyx-penpot-assets
 
 networks:
   yyx-penpot-net:

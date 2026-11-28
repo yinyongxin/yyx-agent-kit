@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-- **Penpot 独立化 + 通用 skill**：Penpot 从 `templates/base/docker-compose.yml` 拆到仓库级 `tools/penpot`（独立 compose、`start.ps1` / `stop.ps1` / `start-mcp.ps1`，可被多个项目共用）；模板 compose 只保留 PostgreSQL/Redis，`pnpm dev` 不再启动 Penpot MCP；Penpot skill 改为项目无关，支持 `install-skill.ps1` 安装到全局 OpenCode skills；同步 dev 导航页、凭据、conventions 与 README
+- **Penpot 独立化 + 通用 skill**：Penpot 从 `templates/base/docker-compose.yml` 拆到仓库级 `tools/penpot`（独立 compose、`start.ps1` / `stop.ps1` / `start-mcp.ps1`，可被多个项目共用）；模板 compose 只保留 PostgreSQL/Redis，`pnpm dev` 不再启动 Penpot MCP；数据卷迁移到 `yyx-penpot-*`（验证 1 profile / 1 project / 7 files / 916 个资源文件）；Penpot skill 改为项目无关，支持 `install-skill.ps1` 安装到全局 OpenCode skills；同步 dev 导航页、凭据、conventions 与 README
 - **server 目录规范统一**：`audit` / `permissions` / `users` 的 Repository 移到 `repositories/`；`/me` 从 `auth` 迁到 `users/me.controller.ts`，profile/tenants 查询下沉到 users repository；auth 仓储改名 `AuthUsersRepository`，消除与平台 `UsersRepository` 重名；补齐 `users/dto`、`tenants/members`、`tenants/roles` 等缺失 README；架构文档补充基础设施模块例外
 - **tenancy 子模块化**：`members/`、`roles/`、`permission-catalog/` 改为真正的 Nest 子模块；新增 `TenancyCoreModule` 统一提供租户事务拦截器；`permissions/` 改名 `permission-catalog/`，类名加 `TenantPermissionCatalog*` 前缀；Repository 统一归到 `repositories/`；平台模块从 `TenancyModule` exports 复用 Service
 - **租户引导与平台级成员管理**：新建租户自动初始化 `admin` / `member` 角色（seed 共用 `provisioning/role-templates.ts`）；`POST /tenants` 支持 `initialAdminEmail`，租户 + 角色 + 初始管理员同一事务；新增 `/tenants/:tenantId/members` 与 `/tenants/:tenantId/roles/options`，平台管理员可跨租户引导/恢复，写操作仅 `super`，并保护最后一个管理员；`/me` 增加 `platformAdminLevel`；管理端建租户支持初始管理员、成员页按平台/租户模式复用；新增 `test:provisioning`
