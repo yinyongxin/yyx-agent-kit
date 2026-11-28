@@ -11,6 +11,11 @@ export default defineConfig({
     },
   },
   plugins: [react(), tailwindcss()],
+  build: {
+    // 统一输出到项目根 dist/<app>，避免多个 app 的 dist 混淆
+    outDir: "../../dist/client",
+    emptyOutDir: true,
+  },
   server: {
     // 47xxx 段，避开 5173 等框架默认端口
     port: 47173,

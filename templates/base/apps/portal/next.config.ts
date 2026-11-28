@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const apiOrigin = process.env.API_ORIGIN ?? "http://localhost:47100";
 
 const nextConfig: NextConfig = {
+  // 统一输出到项目根 dist/portal（Next 默认 .next，改目录避免多 app 混淆）
+  distDir: "../../dist/portal",
   // packages 以 TS 源码形式被消费，需要 Next 转译
   transpilePackages: ["@starter/shared", "@starter/api"],
   // Tailwind v4 在 Turbopack 下需要显式注册 loader；同时禁用构建 FS 缓存，

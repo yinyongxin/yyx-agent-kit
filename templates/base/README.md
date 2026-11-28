@@ -93,6 +93,18 @@ Grafana 预置两条告警规则（错误日志过多、慢请求过多），通
 
 Loki / Tempo 不可达时 `test:logs` / `test:traces` 自动 SKIP；失败会上传 server 日志。
 
+## 构建产物
+
+| 应用 | 输出目录 |
+| --- | --- |
+| admin | `dist/admin` |
+| client | `dist/client` |
+| portal | `dist/portal`（Next `distDir`） |
+| server | `apps/server/dist`（tsc；入口 `dist/apps/server/src/main.js`） |
+
+前端统一收在项目根 `dist/<app>`，部署时按子目录映射即可（`/admin`、`/client`、`/portal`）。
+server 因 `tsc` 的 `rootDir` 与生产镜像入口绑定，保留独立 `dist`。
+
 ## 生产部署（Docker）
 
 ```bash

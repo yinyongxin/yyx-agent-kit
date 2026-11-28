@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **构建产物目录统一**：admin / client 输出到 `dist/admin`、`dist/client`，portal 用 `distDir: dist/portal`；server 保留 `apps/server/dist`（tsc/生产镜像入口绑定）
 - **生产镜像与编排（server）**：多阶段 Dockerfile（生产依赖、非 root、HEALTHCHECK）、entrypoint 启动前 `prisma migrate deploy`、可选幂等 seed；新增 `docker-compose.prod.yml` 与 `.env.production.example`；`pg` / `prisma` / `dotenv` 移到 dependencies
 - **CI**：新增 `.github/workflows/ci.yml`（根仓库校验模板）与 `templates/base/.github/workflows/ci.yml`（模板自带，生成项目后可用）；自动 install → init DB → migrate/seed → api generate → build → lint → 起 server → 7 个 e2e
 - **日志系统归档 + 业务打印规范**：新增 `docs/guides/logging-conventions.md`（级别 / 字段 / 接口写法 / 禁止清单）与 `docs/deliverables/20261128-observability-logging/` 归档记录；pino redact 补充 `x-api-key` / `proxy-authorization`
