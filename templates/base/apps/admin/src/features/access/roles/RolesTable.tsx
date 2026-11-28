@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import {
-  tenantPermissionsControllerList,
+  tenantPermissionCatalogControllerList,
   rolesControllerCreate,
   rolesControllerList,
   rolesControllerRemove,
@@ -132,7 +132,7 @@ export const RolesTable = ({ tenantId }: { tenantId: string }) => {
 
   useEffect(() => {
     let alive = true;
-    void tenantPermissionsControllerList({ path: { tenantId } }).then((res) => {
+    void tenantPermissionCatalogControllerList({ path: { tenantId } }).then((res) => {
       if (!alive || res.error || !res.data) return;
       setPermissionOptions(
         res.data.map((permission) => ({

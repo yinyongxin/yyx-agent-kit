@@ -1,32 +1,24 @@
 import { Module } from "@nestjs/common";
+import { TenancyCoreModule } from "./tenancy-core.module";
 import { TenantController } from "./tenant.controller";
-import { TenantTransactionInterceptor } from "./interceptors/tenant-transaction.interceptor";
-import { TenantMembersController } from "./members/members.controller";
-import { MembersService } from "./members/members.service";
-import { MembersRepository } from "./members/members.repository";
-import { RolesController } from "./roles/roles.controller";
-import { RolesService } from "./roles/roles.service";
-import { RolesRepository } from "./roles/roles.repository";
-import { TenantPermissionsController } from "./permissions/tenant-permissions.controller";
-import { PermissionsService } from "./permissions/permissions.service";
-import { PermissionsRepository } from "./permissions/permissions.repository";
+import { TenancyMembersModule } from "./members/members.module";
+import { TenancyRolesModule } from "./roles/roles.module";
+import { TenancyPermissionCatalogModule } from "./permission-catalog/permission-catalog.module";
 
+/**
+ * 租户上下文命名空间模块。
+ *
+ * 本身只保留 `/t/:tenantId` 基础路由；成员 / 角色 / 权限目录各自是真正的
+ * Nest 子模块，由本模块统一 imports 与 exports，平台模块可复用其中的 Service。
+ */
 @Module({
-  controllers: [
-    TenantController,
-    TenantMembersController,
-    RolesController,
-    TenantPermissionsController,
+  imports: [
+    TenancyCoreModule,
+    TenancyMembersModule,
+    TenancyRolesModule,
+    TenancyPermissionCatalogModule,
   ],
-  providers: [
-    MembersService,
-    MembersRepository,
-    RolesService,
-    RolesRepository,
-    PermissionsService,
-    PermissionsRepository,
-    TenantTransactionInterceptor,
-  ],
-  exports: [MembersService, RolesService, TenantTransactionInterceptor],
+  controllers: [TenantController],
+  exports: [TenancyCoreModule, TenancyMembersModule, TenancyRolesModule],
 })
 export class TenancyModule {}

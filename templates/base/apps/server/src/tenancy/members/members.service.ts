@@ -12,7 +12,7 @@ import type { AddMemberDto } from "./dto/add-member.dto";
 import type { MemberListResponseDto, MemberResponseDto } from "./dto/member-response.dto";
 import type { QueryMembersDto } from "./dto/query-members.dto";
 import type { UpdateMemberDto } from "./dto/update-member.dto";
-import { MembersRepository, type MemberRow } from "./members.repository";
+import { MembersRepository, type MemberRow } from "./repositories/members.repository";
 
 const DEFAULT_ROLE_CODE = "member";
 

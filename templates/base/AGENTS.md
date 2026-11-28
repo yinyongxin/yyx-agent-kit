@@ -35,6 +35,7 @@
 ## 模块导入约定
 
 - **server 内部模块不使用 barrel（`index.ts`）**：直接引用具体文件（如 `from "./tenants.service"`、`from "../logging/request-context"`）。server 是 CJS + Nest DI，barrel 容易引入循环依赖，并破坏启动顺序（如 `tracing.ts` 必须在 `main.ts` 第一行加载）。**此约定覆盖全局默认的 barrel 规则**。
+- **`tenancy/` 是路由命名空间，不是单一业务模块**：`/t/:tenantId/*` 下的每个功能切片必须有独立 `<feature>.module.ts`，统一导入 `TenancyCoreModule`；平台级接口复用其 Service，不要复制成员/角色逻辑。
 - **前端组件 / 页面目录保留 barrel（`index.tsx`）**：只 re-export，不写业务逻辑；外部从目录导入（见 `docs/guides/conventions.md`）。
 - **对外包保留包入口**：`packages/shared` 用 `src/index.ts`，`packages/api` 用生成物入口，外部统一从包名导入。
 - **新增源码目录仍需 `README.md`**：职责 / 文件索引 / 同步要求。

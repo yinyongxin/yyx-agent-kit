@@ -7,6 +7,16 @@
 - 不修改全局 `User`（邮箱、密码、账号状态由平台「用户管理」负责）
 - 不能修改 / 移除自己，避免管理员把自己锁出租户
 
+## 文件索引
+
+| 文件 | 作用 |
+| --- | --- |
+| `members.module.ts` | Nest 子模块：imports `TenancyCoreModule`，exports `MembersService` |
+| `members.controller.ts` | `/t/:tenantId/members` REST 接口 |
+| `members.service.ts` | 成员业务、自我操作保护、最后一个管理员保护 |
+| `repositories/members.repository.ts` | Prisma 查询（事务客户端） |
+| `dto/` | 查询 / 添加 / 更新 / 响应结构 |
+
 ## 接口
 
 | 方法 | 路径 | 权限 | 说明 |

@@ -1665,7 +1665,7 @@
     },
     "/starter/api/t/{tenantId}/permissions": {
       "get": {
-        "operationId": "TenantPermissionsController_list",
+        "operationId": "TenantPermissionCatalogController_list",
         "parameters": [
           {
             "name": "tenantId",
@@ -1684,7 +1684,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PermissionDto"
+                    "$ref": "#/components/schemas/TenantPermissionDto"
                   }
                 }
               }
@@ -3966,7 +3966,7 @@
           }
         }
       },
-      "PermissionDto": {
+      "TenantPermissionDto": {
         "type": "object",
         "properties": {
           "id": {

@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **tenancy 子模块化**：`members/`、`roles/`、`permission-catalog/` 改为真正的 Nest 子模块；新增 `TenancyCoreModule` 统一提供租户事务拦截器；`permissions/` 改名 `permission-catalog/`，类名加 `TenantPermissionCatalog*` 前缀；Repository 统一归到 `repositories/`；平台模块从 `TenancyModule` exports 复用 Service
 - **租户引导与平台级成员管理**：新建租户自动初始化 `admin` / `member` 角色（seed 共用 `provisioning/role-templates.ts`）；`POST /tenants` 支持 `initialAdminEmail`，租户 + 角色 + 初始管理员同一事务；新增 `/tenants/:tenantId/members` 与 `/tenants/:tenantId/roles/options`，平台管理员可跨租户引导/恢复，写操作仅 `super`，并保护最后一个管理员；`/me` 增加 `platformAdminLevel`；管理端建租户支持初始管理员、成员页按平台/租户模式复用；新增 `test:provisioning`
 - **导航菜单权限收敛 + 全局当前租户**：新增 `TenantProvider` / `useTenant()`（当前租户持久化，角色页与导航共用）、`TenantSwitcher` 导航栏切换器与 `useMenuAccess()`；平台菜单按 `isPlatformAdmin` 隐藏，角色菜单按当前租户 `role:read` 隐藏；角色页移除独立租户下拉，跟随全局切换器；租户成员页同步当前租户并隐藏切换器；无权限菜单项不再显示
 - **管理端前端权限消费**：新增 `TenantPermissionsProvider` / `usePermissions()`、`<Can>`、`<PermissionGate>`、`<PlatformAdminGate>` 与统一 403 内容；成员页按 `user:write`、角色页按 `role:write` 隐藏新建 / 编辑 / 删除 / 批量操作；用户、租户、权限、日志、审计页统一平台管理员门禁；新增 `GET /me` 返回 `isPlatformAdmin`；`test:authz` 增加 `/me` 断言

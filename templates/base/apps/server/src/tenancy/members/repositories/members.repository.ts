@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { Prisma } from "../../generated/prisma/client";
+import type { Prisma } from "../../../generated/prisma/client";
 
 /** 成员行：全局 User 信息 + 当前租户的成员状态 */
 const MEMBER_SELECT = {

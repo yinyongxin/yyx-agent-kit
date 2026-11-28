@@ -15,7 +15,7 @@ import type {
   RoleResponseDto,
 } from "./dto/role-response.dto";
 import type { UpdateRoleDto } from "./dto/update-role.dto";
-import { RolesRepository, type RoleRow } from "./roles.repository";
+import { RolesRepository, type RoleRow } from "./repositories/roles.repository";
 
 const toDto = (row: RoleRow): RoleResponseDto => {
   const permissionCodes = row.permissions

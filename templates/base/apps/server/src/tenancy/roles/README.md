@@ -8,6 +8,16 @@
 - 自定义角色可创建 / 更新 / 删除；`code` 创建后不可修改
 - 删除前检查是否有成员仍在使用，避免成员变成「无角色」
 
+## 文件索引
+
+| 文件 | 作用 |
+| --- | --- |
+| `roles.module.ts` | Nest 子模块：imports `TenancyCoreModule`，exports `RolesService` |
+| `roles.controller.ts` | `/t/:tenantId/roles` REST 接口 |
+| `roles.service.ts` | 角色业务、内置角色保护、权限整体替换 |
+| `repositories/roles.repository.ts` | Prisma 查询（事务客户端） |
+| `dto/` | 查询 / 创建 / 更新 / 响应结构 |
+
 ## 接口
 
 | 方法 | 路径 | 权限 | 说明 |
