@@ -93,6 +93,20 @@ Grafana 预置两条告警规则（错误日志过多、慢请求过多），通
 
 Loki / Tempo 不可达时 `test:logs` / `test:traces` 自动 SKIP；失败会上传 server 日志。
 
+## 生产部署（Docker）
+
+```bash
+cp .env.production.example .env.prod   # 改数据库/Redis 密码、JWT_SECRET、APP_URL
+# 首次部署：SEED_ON_START=true，并设置 SEED_USER_PASSWORD
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+```
+
+- server 多阶段镜像：生产依赖 + 非 root（`app`）+ `HEALTHCHECK`
+- 容器启动时自动执行 `prisma migrate deploy`；`SEED_ON_START=true` 时执行幂等 seed
+- PostgreSQL / Redis 不暴露宿主端口，只暴露 `SERVER_PORT`
+- `app_rw` 密码在 `docker/init-db.sql` 中固定，生产必须同步修改 SQL 与 compose 的 `DATABASE_URL`
+- 前端（admin / client / portal）镜像与反向代理见下一阶段
+
 ## 双击启动 / 停止（Windows）
 
 直接双击根目录的 `start-dev.cmd` / `stop-dev.cmd`：

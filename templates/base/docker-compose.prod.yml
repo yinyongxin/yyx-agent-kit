@@ -1,0 +1,89 @@
+# 生产编排（server + PostgreSQL + Redis）
+# 用法：
+#   cp .env.production.example .env.prod   # 改密码 / 域名
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+#
+# 注意：应用连库账号 app_rw 由 docker/init-db.sql 创建，密码固定为
+# app_rw_pwd_2026；生产必须同时修改 SQL 与下面的 DATABASE_URL。
+name: starter-prod
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
+      TZ: Asia/Shanghai
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-app}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      - starter-net
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD required}
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - starter-net
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 47100
+      DATABASE_URL: postgresql://app_rw:app_rw_pwd_2026@postgres:5432/${POSTGRES_DB:-app}
+      MIGRATE_DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-app}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET required}
+      APP_URL: ${APP_URL:-http://localhost:47100}
+      LOG_LEVEL: info
+      LOG_HTTP_BODY: "false"
+      LOG_FILE: ""
+      OTEL_ENABLED: "false"
+      SEED_ON_START: ${SEED_ON_START:-false}
+      SEED_USER_PASSWORD: ${SEED_USER_PASSWORD:-}
+    ports:
+      - "${SERVER_PORT:-47100}:47100"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:47100/api/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    networks:
+      - starter-net
+
+volumes:
+  postgres-data:
+    name: starter-prod-postgres-data
+  redis-data:
+    name: starter-prod-redis-data
+
+networks:
+  starter-net:
+    name: starter-prod-net
+    driver: bridge
