@@ -1,6 +1,9 @@
 # 日志与链路追踪
 
-> 2026-11-28 落地 P0（pino + traceId）、P1（Loki + Alloy + Grafana + 管理端日志页）、P2（OTel + Tempo 链路追踪）。
+> **状态：已归档（2026-11-28）**。业务打印规范见 [`logging-conventions.md`](logging-conventions.md)；
+> 归档记录见 `docs/deliverables/20261128-observability-logging/`。
+>
+> 落地 P0（pino + traceId）、P1（Loki + Alloy + Grafana + 管理端日志页）、P2（OTel + Tempo 链路追踪）。
 > 实现见 `apps/server/src/logging/`（写入）、`apps/server/src/logs/`（查询）、`apps/server/src/tracing.ts`（OTel）与 `apps/admin/src/features/observability/logs/`。
 
 ## 1. 选型

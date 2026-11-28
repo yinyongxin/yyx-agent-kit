@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **日志系统归档 + 业务打印规范**：新增 `docs/guides/logging-conventions.md`（级别 / 字段 / 接口写法 / 禁止清单）与 `docs/deliverables/20261128-observability-logging/` 归档记录；pino redact 补充 `x-api-key` / `proxy-authorization`
 - **审计 before 快照 + DataTable 刷新规范**：更新/删除前在 service 调 `RequestContext.setAuditBefore(旧值)`，审计详情同时展示 before/after；移除日志页与审计页工具栏「刷新」按钮（搜索/筛选即刷新），AGENTS 与 DataTable README 明确该规范
 - **日志轮转与告警**：本地文件改用 `pino-roll`，按天/50m 切分（`app.YYYY-MM-DD.N.log`），保留 7 个（`LOG_ROTATE_*`）；Grafana provisioning 新增两条告警规则（错误日志 >10/5m、慢请求 >5/5m），状态 `health=ok`
 - **开发导航页统一展示本地凭据**：`/api/dev#services` 的「本地凭据」卡片覆盖 server 测试账号、PostgreSQL（应用 + 管理）、Redis、Penpot、Grafana；点击值复制；凭据从 `.env` / `DATABASE_URL` 解析，仅开发环境返回

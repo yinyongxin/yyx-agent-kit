@@ -63,6 +63,8 @@ export const createPinoHttpOptions = (config: ConfigService) => {
       paths: [
         "req.headers.authorization",
         "req.headers.cookie",
+        "req.headers['x-api-key']",
+        "req.headers['proxy-authorization']",
         "req.query.token",
         "req.query.access_token",
       ],

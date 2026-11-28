@@ -9,7 +9,7 @@
 - 向量能力用 PostgreSQL 的 pgvector 扩展（初始化 SQL 已 `CREATE EXTENSION vector`），不另起向量库；访问封装成 `VectorStore` 接口，将来要换 Qdrant 只换实现。
 - 端口统一使用 **47xxx 段**，禁止用 `3000` / `5173` / `8080` 等框架默认端口，避免与本机其他项目冲突。Vite 必须开 `strictPort`，端口被占时直接失败而不是静默换端口。
 - 接口调用统一走 `@starter/api`，业务代码不自己写 `fetch`、不自己拼 URL。
-- **日志与 traceId 统一由 `apps/server/src/logging/` 处理**：所有响应头带 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；新接口不要手动加 traceId，也不要另起 logger。日志规范见 [`docs/guides/logging-and-tracing.md`](docs/guides/logging-and-tracing.md)。
+- **日志与 traceId 统一由 `apps/server/src/logging/` 处理**：所有响应头带 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；新接口不要手动加 traceId，也不要另起 logger。业务打印规范见 [`docs/guides/logging-conventions.md`](docs/guides/logging-conventions.md)，架构/运维见 [`docs/guides/logging-and-tracing.md`](docs/guides/logging-and-tracing.md)。
 - **本地凭据**：数据库 / Redis / Penpot / Grafana / 测试账号统一在开发导航页 `http://localhost:47100/api/dev#services` 的「本地凭据」卡片查看（仅开发环境，生产 404）；新增有账号密码的本地服务时同步 `src/dev/dev.service.ts` 的 `credentials`。
 - **日志检索**：管理端 `/observability/logs`，后端 `apps/server/src/logs/`（只读 Loki）。本地需 `docker compose --profile observability up -d` 起 Loki（47110）/ Grafana（47111）/ Alloy（47112）；日志写入 `logs/app.log` 供 Alloy 采集。
 - **审计日志**：关键写操作（登录、租户/角色/成员变更）在 controller 加 `@Audit({ action, resource })`；表 `audit_logs` 为 append-only（RLS 禁止改删），查询走 `/api/audit-logs`，管理端 `/observability/audit-logs`。规范见 `apps/server/src/audit/README.md`。

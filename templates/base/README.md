@@ -54,6 +54,7 @@ docker compose down -v        # 停止并删除数据卷（危险）
 `/observability/audit-logs` 查看关键写操作审计（PostgreSQL，append-only）。
 Grafana 预置两条告警规则（错误日志过多、慢请求过多），通知渠道需按环境配置。
 开启 `OTEL_ENABLED=true` 后链路 span 进 Tempo，Grafana 可看瀑布并跳到同 traceId 日志。
+业务日志打印规范见 [`docs/guides/logging-conventions.md`](docs/guides/logging-conventions.md)。
 详见 [`docs/guides/logging-and-tracing.md`](docs/guides/logging-and-tracing.md)。
 
 **认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`，状态存 PostgreSQL，无独立 IdP 容器。多平台共用一个 server 天然共享登录态。当前骨架：JWT bearer + `@Public()` 豁免探活 + `@Can()` policy 示例；生产按官网补齐 store / Google OIDC / 2FA / 微信（详见 `.opencode/skills/standards/nestjs/SKILL.md` 与 `.env.example` 的注释）。
