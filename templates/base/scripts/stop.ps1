@@ -2,7 +2,7 @@ $ErrorActionPreference = "Continue"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-$ports = 47100, 47173, 47174, 47175, 4400, 4401, 4402, 4403
+$ports = 47100, 47173, 47174, 47175
 
 Write-Host "==> 停止应用进程" -ForegroundColor Cyan
 $stopped = 0
@@ -31,7 +31,7 @@ if ($stopped -eq 0) { Write-Host "    没有需要停止的应用进程" }
 
 Start-Sleep -Seconds 1
 
-Write-Host "==> 停止 Docker 依赖（保留数据卷）" -ForegroundColor Cyan
+Write-Host "==> 停止 Docker 依赖（保留数据卷；Penpot 与全局 MCP 不受影响）" -ForegroundColor Cyan
 docker info *> $null
 if ($LASTEXITCODE -eq 0) {
     docker compose down 2>&1 | ForEach-Object { Write-Host ("    " + $_) }

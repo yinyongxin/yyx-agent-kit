@@ -22,8 +22,10 @@ if (-not (Test-Path ".env")) {
 docker compose up -d
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-$port = if ($env:PENPOT_PORT) { $env:PENPOT_PORT } else { "9001" }
-$mailpit = if ($env:PENPOT_MAILPIT_PORT) { $env:PENPOT_MAILPIT_PORT } else { "8025" }
+$port = (docker compose port penpot-frontend 8080 2>$null | Select-Object -Last 1) -replace '^.*:', ''
+if (-not $port) { $port = "9001" }
+$mailpit = (docker compose port penpot-mailpit 8025 2>$null | Select-Object -Last 1) -replace '^.*:', ''
+if (-not $mailpit) { $mailpit = "8025" }
 
 Write-Host "`n等待 Penpot 启动..." -ForegroundColor Cyan
 for ($i = 0; $i -lt 60; $i++) {

@@ -29,7 +29,7 @@ if ($CheckOnly) {
     exit 0
 }
 
-Write-Host "==> 启动 Docker 依赖（PostgreSQL / Redis / Penpot / Mailpit）" -ForegroundColor Cyan
+Write-Host "==> 启动 Docker 依赖（PostgreSQL / Redis）" -ForegroundColor Cyan
 docker compose up -d
 if ($LASTEXITCODE -ne 0) { Fail "docker compose up 失败，请查看上方输出" }
 
