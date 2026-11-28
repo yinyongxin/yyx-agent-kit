@@ -1,44 +1,25 @@
-import { useEffect, useState } from "react";
 import { Alert, Select, Stack, Text } from "@mantine/core";
-import { meControllerTenants, type TenantSummaryDto } from "@starter/api/generated";
 import { PermissionGate } from "@/components/Permission";
-import { TenantPermissionsProvider } from "@/lib/permissions";
-import { getApiErrorMessage } from "@/lib/api-error";
+import { useTenant } from "@/lib/tenant";
 import { RolesTable } from "./RolesTable";
 
 /**
- * 角色页入口：角色是租户内资源，先选租户，再渲染该租户的角色表格。
- * 用 key={tenantId} 重置表格状态，避免切租户后残留页码 / 搜索词。
+ * 角色页入口：租户来自全局当前租户（导航与角色页共用）。
+ * 切换租户会触发全局权限 Provider 重新加载，表格用 key 重置分页/搜索。
  */
 export const RolesContent = () => {
-  const [tenants, setTenants] = useState<TenantSummaryDto[]>([]);
-  const [tenantId, setTenantId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    void meControllerTenants().then((res) => {
-      if (!alive) return;
-      if (res.error || !res.data) {
-        setError(getApiErrorMessage(res.error, "加载租户失败"));
-        return;
-      }
-      setTenants(res.data);
-      const preferred = res.data.find((tenant) => tenant.slug === "default") ?? res.data[0];
-      setTenantId(preferred?.id ?? null);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const { tenants, tenantId, setTenantId, loading, error } = useTenant();
 
   if (error) return <Alert color="red">{error}</Alert>;
-  if (!tenantId) {
+  if (loading) {
     return (
       <Text c="dimmed" size="sm">
         加载租户中…
       </Text>
     );
+  }
+  if (!tenantId) {
+    return <Alert color="yellow">当前账号未加入任何租户</Alert>;
   }
 
   return (
@@ -57,11 +38,9 @@ export const RolesContent = () => {
         allowDeselect={false}
         w={360}
       />
-      <TenantPermissionsProvider tenantId={tenantId}>
-        <PermissionGate permission="role:read">
-          <RolesTable key={tenantId} tenantId={tenantId} />
-        </PermissionGate>
-      </TenantPermissionsProvider>
+      <PermissionGate permission="role:read">
+        <RolesTable key={tenantId} tenantId={tenantId} />
+      </PermissionGate>
     </Stack>
   );
 };

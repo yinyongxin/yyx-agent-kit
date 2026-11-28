@@ -13,6 +13,8 @@
 | `api-error.ts` | 从生成客户端错误体提取可展示的 message（string / string[]） |
 | `me.tsx` | `MeProvider` / `useMe()`：加载 `/me`，提供平台管理员标记 |
 | `permissions.tsx` | `TenantPermissionsProvider` / `usePermissions()`：加载指定租户的 membership 与权限并集 |
+| `tenant.tsx` | `TenantProvider` / `useTenant()`：全局当前租户（持久化）；`GlobalTenantPermissions` 为当前租户挂权限 Provider |
+| `menu-access.ts` | `useMenuAccess()`：导航菜单过滤（平台专属 / 租户权限点） |
 
 ## 注意事项
 

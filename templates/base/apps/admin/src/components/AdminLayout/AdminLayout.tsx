@@ -6,6 +6,7 @@ import { HeaderMegaMenu } from "@/components/header/HeaderMegaMenu";
 import { DoubleNavbar } from "@/components/navbar/DoubleNavbar";
 import { NavbarNested } from "@/components/navbar/NavbarNested";
 import { MeProvider } from "@/lib/me";
+import { GlobalTenantPermissions, TenantProvider } from "@/lib/tenant";
 
 export const AdminLayout = () => {
   const location = useLocation();
@@ -20,8 +21,10 @@ export const AdminLayout = () => {
 
   return (
     <MeProvider>
-      <LayoutModeProvider mode={mode} setMode={setMode}>
-        {isHeader ? (
+      <TenantProvider>
+        <GlobalTenantPermissions>
+          <LayoutModeProvider mode={mode} setMode={setMode}>
+            {isHeader ? (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
           <HeaderMegaMenu />
           <AdminScrollArea style={{ flex: 1, minHeight: 0 }}>
@@ -49,8 +52,10 @@ export const AdminLayout = () => {
             </div>
           </AdminScrollArea>
         </div>
-      )}
-      </LayoutModeProvider>
+            )}
+          </LayoutModeProvider>
+        </GlobalTenantPermissions>
+      </TenantProvider>
     </MeProvider>
   );
 };
