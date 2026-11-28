@@ -127,8 +127,10 @@ if (token) {
     const roles = await request("GET", `/t/${tenantId}/roles`, null, token);
     check(
       "RLS 应用层：租户表只返回当前租户数据",
-      roles.status === 200 && Array.isArray(roles.json) && roles.json.length === 2,
-      `HTTP ${roles.status}, rows=${roles.json?.length}`,
+      roles.status === 200 &&
+        Array.isArray(roles.json?.items) &&
+        roles.json.items.length === 2,
+      `HTTP ${roles.status}, rows=${roles.json?.items?.length}`,
     );
   }
 

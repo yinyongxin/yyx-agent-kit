@@ -4,13 +4,14 @@
 
 ## [Unreleased]
 
+- **租户角色管理模块**：新增 `src/tenancy/roles/` 与 `src/tenancy/permissions/`（`/t/:tenantId/roles` 分页 / 类型筛选 / 搜索、自定义角色 CRUD、角色权限整体替换、权限点目录；内置角色只读、code 租户内唯一、删除前检查成员占用）；原 `GET /roles` 精简列表改为 `/roles/options`，成员页同步切换；管理端「角色」页接入真实接口（租户切换、服务端 DataTable、新建 / 编辑 / 删除、权限多选）；新增 `test:roles` 并纳入 CI
 - **租户成员管理模块**：新增 `src/tenancy/members/`（`/t/:tenantId/members`：分页 / 成员状态 / 搜索、按邮箱添加、角色与租户内状态更新、移除成员；admin/owner 才能写，不能改/删自己）；管理端租户列表新增「成员」入口与 `/access/tenant-members/:tenantId` 页面（服务端 DataTable、添加 / 编辑 / 停用 / 批量操作）；新增 `test:members` 并纳入 CI
 - **用户管理模块**：新增 `src/users/`（`/users` 平台管理员 CRUD：分页 / 状态 / email、displayName 搜索 / 邮箱唯一 / 密码哈希 / 删除保护）；管理端「用户」页接真实接口（服务端 DataTable、新建 / 编辑 / 禁用 / 批量启用禁用删除）；新增 `test:users` 并纳入 CI
 - **前端镜像与网关**：admin / client 用 nginx 静态镜像（内置 `API_PREFIX` 反代），portal 用 Next 镜像；新增 Caddy 网关按 Host 路由与 compose 的 admin/client/portal/gateway；本地默认 `admin.localhost:47180` / `client.localhost:47180` / `portal.localhost:47180`
 - **API 前缀按应用名**：`API_PREFIX` 改为 `/<APP_NAME>/api`（模板默认 `/starter/api`，CLI 生成项目自动替换为项目名）；server 路由 / Swagger / Vite & Next 代理 / dev 页 / 测试 / CI 与容器健康检查同步更新，避免单域多项目时 `/api` 冲突
 - **构建产物目录统一**：admin / client 输出到 `dist/admin`、`dist/client`，portal 用 `distDir: dist/portal`；server 保留 `apps/server/dist`（tsc/生产镜像入口绑定）
 - **生产镜像与编排（server）**：多阶段 Dockerfile（生产依赖、非 root、HEALTHCHECK）、entrypoint 启动前 `prisma migrate deploy`、可选幂等 seed；新增 `docker-compose.prod.yml` 与 `.env.production.example`；`pg` / `prisma` / `dotenv` 移到 dependencies
-- **CI**：新增 `.github/workflows/ci.yml`（根仓库校验模板）与 `templates/base/.github/workflows/ci.yml`（模板自带，生成项目后可用）；自动 install → init DB → migrate/seed → api generate → build → lint → 起 server → 7 个 e2e
+- **CI**：新增 `.github/workflows/ci.yml`（根仓库校验模板）与 `templates/base/.github/workflows/ci.yml`（模板自带，生成项目后可用）；自动 install → init DB → migrate/seed → api generate → build → lint → 起 server → 全部 e2e
 - **日志系统归档 + 业务打印规范**：新增 `docs/guides/logging-conventions.md`（级别 / 字段 / 接口写法 / 禁止清单）与 `docs/deliverables/20261128-observability-logging/` 归档记录；pino redact 补充 `x-api-key` / `proxy-authorization`
 - **审计 before 快照 + DataTable 刷新规范**：更新/删除前在 service 调 `RequestContext.setAuditBefore(旧值)`，审计详情同时展示 before/after；移除日志页与审计页工具栏「刷新」按钮（搜索/筛选即刷新），AGENTS 与 DataTable README 明确该规范
 - **日志轮转与告警**：本地文件改用 `pino-roll`，按天/50m 切分（`app.YYYY-MM-DD.N.log`），保留 7 个（`LOG_ROTATE_*`）；Grafana provisioning 新增两条告警规则（错误日志 >10/5m、慢请求 >5/5m），状态 `health=ok`

@@ -138,6 +138,7 @@ jobs:
           pnpm --filter @starter/server test:tenants
           pnpm --filter @starter/server test:users
           pnpm --filter @starter/server test:members
+          pnpm --filter @starter/server test:roles
           pnpm --filter @starter/server test:rls
           pnpm --filter @starter/server test:generated
           pnpm --filter @starter/server test:logs

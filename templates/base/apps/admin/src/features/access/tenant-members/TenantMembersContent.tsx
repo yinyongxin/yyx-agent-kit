@@ -22,7 +22,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import {
-  tenantControllerRoles,
+  rolesControllerOptions,
   tenantMembersControllerAdd,
   tenantMembersControllerList,
   tenantMembersControllerRemove,
@@ -31,6 +31,7 @@ import {
   type RoleDto,
 } from "@starter/api/generated";
 import { authStore } from "@/lib/auth";
+import { getApiErrorMessage } from "@/lib/api-error";
 import {
   DataTableBatchBar,
   DataTableCardList,
@@ -86,15 +87,6 @@ const toRow = (member: MemberResponseDto): MemberRow => ({
   joinedAt: new Date(member.joinedAt).toLocaleString(),
 });
 
-const errorMessage = (error: unknown, fallback: string): string => {
-  if (error && typeof error === "object" && "message" in error) {
-    const message = (error as { message?: unknown }).message;
-    if (typeof message === "string") return message;
-    if (Array.isArray(message)) return message.join("；");
-  }
-  return fallback;
-};
-
 const labels: DataTableLabels = {
   ...dataTableLabels,
   searchPlaceholder: "搜索邮箱 / 显示名",
@@ -140,7 +132,7 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
 
   useEffect(() => {
     let alive = true;
-    void tenantControllerRoles({ path: { tenantId } }).then((res) => {
+    void rolesControllerOptions({ path: { tenantId } }).then((res) => {
       if (!alive || res.error || !res.data) return;
       setRoleOptions(res.data.map((role) => ({ value: role.code, label: role.name })));
     });
@@ -194,7 +186,7 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
         });
         if (res.error || !res.data) {
           setActionError(
-            errorMessage(
+            getApiErrorMessage(
               res.error,
               "添加失败：请确认账号已由平台管理员在「用户管理」中创建",
             ),
@@ -211,7 +203,7 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
           },
         });
         if (res.error || !res.data) {
-          setActionError(errorMessage(res.error, "更新失败"));
+          setActionError(getApiErrorMessage(res.error, "更新失败"));
           return;
         }
         apiRef.current?.applyMutation({
@@ -236,7 +228,7 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
         path: { tenantId, userId: row.userId },
       });
       if (res.error) {
-        setActionError(errorMessage(res.error, "移除失败"));
+        setActionError(getApiErrorMessage(res.error, "移除失败"));
         return;
       }
       apiRef.current?.reload();
@@ -347,7 +339,7 @@ export const TenantMembersContent = ({ tenantId }: { tenantId: string }) => {
           },
         });
         if (res.error) {
-          api?.setError(errorMessage(res.error, "加载成员失败"));
+          api?.setError(getApiErrorMessage(res.error, "加载成员失败"));
           return;
         }
         api?.setData((res.data?.items ?? []).map(toRow));

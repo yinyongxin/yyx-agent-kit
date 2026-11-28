@@ -10,6 +10,7 @@
 | --- | --- |
 | `auth.ts` | token / 邮箱的本地存储与登录态判断 |
 | `api-client.ts` | 配置 OpenAPI 生成客户端：baseUrl、Bearer 注入、401 跳登录 |
+| `api-error.ts` | 从生成客户端错误体提取可展示的 message（string / string[]） |
 
 ## 注意事项
 

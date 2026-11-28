@@ -18,7 +18,7 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/prisma/` | Prisma Client、`scoped` 守卫、RLS 事务入口 |
 | `src/logging/` | pino 请求日志、traceId/响应头、请求响应体脱敏、全局异常过滤器 |
 | `src/auth/` | 登录、JWT、租户成员 guard、租户上下文 |
-| `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户成员管理、租户事务拦截器、`@TenantTx()` |
+| `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户成员 / 角色 / 权限点、租户事务拦截器、`@TenantTx()` |
 | `src/tenants/` | 平台级租户 CRUD（`/starter/api/tenants`），`PlatformAdminGuard` 保护 |
 | `src/users/` | 平台级用户管理（`/starter/api/users`），`PlatformAdminGuard` 保护 |
 | `prisma/` | schema、models、migrations、seed |
@@ -39,6 +39,9 @@ pnpm --filter @starter/server prisma:generate
 pnpm --filter @starter/server db:deploy      # 应用迁移（MIGRATE_DATABASE_URL）
 pnpm --filter @starter/server db:seed
 pnpm --filter @starter/server test:e2e       # 登录 + 租户边界
+pnpm --filter @starter/server test:users     # 平台用户 CRUD
+pnpm --filter @starter/server test:members   # 租户成员管理
+pnpm --filter @starter/server test:roles     # 租户角色与权限分配
 pnpm --filter @starter/server test:rls       # RLS 并发
 pnpm --filter @starter/server test:generated # OpenAPI 生成客户端联动
 ```

@@ -2,16 +2,17 @@
 
 ## 职责
 
-提供 `/t/:tenantId/...` 的示例 controller，演示租户隔离 guard 的正确挂法。
+提供 `/t/:tenantId/...` 的租户内接口（成员 / 角色 / 权限点），演示租户隔离 guard 与 RLS 事务的正确挂法。
 
 ## 文件索引
 
 | 文件 | 职责 |
 | --- | --- |
 | `tenancy.module.ts` | 模块装配：controller + service + interceptor |
-| `tenant.controller.ts` | 示例路由：`GET /t/:tenantId/membership`（成员信息）、`GET /t/:tenantId/roles`（租户表查询示例） |
-| `tenancy.service.ts` | 租户表查询业务（角色列表），接收调用方的 tx |
+| `tenant.controller.ts` | 示例路由：`GET /t/:tenantId/membership`（成员信息） |
 | `members/` | 租户成员管理：列表 / 添加 / 更新角色与状态 / 移除，详见该目录 README |
+| `roles/` | 租户角色 CRUD 与权限分配，详见该目录 README |
+| `permissions/` | 权限点目录（只读），详见该目录 README |
 | `interceptors/` | `tenant-transaction.interceptor.ts`：开事务并 `set_config('app.tenant_id', ..., true)`，tx 挂到 `req.tenantTx` |
 | `decorators/` | `tenant-tx.decorator.ts`：`@TenantTx()` 取当前请求的事务客户端 |
 | `dto/` | `RoleDto` 等租户路由出参，详见该目录 README |

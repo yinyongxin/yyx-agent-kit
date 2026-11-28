@@ -17,7 +17,7 @@ import {
   client,
   meControllerTenants,
   tenantControllerMembership,
-  tenantControllerRoles,
+  rolesControllerOptions,
   type MembershipDto,
   type RoleDto,
   type TenantSummaryDto,
@@ -80,7 +80,7 @@ export const IntegrationContent = () => {
           path: { tenantId },
           headers: authHeaders(token),
         }),
-        tenantControllerRoles({
+        rolesControllerOptions({
           path: { tenantId },
           headers: authHeaders(token),
         }),
