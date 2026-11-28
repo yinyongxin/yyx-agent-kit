@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **权限点管理模块**：新增 `src/permissions/`（`/permissions` 平台管理员 CRUD：分页 / 搜索、code 唯一且创建后不可改、被角色引用时禁止删除、审计 before/after）；租户权限目录控制器改为 `TenantPermissionsController`，避免与平台接口生成客户端重名；管理端「权限」页接入真实接口（服务端 DataTable、新建 / 编辑 / 删除、按 code 前缀分组、引用数保护）；新增 `test:permissions` 并纳入 CI
 - **租户角色管理模块**：新增 `src/tenancy/roles/` 与 `src/tenancy/permissions/`（`/t/:tenantId/roles` 分页 / 类型筛选 / 搜索、自定义角色 CRUD、角色权限整体替换、权限点目录；内置角色只读、code 租户内唯一、删除前检查成员占用）；原 `GET /roles` 精简列表改为 `/roles/options`，成员页同步切换；管理端「角色」页接入真实接口（租户切换、服务端 DataTable、新建 / 编辑 / 删除、权限多选）；新增 `test:roles` 并纳入 CI
 - **租户成员管理模块**：新增 `src/tenancy/members/`（`/t/:tenantId/members`：分页 / 成员状态 / 搜索、按邮箱添加、角色与租户内状态更新、移除成员；admin/owner 才能写，不能改/删自己）；管理端租户列表新增「成员」入口与 `/access/tenant-members/:tenantId` 页面（服务端 DataTable、添加 / 编辑 / 停用 / 批量操作）；新增 `test:members` 并纳入 CI
 - **用户管理模块**：新增 `src/users/`（`/users` 平台管理员 CRUD：分页 / 状态 / email、displayName 搜索 / 邮箱唯一 / 密码哈希 / 删除保护）；管理端「用户」页接真实接口（服务端 DataTable、新建 / 编辑 / 禁用 / 批量启用禁用删除）；新增 `test:users` 并纳入 CI

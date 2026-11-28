@@ -7,7 +7,7 @@ import { MembersRepository } from "./members/members.repository";
 import { RolesController } from "./roles/roles.controller";
 import { RolesService } from "./roles/roles.service";
 import { RolesRepository } from "./roles/roles.repository";
-import { PermissionsController } from "./permissions/permissions.controller";
+import { TenantPermissionsController } from "./permissions/tenant-permissions.controller";
 import { PermissionsService } from "./permissions/permissions.service";
 import { PermissionsRepository } from "./permissions/permissions.repository";
 
@@ -16,7 +16,7 @@ import { PermissionsRepository } from "./permissions/permissions.repository";
     TenantController,
     TenantMembersController,
     RolesController,
-    PermissionsController,
+    TenantPermissionsController,
   ],
   providers: [
     MembersService,

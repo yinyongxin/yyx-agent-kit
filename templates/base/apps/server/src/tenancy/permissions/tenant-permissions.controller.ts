@@ -26,7 +26,7 @@ import { PermissionsService } from "./permissions.service";
 @ApiForbiddenResponse({ type: ErrorResponseDto })
 @UseGuards(TenantMembershipGuard)
 @Controller(asRoute(`${API_ROUTES.tenant}${API_ROUTES.tenantPermissions}`))
-export class PermissionsController {
+export class TenantPermissionsController {
   constructor(private readonly permissions: PermissionsService) {}
 
   @ApiOperation({ summary: "权限点目录（角色分配用）" })

@@ -21,6 +21,7 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户成员 / 角色 / 权限点、租户事务拦截器、`@TenantTx()` |
 | `src/tenants/` | 平台级租户 CRUD（`/starter/api/tenants`），`PlatformAdminGuard` 保护 |
 | `src/users/` | 平台级用户管理（`/starter/api/users`），`PlatformAdminGuard` 保护 |
+| `src/permissions/` | 平台级权限点管理（`/starter/api/permissions`），`PlatformAdminGuard` 保护 |
 | `prisma/` | schema、models、migrations、seed |
 | `scripts/` | 一次性脚本（`export-openapi.ts`） |
 | `test/` | 接口与数据库验收脚本 |
@@ -42,6 +43,7 @@ pnpm --filter @starter/server test:e2e       # 登录 + 租户边界
 pnpm --filter @starter/server test:users     # 平台用户 CRUD
 pnpm --filter @starter/server test:members   # 租户成员管理
 pnpm --filter @starter/server test:roles     # 租户角色与权限分配
+pnpm --filter @starter/server test:permissions # 平台权限点管理
 pnpm --filter @starter/server test:rls       # RLS 并发
 pnpm --filter @starter/server test:generated # OpenAPI 生成客户端联动
 ```

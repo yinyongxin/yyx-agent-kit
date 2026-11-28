@@ -46,6 +46,7 @@ export const API_ROUTES = {
   meTenants: "/tenants",
   users: "/users",
   tenants: "/tenants",
+  permissions: "/permissions",
   tenant: "/t/:tenantId",
   tenantMembership: "/membership",
   tenantMembers: "/members",

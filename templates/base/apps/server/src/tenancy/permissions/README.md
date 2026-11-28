@@ -4,7 +4,7 @@
 
 - 返回全局权限点 `Permission` 列表，供角色分配权限时使用
 - 放在 `/t/:tenantId/permissions` 下：权限点是全局定义，但要求调用方是当前租户成员
-- 只读；平台级权限点维护留到后续 RBAC 阶段
+- 只读；平台级权限点维护见 `src/permissions/`（`/permissions`）
 
 ## 接口
 
