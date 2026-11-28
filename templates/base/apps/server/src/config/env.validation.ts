@@ -19,6 +19,26 @@ class EnvironmentVariables {
   JWT_SECRET?: string;
 
   @IsOptional()
+  @IsString()
+  REDIS_URL?: string;
+
+  @IsOptional()
+  @IsInt()
+  AUTH_LOGIN_MAX_ATTEMPTS?: number;
+
+  @IsOptional()
+  @IsInt()
+  AUTH_LOGIN_WINDOW_SECONDS?: number;
+
+  @IsOptional()
+  @IsInt()
+  AUTH_LOGIN_LOCK_SECONDS?: number;
+
+  @IsOptional()
+  @IsInt()
+  AUTH_LOGIN_IP_MAX_ATTEMPTS?: number;
+
+  @IsOptional()
   @IsInt()
   PORT?: number;
 

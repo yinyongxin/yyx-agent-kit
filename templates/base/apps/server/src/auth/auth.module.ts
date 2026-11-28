@@ -10,6 +10,7 @@ import { AuthUsersRepository } from "./repositories/auth-users.repository";
 import { TenantMembershipGuard } from "./guards/tenant-membership.guard";
 import { AuthController } from "./auth.controller";
 import { CredentialsService } from "./credentials.service";
+import { LoginThrottleService } from "./login-throttle.service";
 
 /**
  * 认证（@nestjs/authentication）+ 授权（@nestjs/authorization）官方模块。
@@ -53,6 +54,7 @@ import { CredentialsService } from "./credentials.service";
     JwtAuth,
     TenantMembershipGuard,
     CredentialsService,
+    LoginThrottleService,
   ],
   exports: [AuthUsersRepository, TenantMembershipGuard, CredentialsService],
 })

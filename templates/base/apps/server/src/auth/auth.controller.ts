@@ -1,8 +1,9 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Ip, Post } from "@nestjs/common";
 import {
   ApiCreatedResponse,
   ApiOperation,
   ApiTags,
+  ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Public } from "@nestjs/authentication";
@@ -20,9 +21,13 @@ export class AuthController {
   @ApiOperation({ summary: "邮箱密码登录，返回 Bearer access token（公开）" })
   @ApiCreatedResponse({ type: SignInResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
+  @ApiTooManyRequestsResponse({ type: ErrorResponseDto })
   @Public()
   @Post(asRoute(API_ROUTES.authSignIn))
-  signIn(@Body() dto: SignInDto): Promise<SignInResponseDto> {
-    return this.credentials.signIn(dto.email, dto.password);
+  signIn(
+    @Body() dto: SignInDto,
+    @Ip() ip: string,
+  ): Promise<SignInResponseDto> {
+    return this.credentials.signIn(dto.email, dto.password, ip);
   }
 }

@@ -17,7 +17,8 @@ REST API + 多租户隔离 + 认证授权。端口 `47100`，路由前缀 `/api`
 | `src/swagger.ts` | OpenAPI 文档构建（main 与导出脚本共用） |
 | `src/prisma/` | Prisma Client、`scoped` 守卫、RLS 事务入口 |
 | `src/logging/` | pino 请求日志、traceId/响应头、请求响应体脱敏、全局异常过滤器 |
-| `src/auth/` | 登录、JWT、租户成员 guard、租户上下文 |
+| `src/auth/` | 登录、JWT、租户成员 guard、租户上下文、登录失败锁定 |
+| `src/redis/` | Redis 连接封装（登录限流 / 共享缓存，fail-open） |
 | `src/tenancy/` | `/t/:tenantId/...` 示例路由、租户成员 / 角色 / 权限点、租户事务拦截器、`@TenantTx()` |
 | `src/tenants/` | 平台级租户 CRUD（`/starter/api/tenants`），`PlatformAdminGuard` 保护 |
 | `src/users/` | 平台级用户管理（`/starter/api/users`），`PlatformAdminGuard` 保护 |
@@ -46,6 +47,7 @@ pnpm --filter @starter/server test:roles     # 租户角色与权限分配
 pnpm --filter @starter/server test:permissions # 平台权限点管理
 pnpm --filter @starter/server test:authz   # 接口级权限校验
 pnpm --filter @starter/server test:profile # 账号资料与修改密码
+pnpm --filter @starter/server test:throttle # 登录失败锁定
 pnpm --filter @starter/server test:provisioning # 租户引导 + 平台级成员管理
 pnpm --filter @starter/server test:rls       # RLS 并发
 pnpm --filter @starter/server test:generated # OpenAPI 生成客户端联动

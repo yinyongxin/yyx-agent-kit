@@ -12,6 +12,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { authControllerSignIn } from "@starter/api/generated";
 import { authStore } from "@/lib/auth";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 export const LoginContent = () => {
   const navigate = useNavigate();
@@ -26,6 +27,10 @@ export const LoginContent = () => {
     setError(null);
     try {
       const res = await authControllerSignIn({ body: { email, password } });
+      if (res.error) {
+        setError(getApiErrorMessage(res.error, "登录失败"));
+        return;
+      }
       const token = res.data?.accessToken;
       if (!token) {
         setError("登录失败：邮箱或密码不正确");

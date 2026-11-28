@@ -5,6 +5,7 @@ import { AuditModule } from "./audit/audit.module";
 import { LoggingModule } from "./logging/logging.module";
 import { LogsModule } from "./logs/logs.module";
 import { PrismaModule } from "./prisma/prisma.module";
+import { RedisModule } from "./redis/redis.module";
 import { AppConfigModule } from "./config/config.module";
 import { AuthModule } from "./auth/auth.module";
 import { TenantMiddleware } from "./auth/middleware/tenant.middleware";
@@ -24,6 +25,7 @@ const isProduction = process.env.NODE_ENV === "production";
     AuditModule,
     AppConfigModule,
     PrismaModule,
+    RedisModule,
     AuthModule,
     TenancyModule,
     TenantsModule,

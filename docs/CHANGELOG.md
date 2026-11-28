@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **登录失败锁定**：新增 `RedisModule` / `LoginThrottleService`，按「邮箱+IP」和「IP」双维度计数（默认 5 次 / 5 分钟，锁 15 分钟，IP 阈值 30）；登录成功清零邮箱+IP；Redis 不可用时 fail-open；登录页展示 429 文案；新增 `test:throttle` 并纳入 CI
 - **账号自助与安全**：新增 `PATCH /me`（显示名）与 `POST /me/password`（校验旧密码、至少 8 位、新旧不能相同）；管理端「账号设置」页接入个人资料与修改密码；审计 `user.profile.update` / `user.password.change`；新增 `test:profile` 并纳入 CI。当前无 session store，修改密码不会立即使已签发 JWT 失效
 - **管理端导航一致性**：HeaderMegaMenu 接入 `useMenuAccess`，平台菜单与日志菜单按 `isPlatformAdmin` 过滤，角色菜单按当前租户 `role:read` 过滤；设置入口统一改为「账号设置」
 - **Penpot 独立化 + 通用 skill**：Penpot 从 `templates/base/docker-compose.yml` 拆到仓库级 `tools/penpot`（独立 compose、`start.ps1` / `stop.ps1` / `start-mcp.ps1`，可被多个项目共用）；模板 compose 只保留 PostgreSQL/Redis，`pnpm dev` 不再启动 Penpot MCP；数据卷迁移到 `yyx-penpot-*`（验证 1 profile / 1 project / 7 files / 916 个资源文件）；Penpot skill 改为项目无关，支持 `install-skill.ps1` 安装到全局 OpenCode skills；同步 dev 导航页、凭据、conventions 与 README

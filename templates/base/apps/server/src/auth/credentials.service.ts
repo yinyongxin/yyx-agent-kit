@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PasswordHasher, TokenService } from "@nestjs/authentication";
 import { AuditService } from "../audit/audit.service";
 import { AuthUsersRepository } from "./repositories/auth-users.repository";
+import { LoginThrottleService } from "./login-throttle.service";
 
 /**
  * 登录闭环的业务逻辑：验证邮箱密码，签发 access token。
@@ -17,12 +18,16 @@ export class CredentialsService {
     private readonly hasher: PasswordHasher,
     private readonly tokens: TokenService,
     private readonly audit: AuditService,
+    private readonly throttle: LoginThrottleService,
   ) {}
 
-  async signIn(email: string, password: string) {
+  async signIn(email: string, password: string, ip: string) {
+    await this.throttle.assertAllowed(email, ip);
+
     const found = await this.users.findCredentials(email);
     const valid = await this.hasher.verify(password, found?.passwordHash ?? null);
     if (!valid || !found) {
+      await this.throttle.recordFailure(email, ip);
       await this.audit.record({
         action: "auth.sign_in",
         resource: "session",
@@ -33,6 +38,7 @@ export class CredentialsService {
       throw new UnauthorizedException("邮箱或密码不正确");
     }
 
+    await this.throttle.recordSuccess(email, ip);
     const issued = await this.tokens.issue(found.user.id);
     await this.audit.record({
       action: "auth.sign_in",

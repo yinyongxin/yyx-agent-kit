@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { appConfig, authConfig, databaseConfig, devConfig, loggingConfig } from "./configuration";
+import { appConfig, authConfig, databaseConfig, devConfig, loggingConfig, redisConfig } from "./configuration";
 import { validateEnv } from "./env.validation";
 
 /**
@@ -17,7 +17,7 @@ import { validateEnv } from "./env.validation";
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [appConfig, databaseConfig, authConfig, devConfig, loggingConfig],
+      load: [appConfig, databaseConfig, authConfig, devConfig, loggingConfig, redisConfig],
       validate: validateEnv,
     }),
   ],

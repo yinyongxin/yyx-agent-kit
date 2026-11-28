@@ -106,4 +106,15 @@ export const authConfig = registerAs("auth", () => ({
   issuer: process.env.JWT_ISSUER ?? "starter-api",
   audience: process.env.JWT_AUDIENCE ?? "starter-web",
   ttl: process.env.JWT_TTL ?? "15m",
+  /** 登录失败锁定：同邮箱+IP 窗口内失败次数上限 */
+  loginMaxAttempts: Number(process.env.AUTH_LOGIN_MAX_ATTEMPTS ?? 5),
+  loginWindowSeconds: Number(process.env.AUTH_LOGIN_WINDOW_SECONDS ?? 300),
+  loginLockSeconds: Number(process.env.AUTH_LOGIN_LOCK_SECONDS ?? 900),
+  /** 同 IP 更高的阈值，防止批量撞库；成功登录不清零 */
+  loginIpMaxAttempts: Number(process.env.AUTH_LOGIN_IP_MAX_ATTEMPTS ?? 30),
+}));
+
+/** Redis（登录限流 / 共享缓存）；未配置时相关能力 fail-open */
+export const redisConfig = registerAs("redis", () => ({
+  url: process.env.REDIS_URL ?? "",
 }));
