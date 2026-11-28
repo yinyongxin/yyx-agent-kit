@@ -40,4 +40,5 @@
 - `LoggerModule` 只在本模块注册一次，业务模块不要重复 import
 - traceId 只放响应头/错误体，**不要**放进成功响应 body（避免契约变更）
 - 日志写 stdout，生产由 Docker / PM2 / Grafana Alloy 收集；不直接写业务库
+- OTel span 由 `TraceMiddleware` 创建（`src/tracing.ts` 初始化 SDK），traceId 与日志一致
 - 新增敏感字段时同步 `sanitize.ts` 的关键字列表

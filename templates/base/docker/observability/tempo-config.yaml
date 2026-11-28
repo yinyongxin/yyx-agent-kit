@@ -1,0 +1,30 @@
+# Tempo 单机配置（本地开发 / 小规模部署）
+# 接收应用 OTLP 数据，供 Grafana 查看 span 瀑布；生产建议对象存储（S3/MinIO）
+server:
+  http_listen_port: 3200
+  grpc_listen_port: 9095
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        http:
+          endpoint: 0.0.0.0:4318
+        grpc:
+          endpoint: 0.0.0.0:4317
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/tempo/traces
+    wal:
+      path: /var/tempo/wal
+
+compactor:
+  compaction:
+    # 本地保留 24 小时；按磁盘与合规要求调整
+    block_retention: 24h
+
+usage_report:
+  reporting_enabled: false

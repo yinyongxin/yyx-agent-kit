@@ -84,6 +84,7 @@ export class DevService {
     const penpotPluginPort = this.config.getOrThrow<number>("dev.penpotPluginPort");
     const lokiPort = this.config.getOrThrow<number>("dev.lokiPort");
     const grafanaPort = this.config.getOrThrow<number>("dev.grafanaPort");
+    const tempoPort = this.config.getOrThrow<number>("dev.tempoPort");
     const swaggerEnabled = this.config.getOrThrow<boolean>("app.swaggerEnabled");
 
     const [
@@ -97,6 +98,7 @@ export class DevService {
       redisUp,
       lokiUp,
       grafanaUp,
+      tempoUp,
     ] = await Promise.all([
       probeHttp(`http://localhost:${clientPort}`),
       probeHttp(`http://localhost:${adminPort}`),
@@ -108,6 +110,7 @@ export class DevService {
       probeTcp(redisHost, redisPort),
       probeHttp(`http://localhost:${lokiPort}/ready`),
       probeHttp(`http://localhost:${grafanaPort}/api/health`),
+      probeHttp(`http://localhost:${tempoPort}/ready`),
     ]);
 
     const base = (p: number) => `http://localhost:${p}`;
@@ -247,6 +250,17 @@ export class DevService {
         url: base(grafanaPort),
         links: [{ label: "health", href: `${base(grafanaPort)}/api/health` }],
         command: "docker compose --profile observability up -d grafana",
+        probe: "HTTP",
+      },
+      {
+        id: "tempo",
+        name: "Tempo",
+        group: "依赖服务",
+        port: tempoPort,
+        status: tempoUp ? "online" : "offline",
+        url: base(tempoPort),
+        links: [{ label: "ready", href: `${base(tempoPort)}/ready` }],
+        command: "docker compose --profile observability up -d tempo",
         probe: "HTTP",
       },
     ];

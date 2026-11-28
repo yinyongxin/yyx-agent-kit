@@ -241,6 +241,22 @@ services:
     networks:
       - starter-net
 
+  tempo:
+    image: grafana/tempo:${TEMPO_VERSION:-2.10.10}
+    container_name: starter-tempo
+    profiles: ["observability"]
+    restart: unless-stopped
+    command: -config.file=/etc/tempo/config.yaml
+    ports:
+      - "${TEMPO_PORT:-47113}:3200"
+      - "${TEMPO_OTLP_HTTP_PORT:-47114}:4318"
+      - "${TEMPO_OTLP_GRPC_PORT:-47115}:4317"
+    volumes:
+      - ./docker/observability/tempo-config.yaml:/etc/tempo/config.yaml:ro
+      - tempo-data:/var/tempo
+    networks:
+      - starter-net
+
   grafana:
     image: grafana/grafana:${GRAFANA_VERSION:-13.2.7}
     container_name: starter-grafana
@@ -261,6 +277,8 @@ services:
     depends_on:
       loki:
         condition: service_started
+      tempo:
+        condition: service_started
     networks:
       - starter-net
 
@@ -279,6 +297,8 @@ volumes:
     name: starter-grafana-data
   alloy-data:
     name: starter-alloy-data
+  tempo-data:
+    name: starter-tempo-data
 
 networks:
   starter-net:

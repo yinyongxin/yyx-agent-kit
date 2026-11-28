@@ -10,3 +10,22 @@ datasources:
     jsonData:
       timeout: 60
       maxLines: 5000
+
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    jsonData:
+      # 从 span 跳到同 traceId 的 Loki 日志
+      tracesToLogsV2:
+        datasourceUid: loki
+        filterByTraceID: true
+        filterBySpanID: false
+        spanStartTimeShift: "-5m"
+        spanEndTimeShift: "5m"
+        tags:
+          - key: service.name
+            value: service
+        customQuery: true
+        query: '{service="$${__tags.service}"} | traceId="$${__trace.traceId}"'

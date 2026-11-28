@@ -47,9 +47,10 @@ docker compose down -v        # 停止并删除数据卷（危险）
 | postgres | `pgvector/pgvector:pg17` | 54732 | 关系库 + pgvector 扩展；认证状态表也在此库 |
 | redis | `redis:7-alpine` | 46379 | 限流共享存储 / 业务缓存 |
 
-**可观测性（可选）**：`docker compose --profile observability up -d` 额外起 Loki（47110）、Grafana（47111）、Alloy（47112）。
+**可观测性（可选）**：`docker compose --profile observability up -d` 额外起 Loki（47110）、Grafana（47111）、Alloy（47112）、Tempo（47113 / OTLP 47114）。
 应用日志写 `logs/app.log`，Alloy 采集后进 Loki；管理端 `/observability/logs` 可检索请求日志与 traceId 时间线，
 `/observability/audit-logs` 查看关键写操作审计（PostgreSQL，append-only）。
+开启 `OTEL_ENABLED=true` 后链路 span 进 Tempo，Grafana 可看瀑布并跳到同 traceId 日志。
 详见 [`docs/guides/logging-and-tracing.md`](docs/guides/logging-and-tracing.md)。
 
 **认证/授权**：NestJS 官方 `@nestjs/authentication` + `@nestjs/authorization`，状态存 PostgreSQL，无独立 IdP 容器。多平台共用一个 server 天然共享登录态。当前骨架：JWT bearer + `@Public()` 豁免探活 + `@Can()` policy 示例；生产按官网补齐 store / Google OIDC / 2FA / 微信（详见 `.opencode/skills/standards/nestjs/SKILL.md` 与 `.env.example` 的注释）。

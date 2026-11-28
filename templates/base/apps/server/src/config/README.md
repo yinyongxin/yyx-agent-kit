@@ -23,7 +23,8 @@ const dbUrl = this.config.getOrThrow<string>("database.url");
 
 - 业务模块不要 import `ConfigModule`（`isGlobal: true`）。
 - 新增配置项：在 `configuration.ts` 加字段，并在 `env.validation.ts` 加校验。
-- 日志配置（`logging`）：`LOG_LEVEL` / `LOG_HTTP_BODY` / `LOG_BODY_LIMIT`，见 `.env.example` 与 `src/logging/README.md`。
+- 日志配置（`logging`）：`LOG_LEVEL` / `LOG_HTTP_BODY` / `LOG_BODY_LIMIT` / `LOG_FILE` / `LOKI_URL` / `LOG_SERVICE_NAME` / `SLOW_SQL_MS` / `SLOW_SQL_LOG_PARAMS`，见 `.env.example` 与 `src/logging/README.md`。
+- 链路追踪（OTel）：`OTEL_ENABLED` / `OTEL_SERVICE_NAME` / `OTEL_EXPORTER_OTLP_ENDPOINT` / `OTEL_TRACES_SAMPLER`，由 `src/tracing.ts` 在 AppModule 之前读取（自行 load .env）。
 - 脚本（`prisma7.config.ts` / `seed.ts` / `scripts/*`）在 Nest 容器外，继续用 dotenv。
 
 ## 同步要求

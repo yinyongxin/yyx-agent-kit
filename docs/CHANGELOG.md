@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- **链路追踪（OTel + Tempo）**：`src/tracing.ts` 初始化 `@opentelemetry/sdk-node`，OTLP → Tempo（47113 查询 / 47114 OTLP HTTP）；NodeAdapter 下 HTTP 插桩的 context 传不进 middleware，改由 `TraceMiddleware` 创建 server span 并用 `context.with` 包裹请求链，日志 traceId 与 Tempo 一致；关闭 `instrumentation-nestjs-core`（不支持 Nest 12）/ `fs`，logs/metrics 不重复导出；新增 Tempo compose 服务、Grafana 数据源与 `test:traces` 验收
 - **慢查询采集**：Prisma 7 + driver adapter 下 `$on("query")` 不可用（实测 `_engineConfig` undefined），改用 `scoped` extension 计时 + 租户事务整体计时；`SLOW_SQL_MS`（默认 100ms）/ `SLOW_SQL_LOG_PARAMS`（默认关闭），日志带 traceId / model / operation
 - **审计日志**：新增 `audit_logs`（append-only，RLS 禁止改删）与 `apps/server/src/audit/`；`@Audit({ action, resource })` 自动记录租户 CRUD，登录成功/失败在 `CredentialsService` 显式记录（含 traceId / ip / userAgent）；新增 `GET /api/audit-logs`、`/api/audit-logs/:id` 与管理端「审计日志」页 `/observability/audit-logs`；`test:audit` 验收
 - **可观测性（Loki）**：compose 新增 `observability` profile（Loki 47110 / Grafana 47111 / Alloy 47112），Alloy 采集 `logs/app.log`；pino 输出字符串 level 并支持 `LOG_FILE` 双写。新增 `/api/logs`、`/api/logs/stats`、`/api/logs/trace/:traceId`（平台管理员，Loki 只读）与管理端「日志」页 `/observability/logs`（DataTable 服务端模式 + 详情抽屉 + trace 时间线）

@@ -1,20 +1,11 @@
-import { config } from "dotenv";
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+// 第一行：OTel 必须在 AppModule / http 模块加载前完成插桩
+import "./tracing";
+
+import { loadEnv } from "./config/load-env";
 
 // 必须在 import AppModule 之前加载 .env：JwtStrategy / prisma 在模块加载时就读 process.env
-// 从 cwd 向上找最近的 .env（兼容源码/编译产物不同目录层级）
-const findEnv = () => {
-  let dir = process.cwd();
-  for (let i = 0; i < 4; i++) {
-    const candidate = resolve(dir, ".env");
-    if (existsSync(candidate)) return candidate;
-    dir = resolve(dir, "..");
-  }
-  return undefined;
-};
-const envPath = findEnv();
-if (envPath) config({ path: envPath });
+// （tracing 已调用过一次 loadEnv，dotenv 幂等）
+loadEnv();
 
 import "reflect-metadata";
 import { ValidationPipe, Logger } from "@nestjs/common";

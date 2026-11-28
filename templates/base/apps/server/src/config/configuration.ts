@@ -44,6 +44,7 @@ export const devConfig = registerAs("dev", () => {
     /** 可观测性（docker compose --profile observability） */
     lokiPort: Number(process.env.LOKI_PORT ?? 47110),
     grafanaPort: Number(process.env.GRAFANA_PORT ?? 47111),
+    tempoPort: Number(process.env.TEMPO_PORT ?? 47113),
   };
 });
 

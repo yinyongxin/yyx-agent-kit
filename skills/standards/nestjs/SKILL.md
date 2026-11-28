@@ -44,6 +44,7 @@ description: 开发 NestJS / TypeScript 后端时加载。技术栈、OIDC 认�
 - **表字段约定**：业务表 `id`（uuid）+ `createdAt` + `updatedAt`（`@db.Timestamptz(3)`），关联表联合主键不加 `id`，`deletedAt` 按需；`pnpm schema:check` 校验，详见 `docs/guides/database-conventions.md`。
 - **日志/traceId**：统一走 `apps/server/src/logging/`（pino + nestjs-pino）；所有响应头带 `X-Trace-Id` / `traceparent`，错误体带 `traceId`；请求/响应体日志需脱敏与截断（`LOG_HTTP_BODY` 控制），规范见 `docs/guides/logging-and-tracing.md`。查询走 `apps/server/src/logs/`（Loki），管理端日志页 `/observability/logs`。
 - **审计日志**：关键写操作加 `@Audit({ action, resource })`（`apps/server/src/audit/`）；`audit_logs` 为 append-only，RLS 禁止 UPDATE/DELETE；登录成功/失败在 `CredentialsService` 手动记录；查询 `/api/audit-logs`（平台管理员）。
+- **链路追踪**：`apps/server/src/tracing.ts`（OTel → Tempo，OTLP 47114）；Nest NodeAdapter 下**不要依赖 HTTP 入站插桩**，server span 由 `TraceMiddleware` 创建；`instrumentation-nestjs-core` 必须关闭（不支持 Nest 12）。
 
 - **中间件通配路由**：Nest 12 禁用裸 `*`；`forRoutes("*")` 叠加全局前缀会变成 `/api/*`，触发 `LegacyRouteConverter` 警告。用命名通配 `forRoutes("{*splat}")` 覆盖全部路径（官方 Middleware → Route wildcards，见踩坑记录 #25）。
 - 模块按领域拆分：`<feature>/<feature>.module.ts | .controller.ts | .service.ts | dto/ | repositories/`，每个目录有 README；完整目录模板与构件放置见 `docs/guides/server-module-architecture.md`
